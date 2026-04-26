@@ -11,12 +11,14 @@
     "dev": "turbo run dev",
     "lint": "ultracite check",
     "format": "ultracite fix",
-    "typecheck": "turbo run typecheck"
-  },
-  "dependencies": {
-    "@typescript/native-preview": "^7.0.0-dev.20260426.1"
+    "typecheck": "turbo run typecheck",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "turbo build --filter=verno && changeset publish"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260426.1",
     "oxfmt": "^0.46.0",
     "oxlint": "^1.61.0",
     "turbo": "^2.9.6",
