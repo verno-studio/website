@@ -1,9 +1,18 @@
 import { cn } from "@verno/design-system/lib/utils";
-import { Geist as createSans, Instrument_Serif as createSerif } from "next/font/google";
+import {
+  Geist as createSans,
+  Instrument_Serif as createSerif,
+  Geist_Mono as createMono,
+} from "next/font/google";
 
 const sans = createSans({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const mono = createMono({
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 const serif = createSerif({
@@ -13,4 +22,9 @@ const serif = createSerif({
   weight: "400",
 });
 
-export const fonts = cn(sans.variable, serif.variable, "touch-manipulation font-sans antialiased");
+export const fonts = cn(
+  sans.variable,
+  mono.variable,
+  serif.variable,
+  "touch-manipulation font-sans antialiased",
+);
