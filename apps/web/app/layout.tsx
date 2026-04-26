@@ -33,7 +33,7 @@ export const metadata: Metadata = {
       {
         alt: "Verno Studio",
         height: 630,
-        url: new URL("/opengraph-image.png", url).toString(),
+        url: new URL("/opengraph-image.gif", url).toString(),
         width: 1200,
       },
     ],
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
       {
         alt: "Verno Studio",
         height: 630,
-        url: new URL("/opengraph-image.png", url).toString(),
+        url: new URL("/opengraph-image.gif", url).toString(),
         width: 1200,
       },
     ],
