@@ -25,6 +25,7 @@
     "build": "tsdown",
     "dev": "tsdown --watch",
     "test": "bun test",
+    "test:coverage": "bun test --coverage",
     "typecheck": "tsgo --noEmit",
     "prepublishOnly": "bun run build"
   },
