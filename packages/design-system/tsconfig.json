@@ -1,0 +1,11 @@
+{
+  "extends": "@verno/typescript-config/base.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"],
+      "@verno/design-system/*": ["./*"]
+    }
+  },
+  "include": ["components/**/*.ts", "components/**/*.tsx", "lib/**/*.ts"],
+  "exclude": ["node_modules"]
+}
