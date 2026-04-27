@@ -1,4 +1,4 @@
-export const designSystemGlobalsCss = `@import "tailwindcss";
+@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -187,4 +187,3 @@ export const designSystemGlobalsCss = `@import "tailwindcss";
     }
   }
 }
-`;

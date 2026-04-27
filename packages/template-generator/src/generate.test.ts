@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { access, constants, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { defaultNpmScopeFromProjectName, generateProject } from "./index";
+import { defaultNpmScopeFromProjectName, generate, writeTree } from "./index";
 
 let dir: string;
 
@@ -20,16 +20,19 @@ describe("defaultNpmScopeFromProjectName", () => {
   });
 });
 
-describe("generateProject", () => {
+describe("generate + writeTree", () => {
   test("next-app writes key files", async () => {
     const out = join(dir, "next-app");
-    const { filesWritten } = await generateProject({
+    const config = {
       npmScope: "testapp",
-      packageManager: "bun",
+      packageManager: "bun" as const,
       projectDir: out,
       projectName: "test-app",
-      template: "next-app",
-    });
+      template: "next-app" as const,
+    };
+    const { fileCount, tree } = generate(config);
+    expect(fileCount).toBeGreaterThan(0);
+    const filesWritten = await writeTree(out, tree);
     expect(filesWritten.length).toBeGreaterThan(0);
     await access(join(out, "package.json"), constants.R_OK);
     await access(join(out, "app", "page.tsx"), constants.R_OK);
@@ -38,13 +41,15 @@ describe("generateProject", () => {
 
   test("next-turborepo writes monorepo layout", async () => {
     const out = join(dir, "mono");
-    await generateProject({
+    const config = {
       npmScope: "mono",
-      packageManager: "bun",
+      packageManager: "bun" as const,
       projectDir: out,
       projectName: "mono",
-      template: "next-turborepo",
-    });
+      template: "next-turborepo" as const,
+    };
+    const { tree } = generate(config);
+    await writeTree(out, tree);
     await access(join(out, "turbo.json"), constants.R_OK);
     await access(join(out, "apps", "web", "package.json"), constants.R_OK);
     await access(join(out, "packages", "typescript-config", "base.json"), constants.R_OK);
@@ -54,14 +59,16 @@ describe("generateProject", () => {
   test("next-turborepo writes design-system shadcn config and app imports design-system CSS", async () => {
     const out = join(dir, "mono-ds");
     const ds = "@acme/design-system";
-    await generateProject({
+    const config = {
       npmScope: "acme",
-      packageManager: "bun",
+      packageManager: "bun" as const,
       projectDir: out,
       projectName: "my-app",
       shadcnPreset: "lyra",
-      template: "next-turborepo",
-    });
+      template: "next-turborepo" as const,
+    };
+    const { tree } = generate(config);
+    await writeTree(out, tree);
     const componentsJson = await readFile(
       join(out, "packages", "design-system", "components.json"),
       "utf-8",

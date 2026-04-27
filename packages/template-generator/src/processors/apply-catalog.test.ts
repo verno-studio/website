@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { buildNextAppTree } from "../templates/next-app";
-import { buildNextTurborepoTree } from "../templates/next-turborepo";
+import { buildInterpolatedFileTree } from "../generator";
 import { applyDependencyCatalog } from "./apply-catalog";
 import { scoped } from "../paths";
 import { DEPENDENCY_VERSIONS } from "../catalog/dependencies";
@@ -9,7 +8,7 @@ import { TOOLING } from "../catalog/tooling";
 describe("applyDependencyCatalog", () => {
   test("applies the same app dependency versions to next-app", () => {
     const tree = applyDependencyCatalog(
-      buildNextAppTree({
+      buildInterpolatedFileTree({
         npmScope: "a",
         packageManager: "bun",
         projectDir: "/tmp",
@@ -43,7 +42,7 @@ describe("applyDependencyCatalog", () => {
       shadcnPreset: "a2r6bw",
       template: "next-turborepo" as const,
     };
-    const tree = applyDependencyCatalog(buildNextTurborepoTree(config), config);
+    const tree = applyDependencyCatalog(buildInterpolatedFileTree(config), config);
     const ds = scoped("acme", "design-system");
     const tsc = scoped("acme", "typescript-config");
     const root = JSON.parse(tree["package.json"] ?? "{}") as {

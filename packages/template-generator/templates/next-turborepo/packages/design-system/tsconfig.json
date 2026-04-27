@@ -1,0 +1,18 @@
+{
+  "extends": "../typescript-config/react-library.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"],
+      "{{dsName}}/*": ["./*"]
+    }
+  },
+  "include": [
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "lib/**/*.ts",
+    "hooks/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": ["node_modules"]
+}

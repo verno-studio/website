@@ -15,8 +15,11 @@ export {
   packageManagerField,
   TOOLING,
 } from "./catalog/tooling";
-export { generateProject } from "./generate";
+export { buildInterpolatedFileTree, generate } from "./generator";
+export { buildTemplateVarMap, DEFAULT_COMPONENTS_STYLE } from "./build-template-vars";
+export { interpolate } from "./interpolate";
 export { mergeFileTrees, type FileTree, scoped } from "./paths";
-export { writeFileTree } from "./write";
-export { buildNextAppTree } from "./templates/next-app";
-export { buildNextTurborepoTree } from "./templates/next-turborepo";
+export { writeTree } from "./fs-writer";
+export type { GenerateResult } from "./types";
+export { GeneratorError } from "./types";
+export { VirtualFileSystem } from "./core/virtual-fs";

@@ -10,9 +10,10 @@
     }
   },
   "scripts": {
-    "typecheck": "tsgo --noEmit",
-    "test": "bun test",
-    "test:coverage": "bun test --coverage"
+    "generate:templates": "bun run scripts/generate-template-registry.ts",
+    "typecheck": "bun run generate:templates && tsgo --noEmit",
+    "test": "bun run generate:templates && bun test",
+    "test:coverage": "bun run generate:templates && bun test --coverage"
   },
   "devDependencies": {
     "@types/bun": "^1.3.12",
