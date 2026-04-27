@@ -1,4 +1,3 @@
-import { parseArgs } from "node:util";
 import type { PackageManager, TemplateId } from "@verno/template-generator";
 
 export const TEMPLATES: readonly TemplateId[] = ["next-app", "next-turborepo"];
@@ -16,20 +15,43 @@ export type UiMode = "shadcn" | "none";
 export const isUiMode = (value: string | undefined): value is UiMode =>
   value === "shadcn" || value === "none";
 
-export interface CreateCliValues {
-  readonly help: boolean;
-  readonly "dry-run": boolean;
-  readonly json: boolean;
-  readonly "no-git": boolean;
-  readonly "no-install": boolean;
-  readonly "package-manager"?: string;
-  readonly "shadcn-preset"?: string;
-  readonly "skip-shadcn": boolean;
-  readonly "skip-ultracite": boolean;
-  readonly template?: string;
-  readonly ui?: string;
+/** Normalized options for `verno create` (from Commander). */
+export interface CreateCommandOptions {
+  readonly dryRun: boolean;
   readonly yes: boolean;
+  readonly noGit: boolean;
+  readonly noInstall: boolean;
+  readonly skipShadcn: boolean;
+  readonly skipUltracite: boolean;
+  readonly template?: string;
+  readonly packageManager?: string;
+  readonly ui?: string;
+  readonly shadcnPreset?: string;
 }
+
+export const toCreateCommandOptions = (raw: {
+  readonly dryRun?: boolean;
+  readonly yes?: boolean;
+  readonly noGit?: boolean;
+  readonly noInstall?: boolean;
+  readonly skipShadcn?: boolean;
+  readonly skipUltracite?: boolean;
+  readonly template?: string;
+  readonly packageManager?: string;
+  readonly ui?: string;
+  readonly shadcnPreset?: string;
+}): CreateCommandOptions => ({
+  dryRun: raw.dryRun ?? false,
+  noGit: raw.noGit ?? false,
+  noInstall: raw.noInstall ?? false,
+  packageManager: raw.packageManager,
+  shadcnPreset: raw.shadcnPreset,
+  skipShadcn: raw.skipShadcn ?? false,
+  skipUltracite: raw.skipUltracite ?? false,
+  template: raw.template,
+  ui: raw.ui,
+  yes: raw.yes ?? false,
+});
 
 export interface ResolvedCreateInputs {
   readonly doGit: boolean;
@@ -43,51 +65,26 @@ export interface ResolvedCreateInputs {
   readonly useShadcn: boolean;
 }
 
-export const parseCreateArgv = (argv: string[]) => {
-  const { values, positionals } = parseArgs({
-    allowPositionals: true,
-    args: argv,
-    options: {
-      "dry-run": { default: false, type: "boolean" },
-      help: { default: false, short: "h", type: "boolean" },
-      json: { default: false, type: "boolean" },
-      "no-git": { default: false, type: "boolean" },
-      "no-install": { default: false, type: "boolean" },
-      "package-manager": { short: "p", type: "string" },
-      "shadcn-preset": { type: "string" },
-      "skip-shadcn": { default: false, type: "boolean" },
-      "skip-ultracite": { default: false, type: "boolean" },
-      template: { short: "T", type: "string" },
-      ui: { type: "string" },
-      yes: { default: false, short: "y", type: "boolean" },
-    },
-    strict: true,
-  });
-  return { positionals, values };
-};
-
 export const resolveCreateInputsNonInteractive = (
-  positionals: readonly string[],
-  values: CreateCliValues,
+  name: string,
+  options: CreateCommandOptions,
 ): ResolvedCreateInputs => {
-  const [first] = positionals;
-  if (!first) {
+  if (!name) {
     throw new Error("Project name is required. Example: verno create my-app -y");
   }
-  const name = first;
 
   let template: TemplateId;
-  if (values.template) {
-    if (!isTemplateId(values.template)) {
+  if (options.template) {
+    if (!isTemplateId(options.template)) {
       throw new Error(`Invalid --template. Use: ${TEMPLATES.join(" | ")}`);
     }
-    ({ template } = values);
+    ({ template } = options);
   } else {
     template = "next-app";
   }
 
   let packageManager: PackageManager;
-  const rawPackageManager = values["package-manager"];
+  const rawPackageManager = options.packageManager;
   if (rawPackageManager) {
     if (!isPackageManager(rawPackageManager)) {
       throw new Error(`Invalid --package-manager. Use: ${PACKAGE_MANAGERS.join(" | ")}`);
@@ -98,26 +95,26 @@ export const resolveCreateInputsNonInteractive = (
   }
 
   let ui: UiMode;
-  if (values.ui) {
-    if (!isUiMode(values.ui)) {
+  if (options.ui) {
+    if (!isUiMode(options.ui)) {
       throw new Error("Invalid --ui. Use: shadcn | none");
     }
-    ({ ui } = values);
+    ({ ui } = options);
   } else {
     ui = "shadcn";
   }
-  if (values["skip-shadcn"]) {
+  if (options.skipShadcn) {
     ui = "none";
   }
   return {
-    doGit: !values["no-git"],
-    doInstall: !values["no-install"],
+    doGit: !options.noGit,
+    doInstall: !options.noInstall,
     name,
     packageManager,
-    runUltracite: !values["skip-ultracite"],
-    shadcnPreset: values["shadcn-preset"] ?? DEFAULT_SHADCN_PRESET,
+    runUltracite: !options.skipUltracite,
+    shadcnPreset: options.shadcnPreset ?? DEFAULT_SHADCN_PRESET,
     template,
     ui,
-    useShadcn: ui === "shadcn" && !values["skip-shadcn"],
+    useShadcn: ui === "shadcn" && !options.skipShadcn,
   };
 };

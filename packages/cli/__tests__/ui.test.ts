@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { formatVernoBanner, renderVernoTitle, VERNO_TITLE_SIMPLE } from "./ui";
+import { formatVernoBanner, renderVernoTitle, VERNO_TITLE_SIMPLE } from "../src/ui";
 
 describe("formatVernoBanner", () => {
   let originalIsTTY: boolean | undefined;
@@ -28,7 +28,7 @@ describe("formatVernoBanner", () => {
     expect(formatVernoBanner(false)).toBe("verno");
   });
 
-  test("returns plain text in json mode", () => {
+  test("returns plain text when plain output is requested", () => {
     Object.defineProperty(process.stdout, "isTTY", { configurable: true, value: true });
     delete process.env.NO_COLOR;
     expect(formatVernoBanner(true)).toBe("verno");

@@ -1,42 +1,47 @@
-import { isCLIError, isUserCancelled, ProcessFailedError } from "./errors";
+import process from "node:process";
+import { Command } from "commander";
+import packageJson from "../package.json";
 import { runCreate } from "./commands/create";
+import { toCreateCommandOptions } from "./commands/create-args";
+import { isCLIError, isUserCancelled, ProcessFailedError } from "./errors";
 
-const showGlobalHelp = (): void => {
-  process.stdout.write(`
-verno — Verno CLI
+const program = new Command();
 
-Usage:
-  verno <command> [options]
+program
+  .name("verno")
+  .description(packageJson.description)
+  .version(packageJson.version, "-v, --version");
 
-Commands:
-  create <name>   Scaffold a Next.js app or Turborepo monorepo
-
-Run \`verno create --help\` for options.
-`);
-};
-
-const main = async (): Promise<void> => {
-  const argv = process.argv.slice(2);
-  const [cmd, ...rest] = argv;
-  const isGlobalHelp = argv.length === 0 || cmd === "help" || cmd === "--help" || cmd === "-h";
-  if (isGlobalHelp) {
-    showGlobalHelp();
-    return;
-  }
-
-  if (cmd === "create") {
-    await runCreate(rest);
-    return;
-  }
-
-  process.stderr.write(`Unknown command: ${String(cmd)}\n`);
-  showGlobalHelp();
-  process.exit(1);
-};
+program
+  .command("create")
+  .description("Scaffold a Next.js app or Turborepo monorepo")
+  .argument("[name]", "Project directory name")
+  .option("-y, --yes", "Non-interactive mode (requires project name)", false)
+  .option("--dry-run", "Print the plan without writing files or running hooks", false)
+  .option("-T, --template <id>", "next-app | next-turborepo")
+  .option("-p, --package-manager <pm>", "bun | pnpm | npm")
+  .option("--ui <mode>", "shadcn | none")
+  .option("--shadcn-preset <name>", "shadcn preset (e.g. nova)")
+  .option("--no-install", "Skip dependency install")
+  .option("--no-git", "Skip git init")
+  .option("--skip-shadcn", "Skip shadcn bootstrap")
+  .option("--skip-ultracite", "Skip ultracite init")
+  .action(async (name: string | undefined, opts) => {
+    await runCreate({
+      name,
+      options: toCreateCommandOptions(opts),
+    });
+  });
 
 const run = async (): Promise<void> => {
   try {
-    await main();
+    const argv = process.argv.slice(2);
+    if (argv.length === 0) {
+      program.outputHelp();
+      process.exitCode = 0;
+      return;
+    }
+    await program.parseAsync(process.argv);
   } catch (error: unknown) {
     if (isUserCancelled(error)) {
       process.exit(0);

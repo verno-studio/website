@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { getShadcnExecSpec, getUltraciteExecSpec } from "@verno/template-generator";
-import { getShadcnBootstrapCommand, getUltraciteInitCommand } from "./pm-exec";
+import { getShadcnBootstrapCommand, getUltraciteInitCommand } from "../src/pm-exec";
 
 describe("getShadcnBootstrapCommand", () => {
   const spec = getShadcnExecSpec();

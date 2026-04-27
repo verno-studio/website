@@ -11,7 +11,7 @@ import {
   PACKAGE_MANAGERS,
   TEMPLATES,
 } from "./create-args";
-import type { CreateCliValues, ResolvedCreateInputs, UiMode } from "./create-args";
+import type { CreateCommandOptions, ResolvedCreateInputs, UiMode } from "./create-args";
 
 const exitOnCancel = (value: unknown): void => {
   if (p.isCancel(value)) {
@@ -62,12 +62,12 @@ const readProjectName = async (positionalName: string | undefined): Promise<stri
   return n as string;
 };
 
-const readTemplate = async (values: CreateCliValues): Promise<TemplateId> => {
-  if (values.template) {
-    if (!isTemplateId(values.template)) {
+const readTemplate = async (options: CreateCommandOptions): Promise<TemplateId> => {
+  if (options.template) {
+    if (!isTemplateId(options.template)) {
       throw new Error(`Invalid --template. Use: ${TEMPLATES.join(" | ")}`);
     }
-    return values.template;
+    return options.template;
   }
   const t = assertValue(
     await p.select({
@@ -79,8 +79,8 @@ const readTemplate = async (values: CreateCliValues): Promise<TemplateId> => {
   return isTemplateId(t) ? t : "next-app";
 };
 
-const readPackageManager = async (values: CreateCliValues): Promise<PackageManager> => {
-  const raw = values["package-manager"];
+const readPackageManager = async (options: CreateCommandOptions): Promise<PackageManager> => {
+  const raw = options.packageManager;
   if (raw) {
     if (!isPackageManager(raw)) {
       throw new Error(`Invalid --package-manager. Use: ${PACKAGE_MANAGERS.join(" | ")}`);
@@ -97,15 +97,18 @@ const readPackageManager = async (values: CreateCliValues): Promise<PackageManag
   return isPackageManager(pm) ? pm : "bun";
 };
 
-const readUiMode = async (hasSkipShadcn: boolean, values: CreateCliValues): Promise<UiMode> => {
+const readUiMode = async (
+  hasSkipShadcn: boolean,
+  options: CreateCommandOptions,
+): Promise<UiMode> => {
   if (hasSkipShadcn) {
     return "none";
   }
-  if (values.ui) {
-    if (!isUiMode(values.ui)) {
+  if (options.ui) {
+    if (!isUiMode(options.ui)) {
       throw new Error("Invalid --ui. Use: shadcn | none");
     }
-    return values.ui;
+    return options.ui;
   }
   const u = assertValue(
     await p.select({
@@ -120,9 +123,9 @@ const readUiMode = async (hasSkipShadcn: boolean, values: CreateCliValues): Prom
   return isUiMode(u) ? u : "shadcn";
 };
 
-const readShadcnPreset = async (values: CreateCliValues, ui: UiMode): Promise<string> => {
-  if (values["shadcn-preset"]) {
-    return values["shadcn-preset"];
+const readShadcnPreset = async (options: CreateCommandOptions, ui: UiMode): Promise<string> => {
+  if (options.shadcnPreset) {
+    return options.shadcnPreset;
   }
   if (ui !== "shadcn") {
     return DEFAULT_SHADCN_PRESET;
@@ -173,33 +176,31 @@ const readRunUltracite = async (hasSkipUltracite: boolean): Promise<boolean> => 
   return Boolean(c);
 };
 
-export const runInteractiveCreateWizard = async (options: {
-  readonly originalArgv: readonly string[];
-  readonly positionals: readonly string[];
-  readonly values: CreateCliValues;
+export const runInteractiveCreateWizard = async (args: {
+  readonly name?: string;
+  readonly options: CreateCommandOptions;
 }): Promise<ResolvedCreateInputs> => {
-  const { originalArgv, positionals, values } = options;
-  const hasNoInstall = originalArgv.includes("--no-install");
-  const hasNoGit = originalArgv.includes("--no-git");
-  const hasSkipShadcn = values["skip-shadcn"] || originalArgv.includes("--skip-shadcn");
-  const hasSkipUltracite = values["skip-ultracite"] || originalArgv.includes("--skip-ultracite");
-  const isDryRun = values["dry-run"];
+  const { name: positionalName, options } = args;
+  const hasNoInstall = options.noInstall;
+  const hasNoGit = options.noGit;
+  const hasSkipShadcn = options.skipShadcn;
+  const hasSkipUltracite = options.skipUltracite;
+  const isDryRun = options.dryRun;
 
   renderVernoTitle(false);
   p.intro(pc.magenta("Creating a new Verno Studio project"));
   p.log.info("This wizard will guide you through a new project. Use arrow keys, Enter, and y/n.");
 
-  const [positionalName] = positionals;
   p.log.step("Project — name and folder");
   const name = await readProjectName(positionalName);
 
   p.log.step("Stack — template and package manager");
-  const template = await readTemplate(values);
-  const packageManager = await readPackageManager(values);
+  const template = await readTemplate(options);
+  const packageManager = await readPackageManager(options);
 
   p.log.step("UI — shadcn and preset");
-  const ui = await readUiMode(hasSkipShadcn, values);
-  const shadcnPreset = await readShadcnPreset(values, ui);
+  const ui = await readUiMode(hasSkipShadcn, options);
+  const shadcnPreset = await readShadcnPreset(options, ui);
 
   p.log.step("Post-create — install, ultracite, and git");
   const doInstall = await readDoInstall(hasNoInstall);

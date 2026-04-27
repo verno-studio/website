@@ -77,13 +77,6 @@ export const runGitIfEnabled = async (enabled: boolean, projectDir: string): Pro
   await runProcess("git", ["init"], { cwd: projectDir, stepId: "git" });
 };
 
-/** @deprecated Use {@link getProjectPath} + {@link assertPathAvailable}. */
-export const assertNewDirectory = (name: string): string => {
-  const projectDir = getProjectPath(name);
-  assertPathAvailable(projectDir);
-  return projectDir;
-};
-
 export const buildConfig = (args: {
   readonly name: string;
   readonly npmScope: string;

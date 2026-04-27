@@ -14,8 +14,8 @@ const VERNO_BANNER = `
 const TRUECOLOR_BANNER_PREFIX = "\u001B[38;2;255;81;20m";
 const SGR_RESET = "\u001B[0m";
 
-const allowColorBanner = (jsonMode: boolean): boolean => {
-  if (jsonMode) {
+const allowColorBanner = (plainOutput: boolean): boolean => {
+  if (plainOutput) {
     return false;
   }
   if (process.env.NO_COLOR) {
@@ -31,8 +31,8 @@ const vernoBannerWidth = (): number => {
   return Math.max(...titleLines.map((line) => line.length));
 };
 
-export const renderVernoTitle = (jsonMode: boolean): void => {
-  if (!allowColorBanner(jsonMode)) {
+export const renderVernoTitle = (plainOutput: boolean): void => {
+  if (!allowColorBanner(plainOutput)) {
     return;
   }
   const terminalWidth = process.stdout.columns ?? 80;
@@ -43,15 +43,15 @@ export const renderVernoTitle = (jsonMode: boolean): void => {
   process.stdout.write(`${brandColor(VERNO_BANNER)}\n`);
 };
 
-export const formatVernoBanner = (jsonMode: boolean): string => {
-  if (!allowColorBanner(jsonMode)) {
+export const formatVernoBanner = (plainOutput: boolean): string => {
+  if (!allowColorBanner(plainOutput)) {
     return "verno";
   }
   return `${TRUECOLOR_BANNER_PREFIX}${VERNO_BANNER}${SGR_RESET}`;
 };
 
-export const dimPath = (path: string, jsonMode: boolean): string => {
-  if (jsonMode) {
+export const dimPath = (path: string, plainOutput: boolean): string => {
+  if (plainOutput) {
     return path;
   }
   return pc.dim(path);
