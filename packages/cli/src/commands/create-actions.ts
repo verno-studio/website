@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { generateProject } from "@verno/template-generator";
+import { generate, writeTree } from "@verno/template-generator";
 import type { PackageManager, ProjectConfig, TemplateId } from "@verno/template-generator";
 import {
   getPmInstallCommand,
@@ -23,7 +23,8 @@ export const scaffold = async (
   onLine?: (line: string) => void,
 ): Promise<{ readonly filesWritten: number }> => {
   onLine?.(`\nScaffolding ${config.template} in ${config.projectDir} …`);
-  const { filesWritten } = await generateProject(config);
+  const { tree } = generate(config);
+  const filesWritten = await writeTree(config.projectDir, tree);
   onLine?.(`Wrote ${String(filesWritten.length)} files.`);
   return { filesWritten: filesWritten.length };
 };
