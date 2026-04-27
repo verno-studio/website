@@ -7,6 +7,7 @@ import {
   getShadcnBootstrapCommand,
   getUltraciteInitCommand,
 } from "../pm-exec";
+import type { UltraciteInitMode } from "../pm-exec";
 import { runProcess } from "../run";
 import { getShadcnWorkingDirectory } from "./create-plan";
 
@@ -20,11 +21,14 @@ export const assertPathAvailable = (projectDir: string): void => {
 
 export const scaffold = async (
   config: ProjectConfig,
+  projectDir: string,
   onLine?: (line: string) => void,
 ): Promise<{ readonly filesWritten: number }> => {
-  onLine?.(`\nScaffolding ${config.template} in ${config.projectDir} …`);
-  const { tree } = generate(config);
-  const filesWritten = await writeTree(config.projectDir, tree);
+  onLine?.(`\nScaffolding ${config.template} in ${projectDir} …`);
+  const gen = generate({ config });
+  const tree = gen.unwrap();
+  const writeResult = await writeTree(tree, projectDir);
+  const filesWritten = writeResult.unwrap();
   onLine?.(`Wrote ${String(filesWritten.length)} files.`);
   return { filesWritten: filesWritten.length };
 };
@@ -63,12 +67,15 @@ export const runUltraciteIfEnabled = async (
   enabled: boolean,
   packageManager: PackageManager,
   projectDir: string,
+  mode: UltraciteInitMode,
+  runOptions?: { readonly ciSafe?: boolean },
 ): Promise<void> => {
   if (!enabled) {
     return;
   }
-  const u = getUltraciteInitCommand(packageManager);
-  await runProcess(u.file, u.args, { cwd: projectDir, stepId: "ultracite" });
+  const u = getUltraciteInitCommand(packageManager, mode);
+  const ciSafe = runOptions?.ciSafe ?? mode === "quiet";
+  await runProcess(u.file, u.args, { ciSafe, cwd: projectDir, stepId: "ultracite" });
 };
 
 export const runGitIfEnabled = async (enabled: boolean, projectDir: string): Promise<void> => {
@@ -82,13 +89,11 @@ export const buildConfig = (args: {
   readonly name: string;
   readonly npmScope: string;
   readonly packageManager: PackageManager;
-  readonly projectDir: string;
   readonly shadcnPreset: string;
   readonly template: TemplateId;
 }): ProjectConfig => ({
   npmScope: args.npmScope,
   packageManager: args.packageManager,
-  projectDir: args.projectDir,
   projectName: args.name,
   shadcnPreset: args.shadcnPreset,
   template: args.template,

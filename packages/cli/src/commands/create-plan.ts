@@ -126,7 +126,10 @@ export const buildCreatePlan = (
   }
 
   if (resolved.runUltracite) {
-    const u = getUltraciteInitCommand(resolved.packageManager);
+    const u = getUltraciteInitCommand(
+      resolved.packageManager,
+      resolved.nonInteractive ? "quiet" : "interactive",
+    );
     steps.push({
       command: { args: u.args, cwd: projectDir, file: u.file },
       id: "ultracite",

@@ -57,6 +57,8 @@ export interface ResolvedCreateInputs {
   readonly doGit: boolean;
   readonly doInstall: boolean;
   readonly name: string;
+  /** True when `verno create -y` — use non-interactive hooks (e.g. `ultracite init --quiet`). */
+  readonly nonInteractive: boolean;
   readonly packageManager: PackageManager;
   readonly runUltracite: boolean;
   readonly shadcnPreset: string;
@@ -110,6 +112,7 @@ export const resolveCreateInputsNonInteractive = (
     doGit: !options.noGit,
     doInstall: !options.noInstall,
     name,
+    nonInteractive: true,
     packageManager,
     runUltracite: !options.skipUltracite,
     shadcnPreset: options.shadcnPreset ?? DEFAULT_SHADCN_PRESET,

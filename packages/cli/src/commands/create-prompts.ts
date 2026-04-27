@@ -238,6 +238,7 @@ export const runInteractiveCreateWizard = async (args: {
     doGit,
     doInstall,
     name,
+    nonInteractive: false,
     packageManager,
     runUltracite,
     shadcnPreset,

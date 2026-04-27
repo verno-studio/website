@@ -110,17 +110,19 @@ export const runCreate = async (args: {
     name: resolved.name,
     npmScope: defaultNpmScopeFromProjectName(resolved.name),
     packageManager: resolved.packageManager,
-    projectDir,
     shadcnPreset: resolved.shadcnPreset,
     template: resolved.template,
   });
 
   try {
     assertPathAvailable(projectDir);
+    const ultraciteQuiet = resolved.runUltracite && resolved.nonInteractive;
+    const deferGit = resolved.doGit && resolved.runUltracite && !resolved.nonInteractive;
+
     await p.tasks([
       {
         task: async (message) => {
-          const { filesWritten: n } = await scaffold(config, (line) => {
+          const { filesWritten: n } = await scaffold(config, projectDir, (line) => {
             message?.(line);
           });
           return `Wrote ${String(n)} files.`;
@@ -152,16 +154,16 @@ export const runCreate = async (args: {
         title: "shadcn init",
       },
       {
-        enabled: resolved.runUltracite,
+        enabled: resolved.runUltracite && ultraciteQuiet,
         task: async (message) => {
-          message?.("ultracite init…");
-          await runUltraciteIfEnabled(true, resolved.packageManager, projectDir);
+          message?.("ultracite init (quiet)…");
+          await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "quiet");
           return "ultracite init complete";
         },
         title: "ultracite init",
       },
       {
-        enabled: resolved.doGit,
+        enabled: resolved.doGit && !deferGit,
         task: async (message) => {
           message?.("git init…");
           await runGitIfEnabled(true, projectDir);
@@ -170,6 +172,19 @@ export const runCreate = async (args: {
         title: "git init",
       },
     ]);
+
+    if (resolved.runUltracite && !ultraciteQuiet) {
+      process.stdout.write(
+        `\n${pc.cyan("ultracite")} — follow the prompts, then the CLI will continue.\n\n`,
+      );
+      await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "interactive", {
+        ciSafe: false,
+      });
+    }
+
+    if (deferGit) {
+      await runGitIfEnabled(true, projectDir);
+    }
   } catch (error) {
     if (error instanceof ProcessFailedError) {
       process.stderr.write(`${pc.red("Error:")} ${error.message}\n`);

@@ -31,27 +31,19 @@ export const getShadcnBootstrapCommand = (
   return { args: ["--yes", shadcnSpec, ...afterInit], file: "npx" };
 };
 
+/** Interactive: Ultracite prompts for linter, frameworks, editors. Quiet: non-interactive (e.g. `verno create -y`). */
+export type UltraciteInitMode = "interactive" | "quiet";
+
 export const getUltraciteInitCommand = (
   pm: PackageManager,
+  mode: UltraciteInitMode,
 ): {
   readonly file: string;
   readonly args: readonly string[];
 } => {
   const ultraciteSpec = getUltraciteExecSpec();
-  const rest = [
-    "init",
-    "--pm",
-    pm,
-    "--linter",
-    "oxlint",
-    "--frameworks",
-    "react",
-    "next",
-    "--editors",
-    "vscode",
-    "cursor",
-    "--quiet",
-  ] as const;
+  const rest =
+    mode === "quiet" ? (["init", "--pm", pm, "--quiet"] as const) : (["init", "--pm", pm] as const);
   if (pm === "bun") {
     return { args: ["x", ultraciteSpec, ...rest], file: "bun" };
   }

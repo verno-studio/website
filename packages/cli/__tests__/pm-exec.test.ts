@@ -20,12 +20,17 @@ describe("getShadcnBootstrapCommand", () => {
 });
 
 describe("getUltraciteInitCommand", () => {
-  test("uses catalog ultracite exec spec", () => {
+  test("quiet mode: dlx, init, --pm, package manager, --quiet", () => {
     const spec = getUltraciteExecSpec();
-    const cmd = getUltraciteInitCommand("pnpm");
-    expect(cmd.args[0]).toBe("dlx");
-    expect(cmd.args[1]).toBe(spec);
-    expect(cmd.args).toContain("init");
-    expect(cmd.args).toContain("oxlint");
+    const cmd = getUltraciteInitCommand("pnpm", "quiet");
+    expect(cmd.args).toEqual(["dlx", spec, "init", "--pm", "pnpm", "--quiet"]);
+  });
+
+  test("interactive mode: no --quiet so Ultracite can prompt", () => {
+    const spec = getUltraciteExecSpec();
+    const cmd = getUltraciteInitCommand("bun", "interactive");
+    expect(cmd.args).toEqual(["x", spec, "init", "--pm", "bun"]);
+    expect(cmd.args).not.toContain("--quiet");
+    expect(cmd.args).not.toContain("--linter");
   });
 });

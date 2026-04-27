@@ -1,6 +1,16 @@
 import type { PackageManager, TemplateId } from "@verno/template-generator";
 import type { ResolvedCreateInputs } from "./create-args";
 
+const shadcnRunner = (packageManager: PackageManager): string => {
+  if (packageManager === "bun") {
+    return "bun x --bun shadcn@latest";
+  }
+  if (packageManager === "pnpm") {
+    return "pnpm dlx shadcn@latest";
+  }
+  return "npx shadcn@latest";
+};
+
 const devCommand = (packageManager: PackageManager): string => {
   if (packageManager === "bun") {
     return "bun run dev";
@@ -26,8 +36,9 @@ export const getNextSteps = (inputs: {
   readonly doInstall: boolean;
   readonly packageManager: PackageManager;
   readonly template: TemplateId;
+  readonly useShadcn: boolean;
 }): string[] => {
-  const { name, doInstall, packageManager, template } = inputs;
+  const { name, doInstall, packageManager, template, useShadcn } = inputs;
   const steps: string[] = [`cd ${name}`];
   if (!doInstall) {
     steps.push(installCommand(packageManager));
@@ -36,6 +47,11 @@ export const getNextSteps = (inputs: {
     steps.push(`Start the monorepo: ${devCommand(packageManager)}`);
   } else {
     steps.push(devCommand(packageManager));
+  }
+  if (useShadcn && template === "next-turborepo") {
+    const sh = shadcnRunner(packageManager);
+    const ds = "packages/design-system";
+    steps.push(`To switch shadcn preset later: cd ${ds} && ${sh} apply --preset <code>`);
   }
   return steps;
 };
@@ -46,4 +62,5 @@ export const getNextStepHints = (resolved: ResolvedCreateInputs): string[] =>
     name: resolved.name,
     packageManager: resolved.packageManager,
     template: resolved.template,
+    useShadcn: resolved.useShadcn,
   });

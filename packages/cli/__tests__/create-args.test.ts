@@ -45,6 +45,7 @@ describe("resolveCreateInputsNonInteractive", () => {
     });
     expect(r.useShadcn).toBe(false);
     expect(r.runUltracite).toBe(false);
+    expect(r.nonInteractive).toBe(true);
   });
 
   test("parses short-style options via toCreateCommandOptions", () => {
@@ -58,5 +59,6 @@ describe("resolveCreateInputsNonInteractive", () => {
     );
     expect(r.packageManager).toBe("npm");
     expect(r.template).toBe("next-app");
+    expect(r.nonInteractive).toBe(true);
   });
 });

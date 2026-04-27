@@ -7,6 +7,8 @@ export interface RunProcessOptions {
   readonly stdio?: "inherit" | "pipe";
   readonly stepId?: "install" | "shadcn" | "ultracite" | "git" | "unknown";
   readonly env?: NodeJS.ProcessEnv;
+  /** When false, do not set `CI=1` (needed for child CLIs that treat CI as non-interactive). Default true. */
+  readonly ciSafe?: boolean;
 }
 
 const isExecaError = (e: unknown): e is ExecaError =>
@@ -17,7 +19,8 @@ export const runProcess = async (
   args: readonly string[],
   options: RunProcessOptions,
 ): Promise<void> => {
-  const env = { ...process.env, ...options.env, CI: process.env.CI ?? "1" };
+  const base = { ...process.env, ...options.env };
+  const env = options.ciSafe === false ? base : { ...base, CI: process.env.CI ?? "1" };
   try {
     await execa(file, args, {
       cwd: options.cwd,
