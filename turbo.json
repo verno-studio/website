@@ -7,8 +7,12 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
-    "test": {},
-    "test:coverage": {},
+    "test": {
+      "dependsOn": ["^build"]
+    },
+    "test:coverage": {
+      "dependsOn": ["^build"]
+    },
     "//#lint": {},
     "//#format": {
       "cache": false
