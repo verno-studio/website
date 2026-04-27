@@ -6,5 +6,8 @@ import next from "ultracite/oxlint/next";
 
 export default defineConfig({
   extends: [core, react, next],
-  ignorePatterns: ["packages/design-system/components/ui"],
+  ignorePatterns: [
+    "packages/design-system/components/ui",
+    "packages/template-generator/src/templates.generated.ts",
+  ],
 });
