@@ -11,14 +11,12 @@ describe("applyDependencyCatalog", () => {
       buildInterpolatedFileTree({
         npmScope: "a",
         packageManager: "bun",
-        projectDir: "/tmp",
         projectName: "a",
         template: "next-app",
       }),
       {
         npmScope: "a",
         packageManager: "bun",
-        projectDir: "/tmp",
         projectName: "a",
         template: "next-app",
       },
@@ -37,7 +35,6 @@ describe("applyDependencyCatalog", () => {
     const config = {
       npmScope: "acme",
       packageManager: "pnpm" as const,
-      projectDir: "/tmp",
       projectName: "mono",
       shadcnPreset: "a2r6bw",
       template: "next-turborepo" as const,
@@ -58,6 +55,8 @@ describe("applyDependencyCatalog", () => {
       peerDependencies: Record<string, string>;
     };
     expect(root.devDependencies.turbo).toBe(DEPENDENCY_VERSIONS.turbo);
+    expect(root.devDependencies.oxlint).toBeUndefined();
+    expect(root.devDependencies.oxfmt).toBeUndefined();
     expect(web.dependencies[ds]).toBe("workspace:*");
     expect(web.dependencies.next).toBe(DEPENDENCY_VERSIONS.next);
     expect(web.devDependencies[tsc]).toBe("workspace:*");

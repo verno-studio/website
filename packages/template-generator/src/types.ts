@@ -1,25 +1,29 @@
 import type { ProjectConfig } from "./config";
-import type { FileTree } from "./paths";
 
-export class GeneratorError extends Error {
-  readonly config?: ProjectConfig;
-
-  constructor(
-    message: string,
-    options?: {
-      readonly cause?: unknown;
-      readonly config?: ProjectConfig;
-    },
-  ) {
-    const cause = options?.cause;
-    super(message, cause === undefined ? undefined : { cause });
-    this.name = "GeneratorError";
-    this.config = options?.config;
-  }
+export interface VirtualFile {
+  type: "file";
+  path: string;
+  name: string;
+  content: string;
+  extension: string;
 }
 
-export interface GenerateResult {
-  readonly tree: FileTree;
-  readonly fileCount: number;
+export interface VirtualDirectory {
+  type: "directory";
+  path: string;
+  name: string;
+  children: VirtualNode[];
+}
+
+export type VirtualNode = VirtualFile | VirtualDirectory;
+
+export interface VirtualFileTree {
+  root: VirtualDirectory;
+  fileCount: number;
+  directoryCount: number;
+  config: ProjectConfig;
+}
+
+export interface GeneratorOptions {
   readonly config: ProjectConfig;
 }

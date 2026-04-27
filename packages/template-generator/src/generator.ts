@@ -1,37 +1,47 @@
-import { applyDependencyCatalog } from "./processors/apply-catalog";
-import { buildTemplateVarMap } from "./build-template-vars";
+import { Result } from "better-result";
 import type { ProjectConfig } from "./config";
-import { VirtualFileSystem } from "./core/virtual-fs";
-import { interpolate } from "./interpolate";
+import { mergeTemplateLayers } from "./core/embed-templates";
+import { applyTemplateVars } from "./core/template-processor";
+import { VirtualFileSystem, virtualTreeFromFileTree } from "./core/virtual-fs";
+import { GeneratorError } from "./generator-error";
+import { defaultPostProcessors, runPostProcessPipeline } from "./processors";
 import type { FileTree } from "./paths";
-import { RAW_TEMPLATES } from "./templates.generated";
-import type { GenerateResult } from "./types";
-import { GeneratorError } from "./types";
+import type { GeneratorOptions, VirtualFileTree } from "./types";
 
-const loadInterpolatedFileTree = (config: ProjectConfig): FileTree => {
-  const raw = RAW_TEMPLATES[config.template];
-  if (raw === undefined) {
-    throw new GeneratorError(`Unknown template: ${String(config.template)}`, { config });
-  }
-  const vars = buildTemplateVarMap(config);
+const toInterpolatedFileTree = (merged: Map<string, string>, config: ProjectConfig): FileTree => {
   const vfs = new VirtualFileSystem();
-  for (const [rel, content] of Object.entries(raw)) {
-    vfs.addFile(rel, interpolate(content, vars));
+  for (const [rel, raw] of merged) {
+    vfs.writeFile(rel, applyTemplateVars(raw, config));
   }
   return vfs.toFileTree();
 };
 
-/**
- * Produces a file tree (after dependency catalog) for the given project config.
- */
-export const generate = (config: ProjectConfig): GenerateResult => {
-  const base = loadInterpolatedFileTree(config);
-  const tree = applyDependencyCatalog(base, config);
-  return { config, fileCount: Object.keys(tree).length, tree };
-};
+export const generate = (options: GeneratorOptions): Result<VirtualFileTree, GeneratorError> =>
+  Result.try({
+    catch: (e) => {
+      if (GeneratorError.is(e)) {
+        return e;
+      }
+      return new GeneratorError({
+        cause: e,
+        message: e instanceof Error ? e.message : String(e),
+        phase: "unknown",
+      });
+    },
+    try: () => {
+      const { config } = options;
+      const merged = mergeTemplateLayers(config.template);
+      if (merged.size === 0) {
+        throw new GeneratorError({
+          message: `No embedded template files for template "${config.template}".`,
+          phase: "initialization",
+        });
+      }
+      const interpolated = toInterpolatedFileTree(merged, config);
+      const processed = runPostProcessPipeline(interpolated, config, defaultPostProcessors);
+      return virtualTreeFromFileTree(processed, config.projectName, config);
+    },
+  });
 
-/**
- * Unprocessed template (interpolated only). Useful for unit tests and processors.
- */
 export const buildInterpolatedFileTree = (config: ProjectConfig): FileTree =>
-  loadInterpolatedFileTree(config);
+  toInterpolatedFileTree(mergeTemplateLayers(config.template), config);

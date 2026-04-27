@@ -38,13 +38,7 @@ const nextAppDeps: {
   ],
 };
 
-const monorepoRootDevDeps: readonly ManagedDependency[] = [
-  "oxfmt",
-  "oxlint",
-  "turbo",
-  "typescript",
-  "ultracite",
-];
+const monorepoRootDevDeps: readonly ManagedDependency[] = ["turbo", "typescript", "ultracite"];
 
 const webAppDeps: {
   dependencies: readonly ManagedDependency[];

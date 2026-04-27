@@ -4,7 +4,6 @@ export type PackageManager = "bun" | "pnpm" | "npm";
 
 export interface ProjectConfig {
   readonly projectName: string;
-  readonly projectDir: string;
   readonly template: TemplateId;
   readonly packageManager: PackageManager;
   readonly npmScope: string;

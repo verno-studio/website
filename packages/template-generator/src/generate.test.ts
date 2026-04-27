@@ -26,13 +26,14 @@ describe("generate + writeTree", () => {
     const config = {
       npmScope: "testapp",
       packageManager: "bun" as const,
-      projectDir: out,
       projectName: "test-app",
       template: "next-app" as const,
     };
-    const { fileCount, tree } = generate(config);
-    expect(fileCount).toBeGreaterThan(0);
-    const filesWritten = await writeTree(out, tree);
+    const gen = generate({ config });
+    const tree = gen.unwrap();
+    expect(tree.fileCount).toBeGreaterThan(0);
+    const writeResult = await writeTree(tree, out);
+    const filesWritten = writeResult.unwrap();
     expect(filesWritten.length).toBeGreaterThan(0);
     await access(join(out, "package.json"), constants.R_OK);
     await access(join(out, "app", "page.tsx"), constants.R_OK);
@@ -44,12 +45,13 @@ describe("generate + writeTree", () => {
     const config = {
       npmScope: "mono",
       packageManager: "bun" as const,
-      projectDir: out,
       projectName: "mono",
       template: "next-turborepo" as const,
     };
-    const { tree } = generate(config);
-    await writeTree(out, tree);
+    const gen = generate({ config });
+    const tree = gen.unwrap();
+    const writeResult = await writeTree(tree, out);
+    writeResult.unwrap();
     await access(join(out, "turbo.json"), constants.R_OK);
     await access(join(out, "apps", "web", "package.json"), constants.R_OK);
     await access(join(out, "packages", "typescript-config", "base.json"), constants.R_OK);
@@ -62,18 +64,19 @@ describe("generate + writeTree", () => {
     const config = {
       npmScope: "acme",
       packageManager: "bun" as const,
-      projectDir: out,
       projectName: "my-app",
       shadcnPreset: "lyra",
       template: "next-turborepo" as const,
     };
-    const { tree } = generate(config);
-    await writeTree(out, tree);
+    const gen = generate({ config });
+    const tree = gen.unwrap();
+    const writeResult = await writeTree(tree, out);
+    writeResult.unwrap();
     const componentsJson = await readFile(
       join(out, "packages", "design-system", "components.json"),
       "utf-8",
     );
-    expect(componentsJson).toContain(`"style": "radix-nova"`);
+    expect(componentsJson).toContain(`"style": "radix-lyra"`);
     expect(componentsJson).toContain(`"components": "${ds}/components"`);
 
     const appCss = await readFile(join(out, "apps", "web", "app", "globals.css"), "utf-8");
