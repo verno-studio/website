@@ -22,13 +22,20 @@ export const getShadcnBootstrapCommand = (
 ): { readonly file: string; readonly args: readonly string[] } => {
   const shadcnSpec = getShadcnExecSpec();
   const afterInit = ["init", "-t", "next", "-p", options.preset, "-y"] as const;
+  // Monorepo: run from repo root so shadcn detects bun/pnpm from the workspace lockfile; the package has no lockfile.
+  const cwdFlag =
+    options.template === "next-turborepo"
+      ? (["-c", "packages/design-system"] as const)
+      : ([] as const);
+  const initArgs = [...afterInit, ...cwdFlag];
+  // Avoid `bun x shadcn@latest`: Bun often stalls after resolving the ephemeral CLI lockfile on some setups (e.g. WSL2).
   if (pm === "bun") {
-    return { args: ["x", "--bun", shadcnSpec, ...afterInit], file: "bun" };
+    return { args: ["--yes", shadcnSpec, ...initArgs], file: "npx" };
   }
   if (pm === "pnpm") {
-    return { args: ["dlx", shadcnSpec, ...afterInit], file: "pnpm" };
+    return { args: ["dlx", shadcnSpec, ...initArgs], file: "pnpm" };
   }
-  return { args: ["--yes", shadcnSpec, ...afterInit], file: "npx" };
+  return { args: ["--yes", shadcnSpec, ...initArgs], file: "npx" };
 };
 
 /** Interactive: Ultracite prompts for linter, frameworks, editors. Quiet: non-interactive (e.g. `verno create -y`). */

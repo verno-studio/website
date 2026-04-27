@@ -3,7 +3,7 @@ import type { ResolvedCreateInputs } from "./create-args";
 
 const shadcnRunner = (packageManager: PackageManager): string => {
   if (packageManager === "bun") {
-    return "bun x --bun shadcn@latest";
+    return "npx --yes shadcn@latest";
   }
   if (packageManager === "pnpm") {
     return "pnpm dlx shadcn@latest";

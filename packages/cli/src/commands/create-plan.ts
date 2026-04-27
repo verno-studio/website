@@ -109,9 +109,8 @@ export const buildCreatePlan = (
       preset: resolved.shadcnPreset,
       template: resolved.template,
     });
-    const cwd = getShadcnWorkingDirectory(projectDir, resolved.template);
     steps.push({
-      command: { args: sh.args, cwd, file: sh.file },
+      command: { args: sh.args, cwd: projectDir, file: sh.file },
       id: "shadcn",
       label: "Run shadcn init",
       willRun: true,

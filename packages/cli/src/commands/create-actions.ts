@@ -9,7 +9,6 @@ import {
 } from "../pm-exec";
 import type { UltraciteInitMode } from "../pm-exec";
 import { runProcess } from "../run";
-import { getShadcnWorkingDirectory } from "./create-plan";
 
 export const getProjectPath = (name: string): string => resolve(process.cwd(), name);
 
@@ -59,8 +58,11 @@ export const runShadcnIfEnabled = async (options: {
     preset: options.preset,
     template: options.template,
   });
-  const cwd = getShadcnWorkingDirectory(options.projectDir, options.template);
-  await runProcess(sh.file, sh.args, { cwd, stepId: "shadcn" });
+  await runProcess(sh.file, sh.args, {
+    ciSafe: false,
+    cwd: options.projectDir,
+    stepId: "shadcn",
+  });
 };
 
 export const runUltraciteIfEnabled = async (

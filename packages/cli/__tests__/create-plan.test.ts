@@ -18,7 +18,7 @@ describe("buildCreatePlan", () => {
     const { steps } = buildCreatePlan(r, projectDir);
     expect(steps.find((s) => s.id === "scaffold")?.willRun).toBe(true);
     expect(steps.find((s) => s.id === "install")?.willRun).toBe(true);
-    expect(steps.find((s) => s.id === "shadcn")?.command?.file).toBe("bun");
+    expect(steps.find((s) => s.id === "shadcn")?.command?.file).toBe("npx");
   });
 
   test("getPlanSummary is JSON-serializable", () => {
