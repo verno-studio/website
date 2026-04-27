@@ -138,21 +138,23 @@ export const runCreate = async (args: {
         },
         title: "Install dependencies",
       },
-      {
-        enabled: resolved.useShadcn,
-        task: async (message) => {
-          message?.("shadcn init…");
-          await runShadcnIfEnabled({
-            enabled: true,
-            packageManager: resolved.packageManager,
-            preset: resolved.shadcnPreset,
-            projectDir,
-            template: resolved.template,
-          });
-          return "shadcn init complete";
-        },
-        title: "shadcn init",
-      },
+    ]);
+
+    if (resolved.useShadcn) {
+      process.stdout.write(
+        `\n${pc.cyan("shadcn")} — ${pc.dim("init (full output below; can take a few minutes)")}\n\n`,
+      );
+      await runShadcnIfEnabled({
+        enabled: true,
+        packageManager: resolved.packageManager,
+        preset: resolved.shadcnPreset,
+        projectDir,
+        template: resolved.template,
+      });
+      process.stdout.write("\n");
+    }
+
+    await p.tasks([
       {
         enabled: resolved.runUltracite && ultraciteQuiet,
         task: async (message) => {
