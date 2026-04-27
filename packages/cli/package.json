@@ -32,8 +32,7 @@
   "dependencies": {
     "@clack/prompts": "^0.11.0",
     "@verno/template-generator": "workspace:*",
-    "better-result": "^2.8.2",
-    "consola": "^3.4.2",
+    "commander": "^14.0.3",
     "execa": "^9.6.1",
     "picocolors": "^1.1.1"
   },
