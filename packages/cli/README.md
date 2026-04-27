@@ -2,7 +2,7 @@
 
 Scaffold **Next.js** and **Turborepo** starters, then run **shadcn** and **Ultracite** using their official CLIs.
 
-Interactive `create` uses [**Clack** (`@clack/prompts`)](https://www.clack.cc/) for prompts; pass **`-y` / `--yes`** for a non-interactive, flag-driven flow (CI and scripts).
+Routing uses [**Commander**](https://github.com/tj/commander.js). Interactive `create` uses [**Clack** (`@clack/prompts`)](https://www.clack.cc/) for prompts; pass **`-y` / `--yes`** for a non-interactive, flag-driven flow (CI and scripts).
 
 ## Build (tsdown)
 
@@ -31,7 +31,7 @@ node packages/cli/dist/index.mjs create my-app -y -T next-app
 
 ## Common flags
 
-- `-y, --yes` — skip prompts; require project name in argv when used
+- `-y, --yes` — skip prompts; require project name when used
 - `-T, --template` — `next-app` | `next-turborepo`
 - `-p, --package-manager` — `bun` | `pnpm` | `npm`
 - `--ui shadcn|none` — run shadcn after install (default: shadcn)
@@ -39,6 +39,7 @@ node packages/cli/dist/index.mjs create my-app -y -T next-app
 - `--no-install` — skip package install
 - `--skip-shadcn` / `--skip-ultracite` — skip post steps
 - `--no-git` — skip `git init`
+- `--dry-run` — print the plan only (no files written, no hooks)
 
 ## Flow
 
