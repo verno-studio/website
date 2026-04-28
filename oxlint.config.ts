@@ -8,6 +8,7 @@ export default defineConfig({
   extends: [core, react, next],
   ignorePatterns: [
     "packages/design-system/components/ui",
+    "packages/design-system/components/dot-matrix",
     "packages/template-generator/src/templates.generated.ts",
     "packages/template-generator/templates/**/*.hbs",
   ],
