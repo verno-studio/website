@@ -1,8 +1,8 @@
-# @verno/template-generator
+# Template Generator
 
 Virtual file-tree generator for Verno CLI templates. Template sources live under [`templates/`](templates/); embedded maps in [`src/templates.generated.ts`](src/templates.generated.ts) are produced by `bun run generate:templates` (do not edit by hand).
 
-Layout follows a Better T Stack–style **layered** model driven by composable project config:
+Layout driven by composable Verno project config:
 
 - **`shared/`** — common root files (gitignore, editorconfig, README).
 - **`frontends/next/`** — the Next.js app (merged to repo root, or to `apps/web/` when the **turborepo** add-on is enabled).
