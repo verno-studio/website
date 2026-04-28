@@ -1,0 +1,44 @@
+import "./globals.css";
+{{#if useShadcn}}
+import type { Metadata } from "next";
+{{#if hasDesignSystem}}
+import { DesignSystemProvider } from "{{dsName}}/components/providers/client";
+import { fonts, sans } from "{{dsName}}/lib/fonts";
+import { cn } from "{{dsName}}/lib/utils";
+{{else}}
+import { DesignSystemProvider } from "@/components/providers/client";
+import { fonts, sans } from "@/lib/fonts";
+import { cn } from "@/lib/utils";
+{{/if}}
+import type { ReactNode } from "react";
+{{else}}
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+{{/if}}
+
+const title = "{{projectName}}";
+
+export const metadata: Metadata = { description: "Next.js app", title };
+
+interface RootLayoutProps {
+  readonly children: ReactNode;
+}
+
+const RootLayout = ({ children }: RootLayoutProps) =>
+{{#if useShadcn}}
+(
+  <html lang="en" suppressHydrationWarning>
+    <body className={fonts}>
+      <DesignSystemProvider>{children}</DesignSystemProvider>
+    </body>
+  </html>
+);
+{{else}}
+(
+  <html lang="en" suppressHydrationWarning>
+    <body className="min-h-dvh antialiased">{children}</body>
+  </html>
+);
+{{/if}}
+
+export default RootLayout;

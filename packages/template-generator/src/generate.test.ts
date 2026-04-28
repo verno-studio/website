@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { existsSync } from "node:fs";
 import { access, constants, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -125,5 +126,66 @@ describe("generate + writeTree", () => {
       "utf-8",
     );
     expect(utils).toContain("export const cn");
+  });
+
+  test("single-app ui shadcn writes typography + provider at app root", async () => {
+    const out = join(dir, "root-ui-shadcn");
+    const config = singleApp({
+      addons: ["ultracite"],
+      projectName: "test-app",
+      ui: "shadcn",
+    });
+    const gen = generate({ config });
+    const tree = gen.unwrap();
+    const writeResult = await writeTree(tree, out);
+    writeResult.unwrap();
+
+    await access(join(out, "lib", "fonts.ts"), constants.R_OK);
+    await access(join(out, "lib", "utils.ts"), constants.R_OK);
+    await access(join(out, "components", "providers", "client.tsx"), constants.R_OK);
+
+    expect(existsSync(join(out, "packages", "design-system", "lib", "fonts.ts"))).toBe(false);
+
+    const layout = await readFile(join(out, "app", "layout.tsx"), "utf-8");
+    expect(layout).toContain("DesignSystemProvider");
+    expect(layout).toContain("@/lib/fonts");
+    expect(layout).toContain("@/lib/utils");
+    expect(layout).toContain("cn(");
+
+    const fontsSrc = await readFile(join(out, "lib", "fonts.ts"), "utf-8");
+    expect(fontsSrc).toContain("export const fonts");
+  });
+
+  test("monorepo ui shadcn keeps fonts and provider helpers in design-system only", async () => {
+    const out = join(dir, "mono-ui-shadcn");
+    const ds = "@mono/design-system";
+    const config = monorepoWithDs({
+      npmScope: "mono",
+      projectName: "mono",
+      ui: "shadcn",
+    });
+    const gen = generate({ config });
+    const tree = gen.unwrap();
+    const writeResult = await writeTree(tree, out);
+    writeResult.unwrap();
+
+    expect(existsSync(join(out, "packages", "design-system", "lib", "fonts.ts"))).toBe(true);
+    expect(
+      existsSync(join(out, "packages", "design-system", "components", "providers", "client.tsx")),
+    ).toBe(true);
+
+    expect(existsSync(join(out, "apps", "web", "lib", "fonts.ts"))).toBe(false);
+    expect(existsSync(join(out, "apps", "web", "lib", "utils.ts"))).toBe(false);
+    expect(existsSync(join(out, "apps", "web", "components", "providers", "client.tsx"))).toBe(
+      false,
+    );
+
+    const layout = await readFile(join(out, "apps", "web", "app", "layout.tsx"), "utf-8");
+    expect(layout).toContain("DesignSystemProvider");
+    expect(layout).toContain(`${ds}/lib/fonts`);
+    expect(layout).toContain(`${ds}/lib/utils`);
+    expect(layout).toContain("cn(");
+
+    await access(join(out, "packages", "design-system", "lib", "utils.ts"), constants.R_OK);
   });
 });
