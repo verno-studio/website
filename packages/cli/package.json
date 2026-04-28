@@ -18,7 +18,8 @@
   "author": "Noppakorn Kaewsalabnil <hello@pungrumpy.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/verno-studio/website.git"
+    "url": "git+https://github.com/verno-studio/website.git",
+    "directory": "packages/cli"
   },
   "bin": {
     "verno": "./dist/index.mjs",
