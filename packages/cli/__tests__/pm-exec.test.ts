@@ -37,11 +37,23 @@ describe("getUltraciteInitCommand", () => {
     expect(cmd.args).toEqual(["dlx", spec, "init", "--pm", "pnpm", "--quiet"]);
   });
 
-  test("interactive mode: no --quiet so Ultracite can prompt", () => {
+  test("quiet mode with linter passes --linter before --quiet", () => {
+    const spec = getUltraciteExecSpec();
+    const cmd = getUltraciteInitCommand("pnpm", "quiet", { linter: "biome" });
+    expect(cmd.args).toEqual(["dlx", spec, "init", "--pm", "pnpm", "--linter", "biome", "--quiet"]);
+  });
+
+  test("interactive mode: no --quiet; optional --linter", () => {
+    const spec = getUltraciteExecSpec();
+    const cmd = getUltraciteInitCommand("bun", "interactive", { linter: "oxlint" });
+    expect(cmd.args).toEqual(["x", spec, "init", "--pm", "bun", "--linter", "oxlint"]);
+    expect(cmd.args).not.toContain("--quiet");
+  });
+
+  test("interactive mode without linter omits --linter so Ultracite can prompt", () => {
     const spec = getUltraciteExecSpec();
     const cmd = getUltraciteInitCommand("bun", "interactive");
     expect(cmd.args).toEqual(["x", spec, "init", "--pm", "bun"]);
-    expect(cmd.args).not.toContain("--quiet");
     expect(cmd.args).not.toContain("--linter");
   });
 });

@@ -1,18 +1,18 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import type { AddonId, CodeQualityId, PackageId, PackageManager } from "@verno/template-generator";
-import { CODE_QUALITY_IDS } from "@verno/template-generator";
+import type { AddonId, PackageId, PackageManager } from "@verno/template-generator";
 import { UserCancelledError } from "../errors";
 import { renderVernoTitle } from "../ui";
 import {
   DEFAULT_SHADCN_PRESET,
+  DEFAULT_WORKSPACE_PACKAGES,
   ensureTypescriptWithDesignSystem,
-  isCodeQualityId,
   isPackageManager,
   isUiMode,
   PACKAGE_MANAGERS,
   parseAddonsArg,
   parsePackagesArg,
+  parseUltraciteLinterFlag,
 } from "./create-args";
 import type { CreateCommandOptions, ResolvedCreateInputs, UiMode } from "./create-args";
 
@@ -74,7 +74,7 @@ const readAddonsInteractive = async (options: CreateCommandOptions): Promise<Add
           value: "turborepo",
         },
         {
-          hint: "Adds Ultracite; `ultracite init` picks Biome vs Oxlint vs ESLint",
+          hint: "Runs `ultracite init` (you choose linter there)",
           label: "Ultracite (lint + format)",
           value: "ultracite",
         },
@@ -89,8 +89,6 @@ const PACKAGE_OPTION_DESCRIPTORS = [
   { hint: "shared tsconfig" as const, id: "typescript-config" as const },
   { hint: "requires typescript-config" as const, id: "design-system" as const },
 ] as const;
-
-const defaultPackagesForTurborepo = (): PackageId[] => ["typescript-config", "design-system"];
 
 const readPackagesInteractive = async (
   options: CreateCommandOptions,
@@ -107,7 +105,7 @@ const readPackagesInteractive = async (
   }
   const selected = assertValue(
     await p.multiselect<PackageId>({
-      initialValues: defaultPackagesForTurborepo(),
+      initialValues: [...DEFAULT_WORKSPACE_PACKAGES],
       message: "Workspace packages (under packages/*)",
       options: PACKAGE_OPTION_DESCRIPTORS.map(({ hint, id }) => ({
         hint,
@@ -123,38 +121,6 @@ const readPackagesInteractive = async (
   }
   pkgs = ensureTypescriptWithDesignSystem(pkgs);
   return pkgs;
-};
-
-const readCodeQuality = async (
-  options: CreateCommandOptions,
-  ultraciteOn: boolean,
-): Promise<CodeQualityId | undefined> => {
-  if (!ultraciteOn) {
-    if (options.codeQuality !== undefined && options.codeQuality.length > 0) {
-      throw new Error("--code-quality requires ultracite in --addons.");
-    }
-    return undefined;
-  }
-  if (options.codeQuality !== undefined && options.codeQuality.length > 0) {
-    const v = options.codeQuality;
-    if (!isCodeQualityId(v)) {
-      throw new Error(`Invalid --code-quality. Use: ${CODE_QUALITY_IDS.join(" | ")}`);
-    }
-    return v;
-  }
-  const initial = "oxlint-oxfmt" satisfies CodeQualityId;
-  const q = assertValue(
-    await p.select<CodeQualityId>({
-      initialValue: initial,
-      message: "Preferred Ultracite stack (summary only; ultracite init will prompt too)",
-      options: [
-        { hint: "Biome", label: "Biome", value: "biome" },
-        { hint: "Oxlint + Oxfmt (Verno default)", label: "Oxlint + Oxfmt", value: "oxlint-oxfmt" },
-        { hint: "ESLint + Prettier", label: "ESLint + Prettier", value: "eslint-prettier" },
-      ],
-    }),
-  );
-  return q;
 };
 
 const readPackageManager = async (options: CreateCommandOptions): Promise<PackageManager> => {
@@ -274,7 +240,7 @@ export const runInteractiveCreateWizard = async (args: {
   const turborepoOn = addons.includes("turborepo");
   const packages = await readPackagesInteractive(options, turborepoOn);
   const ultraciteOn = addons.includes("ultracite");
-  const codeQuality = await readCodeQuality(options, ultraciteOn);
+  const ultraciteLinter = parseUltraciteLinterFlag(options, ultraciteOn);
 
   p.log.step("Tooling — package manager and UI");
   const packageManager = await readPackageManager(options);
@@ -288,16 +254,23 @@ export const runInteractiveCreateWizard = async (args: {
   const useShadcn = ui === "shadcn" && !hasSkipShadcn;
   const runUltracite = ultraciteOn;
 
+  let ultraciteSummary = "no";
+  if (runUltracite) {
+    ultraciteSummary =
+      ultraciteLinter === undefined
+        ? "yes — ultracite init (choose linter in Ultracite, after install)"
+        : `yes — ultracite init with --linter ${ultraciteLinter} (after install)`;
+  }
+
   const summaryLines: string[] = [
     `Name:           ${name}`,
     `Frontend:       Next.js`,
     `Add-ons:        ${addonsSummary(addons)}`,
     `Packages:       ${packagesSummary(packages, turborepoOn)}`,
-    `Code quality:   ${codeQuality ?? "—"}`,
     `Package mgr:    ${packageManager}`,
     `UI:             ${useShadcn ? `shadcn (preset: ${shadcnPreset})` : "none"}`,
     `Install:        ${doInstall ? "yes" : "no"}`,
-    `Ultracite init: ${runUltracite ? "yes (after install)" : "no"}`,
+    `Ultracite init: ${ultraciteSummary}`,
     `git:            ${doGit ? "yes" : "no"}`,
   ];
   if (isDryRun) {
@@ -318,7 +291,6 @@ export const runInteractiveCreateWizard = async (args: {
 
   return {
     addons,
-    codeQuality,
     doGit,
     doInstall,
     frontend: "next",
@@ -329,6 +301,7 @@ export const runInteractiveCreateWizard = async (args: {
     runUltracite,
     shadcnPreset,
     ui,
+    ultraciteLinter,
     useShadcn,
   };
 };

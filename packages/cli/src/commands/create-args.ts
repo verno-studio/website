@@ -1,15 +1,14 @@
-import type {
-  AddonId,
-  CodeQualityId,
-  FrontendId,
-  PackageId,
-  PackageManager,
-} from "@verno/template-generator";
-import { ADDON_IDS, CODE_QUALITY_IDS, FRONTENDS, PACKAGE_IDS } from "@verno/template-generator";
+import type { AddonId, FrontendId, PackageId, PackageManager } from "@verno/template-generator";
+import { ADDON_IDS, FRONTENDS, PACKAGE_IDS } from "@verno/template-generator";
+import type { UltraciteLinterId } from "../ultracite-linter";
+import {
+  DEFAULT_ULTRACITE_LINTER,
+  ULTRACITE_LINTER_IDS,
+  isUltraciteLinterId,
+} from "../ultracite-linter";
 
 export const PACKAGE_MANAGERS: readonly PackageManager[] = ["bun", "pnpm", "npm"];
 export const DEFAULT_SHADCN_PRESET = "nova";
-export const DEFAULT_CODE_QUALITY = "oxlint-oxfmt" satisfies CodeQualityId;
 
 export const isFrontendId = (value: string | undefined): value is FrontendId =>
   value !== undefined && (FRONTENDS as readonly string[]).includes(value);
@@ -27,9 +26,6 @@ export const isAddonId = (value: string): value is AddonId =>
 
 export const isPackageId = (value: string): value is PackageId =>
   (PACKAGE_IDS as readonly string[]).includes(value);
-
-export const isCodeQualityId = (value: string | undefined): value is CodeQualityId =>
-  value !== undefined && (CODE_QUALITY_IDS as readonly string[]).includes(value);
 
 const splitCommaList = (raw: string | undefined): string[] =>
   raw === undefined || raw.trim().length === 0
@@ -73,7 +69,11 @@ export const ensureTypescriptWithDesignSystem = (packages: PackageId[]): Package
   return packages;
 };
 
-const defaultPackagesWhenTurborepo = (): PackageId[] => ["typescript-config", "design-system"];
+/** Default workspace packages when Turborepo is on and `--packages` is omitted. */
+export const DEFAULT_WORKSPACE_PACKAGES: readonly PackageId[] = [
+  "typescript-config",
+  "design-system",
+];
 
 /** Normalized options for `verno create` (from Commander). */
 export interface CreateCommandOptions {
@@ -86,10 +86,11 @@ export interface CreateCommandOptions {
   readonly frontend?: string;
   readonly addons?: string;
   readonly packages?: string;
-  readonly codeQuality?: string;
   readonly packageManager?: string;
   readonly ui?: string;
   readonly shadcnPreset?: string;
+  /** `ultracite init --linter` when the ultracite add-on is enabled. */
+  readonly linter?: string;
 }
 
 export const toCreateCommandOptions = (raw: {
@@ -102,15 +103,15 @@ export const toCreateCommandOptions = (raw: {
   readonly frontend?: string;
   readonly addons?: string;
   readonly packages?: string;
-  readonly codeQuality?: string;
   readonly packageManager?: string;
   readonly ui?: string;
   readonly shadcnPreset?: string;
+  readonly linter?: string;
 }): CreateCommandOptions => ({
   addons: raw.addons,
-  codeQuality: raw.codeQuality,
   dryRun: raw.dryRun ?? false,
   frontend: raw.frontend,
+  linter: raw.linter,
   noGit: raw.noGit ?? false,
   noInstall: raw.noInstall ?? false,
   packageManager: raw.packageManager,
@@ -134,7 +135,8 @@ export interface ResolvedCreateInputs {
   readonly frontend: FrontendId;
   readonly addons: readonly AddonId[];
   readonly packages: readonly PackageId[];
-  readonly codeQuality?: CodeQualityId;
+  /** `ultracite init --linter` when set; quiet `-y` defaults to oxlint; interactive defers to Ultracite unless `--linter` is passed. */
+  readonly ultraciteLinter?: UltraciteLinterId;
   readonly ui: UiMode;
   readonly useShadcn: boolean;
 }
@@ -156,26 +158,6 @@ const readFrontendNonInteractive = (options: CreateCommandOptions): FrontendId =
   return raw;
 };
 
-const resolveCodeQualityNonInteractive = (
-  options: CreateCommandOptions,
-  ultraciteOn: boolean,
-): CodeQualityId | undefined => {
-  if (!ultraciteOn) {
-    if (options.codeQuality !== undefined && options.codeQuality.length > 0) {
-      throw new Error("--code-quality requires ultracite in --addons.");
-    }
-    return undefined;
-  }
-  const rawQ = options.codeQuality;
-  if (rawQ !== undefined && rawQ.length > 0) {
-    if (!isCodeQualityId(rawQ)) {
-      throw new Error(`Invalid --code-quality. Use: ${CODE_QUALITY_IDS.join(" | ")}`);
-    }
-    return rawQ;
-  }
-  return DEFAULT_CODE_QUALITY;
-};
-
 const resolvePackageManagerNonInteractive = (options: CreateCommandOptions): PackageManager => {
   const rawPackageManager = options.packageManager;
   if (rawPackageManager === undefined) {
@@ -188,16 +170,15 @@ const resolvePackageManagerNonInteractive = (options: CreateCommandOptions): Pac
 };
 
 const resolveUiNonInteractive = (options: CreateCommandOptions): UiMode => {
-  let ui: UiMode;
-  if (options.ui) {
-    if (!isUiMode(options.ui)) {
+  const { skipShadcn, ui: rawUi } = options;
+  let ui: UiMode = "shadcn";
+  if (rawUi !== undefined && rawUi.length > 0) {
+    if (!isUiMode(rawUi)) {
       throw new Error("Invalid --ui. Use: shadcn | none");
     }
-    ({ ui } = options);
-  } else {
-    ui = "shadcn";
+    ui = rawUi;
   }
-  if (options.skipShadcn) {
+  if (skipShadcn) {
     return "none";
   }
   return ui;
@@ -209,12 +190,32 @@ const resolveWorkspacePackagesNonInteractive = (
 ): PackageId[] => {
   let packages = parsePackagesArg(options.packages);
   if (turborepoOn && packages.length === 0) {
-    packages = defaultPackagesWhenTurborepo();
+    packages = [...DEFAULT_WORKSPACE_PACKAGES];
   }
   if (!turborepoOn && packages.length > 0) {
     throw new Error("--packages requires turborepo in --addons.");
   }
   return ensureTypescriptWithDesignSystem(packages);
+};
+
+export const parseUltraciteLinterFlag = (
+  options: CreateCommandOptions,
+  ultraciteOn: boolean,
+): UltraciteLinterId | undefined => {
+  if (!ultraciteOn) {
+    if (options.linter !== undefined && options.linter.length > 0) {
+      throw new Error("--linter requires ultracite in --addons.");
+    }
+    return undefined;
+  }
+  const raw = options.linter;
+  if (raw !== undefined && raw.length > 0) {
+    if (!isUltraciteLinterId(raw)) {
+      throw new Error(`Invalid --linter. Use: ${ULTRACITE_LINTER_IDS.join(" | ")}`);
+    }
+    return raw;
+  }
+  return undefined;
 };
 
 export const resolveCreateInputsNonInteractive = (
@@ -234,13 +235,14 @@ export const resolveCreateInputsNonInteractive = (
 
   const turborepoOn = addons.includes("turborepo");
   const packages = resolveWorkspacePackagesNonInteractive(options, turborepoOn);
-  const codeQuality = resolveCodeQualityNonInteractive(options, addons.includes("ultracite"));
   const packageManager = resolvePackageManagerNonInteractive(options);
   const ui = resolveUiNonInteractive(options);
+  const ultraciteOn = addons.includes("ultracite");
+  const flagged = parseUltraciteLinterFlag(options, ultraciteOn);
+  const ultraciteLinter = ultraciteOn ? (flagged ?? DEFAULT_ULTRACITE_LINTER) : undefined;
 
   return {
     addons,
-    codeQuality,
     doGit: !options.noGit,
     doInstall: !options.noInstall,
     frontend,
@@ -251,6 +253,7 @@ export const resolveCreateInputsNonInteractive = (
     runUltracite: addons.includes("ultracite"),
     shadcnPreset: options.shadcnPreset ?? DEFAULT_SHADCN_PRESET,
     ui,
+    ultraciteLinter,
     useShadcn: ui === "shadcn" && !options.skipShadcn,
   };
 };

@@ -173,7 +173,9 @@ export const runCreate = async (args: {
         enabled: resolved.runUltracite && ultraciteQuiet,
         task: async (message) => {
           message?.("ultracite init (quiet)…");
-          await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "quiet");
+          await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "quiet", {
+            linter: resolved.ultraciteLinter,
+          });
           return "ultracite init complete";
         },
         title: "ultracite init",
@@ -181,11 +183,14 @@ export const runCreate = async (args: {
     ]);
 
     if (resolved.runUltracite && !ultraciteQuiet) {
-      process.stdout.write(
-        `\n${pc.cyan("ultracite")} — follow the prompts, then the CLI will continue.\n\n`,
-      );
+      const linterHint =
+        resolved.ultraciteLinter === undefined
+          ? "Choose linter, frameworks, and editors in Ultracite's prompts below."
+          : `Using --linter ${resolved.ultraciteLinter} from your flags.`;
+      process.stdout.write(`\n${pc.cyan("ultracite")} — ${linterHint}\n\n`);
       await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "interactive", {
         ciSafe: false,
+        linter: resolved.ultraciteLinter,
       });
     }
 

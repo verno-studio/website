@@ -8,7 +8,6 @@ describe("toCreateCommandOptions", () => {
   test("normalizes commander-style flags", () => {
     const o = toCreateCommandOptions({
       addons: "turborepo,ultracite",
-      codeQuality: "biome",
       dryRun: true,
       packageManager: "npm",
       skipShadcn: true,
@@ -20,7 +19,6 @@ describe("toCreateCommandOptions", () => {
     expect(o.skipShadcn).toBe(true);
     expect(o.skipUltracite).toBe(true);
     expect(o.addons).toBe("turborepo,ultracite");
-    expect(o.codeQuality).toBe("biome");
     expect(o.packageManager).toBe("npm");
   });
 
@@ -52,7 +50,7 @@ describe("resolveCreateInputsNonInteractive", () => {
     expect(r.addons.includes("ultracite")).toBe(false);
   });
 
-  test("parses addons and default code quality for ultracite", () => {
+  test("parses addons and enables ultracite when selected", () => {
     const r = resolveCreateInputsNonInteractive(
       "app",
       toCreateCommandOptions({
@@ -63,8 +61,26 @@ describe("resolveCreateInputsNonInteractive", () => {
     );
     expect(r.packageManager).toBe("npm");
     expect(r.addons).toContain("ultracite");
-    expect(r.codeQuality).toBe("oxlint-oxfmt");
+    expect(r.runUltracite).toBe(true);
+    expect(r.ultraciteLinter).toBe("oxlint");
     expect(r.nonInteractive).toBe(true);
+  });
+
+  test("accepts --linter oxlint with ultracite", () => {
+    const r = resolveCreateInputsNonInteractive(
+      "u",
+      toCreateCommandOptions({ addons: "ultracite", linter: "oxlint", yes: true }),
+    );
+    expect(r.ultraciteLinter).toBe("oxlint");
+  });
+
+  test("rejects --linter without ultracite add-on", () => {
+    expect(() =>
+      resolveCreateInputsNonInteractive(
+        "n",
+        toCreateCommandOptions({ addons: "turborepo", linter: "biome", yes: true }),
+      ),
+    ).toThrow("--linter requires ultracite");
   });
 
   test("turborepo defaults workspace packages when --packages omitted", () => {

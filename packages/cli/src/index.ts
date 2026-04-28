@@ -24,13 +24,13 @@ program
     "--packages <list>",
     "Comma-separated workspace packages when using turborepo: typescript-config, design-system",
   )
-  .option(
-    "--code-quality <id>",
-    "biome | oxlint-oxfmt | eslint-prettier (with ultracite; default when -y: oxlint-oxfmt)",
-  )
   .option("-p, --package-manager <pm>", "bun | pnpm | npm")
   .option("--ui <mode>", "shadcn | none")
   .option("--shadcn-preset <name>", "shadcn preset (e.g. nova)")
+  .option(
+    "--linter <id>",
+    "biome | oxlint | eslint (ultracite add-on; -y default oxlint; interactive uses Ultracite unless set)",
+  )
   .option("--no-install", "Skip dependency install")
   .option("--no-git", "Skip git init")
   .option("--skip-shadcn", "Skip shadcn bootstrap")

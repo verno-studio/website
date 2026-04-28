@@ -1,11 +1,5 @@
 import { join } from "node:path";
-import type {
-  AddonId,
-  CodeQualityId,
-  FrontendId,
-  PackageId,
-  PackageManager,
-} from "@verno/template-generator";
+import type { AddonId, FrontendId, PackageId, PackageManager } from "@verno/template-generator";
 import {
   getPmInstallCommand,
   getShadcnBootstrapCommand,
@@ -42,7 +36,6 @@ export interface CreatePlanSummary {
   frontend: FrontendId;
   addons: readonly AddonId[];
   packages: readonly PackageId[];
-  codeQuality?: CodeQualityId;
   packageManager: PackageManager;
   doInstall: boolean;
   doGit: boolean;
@@ -64,7 +57,6 @@ export const toPlanSummaryJson = (p: {
   frontend: FrontendId;
   addons: readonly AddonId[];
   packages: readonly PackageId[];
-  codeQuality?: CodeQualityId;
   packageManager: PackageManager;
   doInstall: boolean;
   doGit: boolean;
@@ -74,7 +66,6 @@ export const toPlanSummaryJson = (p: {
   steps: readonly CreateStepPlan[];
 }): CreatePlanSummary => ({
   addons: p.addons,
-  codeQuality: p.codeQuality,
   doGit: p.doGit,
   doInstall: p.doInstall,
   frontend: p.frontend,
@@ -147,6 +138,7 @@ export const buildCreatePlan = (
     const u = getUltraciteInitCommand(
       resolved.packageManager,
       resolved.nonInteractive ? "quiet" : "interactive",
+      { linter: resolved.ultraciteLinter },
     );
     steps.push({
       command: { args: u.args, cwd: projectDir, file: u.file },
@@ -188,7 +180,6 @@ export const getPlanSummary = (
 ) =>
   toPlanSummaryJson({
     addons: resolved.addons,
-    codeQuality: resolved.codeQuality,
     doGit: resolved.doGit,
     doInstall: resolved.doInstall,
     frontend: resolved.frontend,

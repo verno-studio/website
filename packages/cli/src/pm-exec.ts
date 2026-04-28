@@ -1,5 +1,6 @@
 import type { PackageManager } from "@verno/template-generator";
 import { getShadcnExecSpec, getUltraciteExecSpec } from "@verno/template-generator";
+import type { UltraciteLinterId } from "./ultracite-linter";
 
 export const getPmInstallCommand = (
   pm: PackageManager,
@@ -37,24 +38,30 @@ export const getShadcnBootstrapCommand = (
   return { args: ["--yes", shadcnSpec, ...initArgs], file: "npx" };
 };
 
-/** Interactive: Ultracite prompts for linter, frameworks, editors. Quiet: non-interactive (e.g. `verno create -y`). */
+/** `interactive`: Ultracite TUI; `quiet`: non-interactive (`-y`, adds `--quiet`). */
 export type UltraciteInitMode = "interactive" | "quiet";
 
 export const getUltraciteInitCommand = (
   pm: PackageManager,
   mode: UltraciteInitMode,
+  options?: { readonly linter?: UltraciteLinterId },
 ): {
   readonly file: string;
   readonly args: readonly string[];
 } => {
   const ultraciteSpec = getUltraciteExecSpec();
-  const rest =
-    mode === "quiet" ? (["init", "--pm", pm, "--quiet"] as const) : (["init", "--pm", pm] as const);
+  const parts: string[] = ["init", "--pm", pm];
+  if (options?.linter !== undefined) {
+    parts.push("--linter", options.linter);
+  }
+  if (mode === "quiet") {
+    parts.push("--quiet");
+  }
   if (pm === "bun") {
-    return { args: ["x", ultraciteSpec, ...rest], file: "bun" };
+    return { args: ["x", ultraciteSpec, ...parts], file: "bun" };
   }
   if (pm === "pnpm") {
-    return { args: ["dlx", ultraciteSpec, ...rest], file: "pnpm" };
+    return { args: ["dlx", ultraciteSpec, ...parts], file: "pnpm" };
   }
-  return { args: ["--yes", ultraciteSpec, ...rest], file: "npx" };
+  return { args: ["--yes", ultraciteSpec, ...parts], file: "npx" };
 };

@@ -4,7 +4,6 @@ import { join, resolve } from "node:path";
 import { generate, writeTree } from "@verno/template-generator";
 import type {
   AddonId,
-  CodeQualityId,
   FrontendId,
   PackageId,
   PackageManager,
@@ -18,6 +17,7 @@ import {
 import type { UltraciteInitMode } from "../pm-exec";
 import { runProcess } from "../run";
 import type { ResolvedCreateInputs, UiMode } from "./create-args";
+import type { UltraciteLinterId } from "../ultracite-linter";
 
 /** Sync with `packages/template-generator/templates/frontends/next/app/globals.css.hbs`. */
 export const VERNO_APP_GLOBALS_BASE_MARKER = "/* This layer is by Verno Studio */" as const;
@@ -150,7 +150,6 @@ const readCliPackageVersion = (): string => {
 
 export interface VernoManifest {
   readonly addons: readonly AddonId[];
-  readonly codeQuality?: CodeQualityId;
   readonly createdAt: string;
   readonly frontend: FrontendId;
   readonly generator: "verno";
@@ -161,6 +160,8 @@ export interface VernoManifest {
   readonly shadcnPreset?: string;
   readonly studio: "Verno Studio";
   readonly ui: UiMode;
+  /** Present when Verno invoked `ultracite init` with `--linter`. */
+  readonly ultraciteLinter?: UltraciteLinterId;
 }
 
 export const buildVernoManifest = (args: {
@@ -168,7 +169,6 @@ export const buildVernoManifest = (args: {
   readonly projectName: string;
 }): VernoManifest => ({
   addons: args.resolved.addons,
-  codeQuality: args.resolved.codeQuality,
   createdAt: new Date().toISOString(),
   frontend: args.resolved.frontend,
   generator: "verno",
@@ -179,6 +179,7 @@ export const buildVernoManifest = (args: {
   shadcnPreset: args.resolved.useShadcn ? args.resolved.shadcnPreset : undefined,
   studio: "Verno Studio",
   ui: args.resolved.ui,
+  ultraciteLinter: args.resolved.runUltracite ? args.resolved.ultraciteLinter : undefined,
 });
 
 export const writeVernoManifest = async (
@@ -257,12 +258,12 @@ export const runUltraciteIfEnabled = async (
   packageManager: PackageManager,
   projectDir: string,
   mode: UltraciteInitMode,
-  runOptions?: { readonly ciSafe?: boolean },
+  runOptions?: { readonly ciSafe?: boolean; readonly linter?: UltraciteLinterId },
 ): Promise<void> => {
   if (!enabled) {
     return;
   }
-  const u = getUltraciteInitCommand(packageManager, mode);
+  const u = getUltraciteInitCommand(packageManager, mode, { linter: runOptions?.linter });
   const ciSafe = runOptions?.ciSafe ?? mode === "quiet";
   await runProcess(u.file, u.args, { ciSafe, cwd: projectDir, stepId: "ultracite" });
 };
@@ -291,7 +292,6 @@ export const toProjectConfig = (args: {
   readonly resolved: ResolvedCreateInputs;
 }): ProjectConfig => ({
   addons: [...args.resolved.addons],
-  codeQuality: args.resolved.codeQuality,
   frontend: args.resolved.frontend,
   npmScope: args.npmScope,
   packageManager: args.packageManager,
