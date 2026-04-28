@@ -10,7 +10,7 @@
     "typecheck": "next typegen && tsgo --noEmit"
   },
   "dependencies": {
-    "@verno/design-system": "workspace:*",
+    "@vernostudio/design-system": "workspace:*",
     "lucide-react": "^1.11.0",
     "next": "16.2.4",
     "react": "19.2.5",
@@ -23,7 +23,7 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@verno/typescript-config": "workspace:*",
+    "@vernostudio/typescript-config": "workspace:*",
     "tailwindcss": "^4",
     "typescript": "^6"
   }

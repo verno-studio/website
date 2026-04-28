@@ -1,5 +1,5 @@
 {
-  "name": "verno-studio",
+  "name": "vernostudio",
   "private": true,
   "workspaces": [
     "apps/*",

@@ -1,5 +1,5 @@
 {
-  "extends": "@verno/typescript-config/base.json",
+  "extends": "@vernostudio/typescript-config/base.json",
   "compilerOptions": {
     "noEmit": true,
     "rootDir": ".",

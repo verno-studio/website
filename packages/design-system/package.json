@@ -1,5 +1,5 @@
 {
-  "name": "@verno/design-system",
+  "name": "@vernostudio/design-system",
   "version": "0.0.0",
   "private": true,
   "sideEffects": false,
@@ -30,7 +30,7 @@
   "devDependencies": {
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@verno/typescript-config": "workspace:*",
+    "@vernostudio/typescript-config": "workspace:*",
     "shadcn": "^4.5.0",
     "typescript": "^6"
   },

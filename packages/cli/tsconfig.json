@@ -1,11 +1,11 @@
 {
-  "extends": "@verno/typescript-config/base.json",
+  "extends": "@vernostudio/typescript-config/base.json",
   "compilerOptions": {
     "noEmit": true,
     "rootDir": ".",
     "types": ["bun"],
     "paths": {
-      "@verno/template-generator": ["../template-generator/src/index.ts"]
+      "@vernostudio/template-generator": ["../template-generator/src/index.ts"]
     }
   },
   "include": ["src/**/*.ts", "__tests__/**/*.ts", "tsdown.config.ts"]

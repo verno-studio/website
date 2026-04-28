@@ -1,5 +1,5 @@
 {
-  "extends": "@verno/typescript-config/nextjs.json",
+  "extends": "@vernostudio/typescript-config/nextjs.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
