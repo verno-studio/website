@@ -25,7 +25,7 @@ describe("buildCreatePlan", () => {
     expect(ultra?.args).toContain("oxlint");
   });
 
-  test("interactive create omits --linter in plan so Ultracite prompts", () => {
+  test("interactive create passes --linter from resolved inputs (wizard or future flags)", () => {
     const r: ResolvedCreateInputs = {
       addons: ["ultracite"],
       doGit: true,
@@ -38,12 +38,14 @@ describe("buildCreatePlan", () => {
       runUltracite: true,
       shadcnPreset: "nova",
       ui: "shadcn",
+      ultraciteLinter: "oxlint",
       useShadcn: true,
     };
     const projectDir = getProjectPath(r.name);
     const { steps } = buildCreatePlan(r, projectDir);
     const ultra = steps.find((s) => s.id === "ultracite")?.command;
-    expect(ultra?.args).not.toContain("--linter");
+    expect(ultra?.args).toContain("--linter");
+    expect(ultra?.args).toContain("oxlint");
   });
 
   test("getPlanSummary is JSON-serializable", () => {

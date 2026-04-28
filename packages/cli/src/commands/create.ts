@@ -10,6 +10,7 @@ import {
   resolvedUsesTurborepo,
 } from "./create-args";
 import type { CreateCommandOptions, ResolvedCreateInputs } from "./create-args";
+import type { UltraciteLinterId } from "../ultracite-linter";
 import {
   assertPathAvailable,
   buildVernoManifest,
@@ -26,6 +27,17 @@ import {
 import { getNextStepHints } from "./create-next-steps";
 import { buildCreatePlan, getPlanSummary } from "./create-plan";
 import type { CreatePlanSummary } from "./create-plan";
+
+const requireUltraciteLinter = (resolved: ResolvedCreateInputs): UltraciteLinterId => {
+  const l = resolved.ultraciteLinter;
+  if (l === undefined) {
+    throw new CLIError(
+      "Ultracite init requires resolved.ultraciteLinter. Pass --linter with the ultracite add-on or use interactive create.",
+      { code: "ULTRACITE" },
+    );
+  }
+  return l;
+};
 
 const printHumanDryRun = (args: {
   projectDir: string;
@@ -126,7 +138,6 @@ export const runCreate = async (args: {
 
   try {
     assertPathAvailable(projectDir);
-    const ultraciteQuiet = resolved.runUltracite && resolved.nonInteractive;
     const monorepo = resolvedUsesTurborepo(resolved);
     const normalizeAppGlobalsLayer = (): Promise<void> =>
       ensureAppGlobalsBaseLayerAtEnd(projectDir, monorepo);
@@ -168,30 +179,32 @@ export const runCreate = async (args: {
 
     await normalizeAppGlobalsLayer();
 
-    await p.tasks([
-      {
-        enabled: resolved.runUltracite && ultraciteQuiet,
-        task: async (message) => {
-          message?.("ultracite init (quiet)…");
-          await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "quiet", {
-            linter: resolved.ultraciteLinter,
-          });
-          return "ultracite init complete";
-        },
-        title: "ultracite init",
-      },
-    ]);
+    if (resolved.runUltracite) {
+      const linter = requireUltraciteLinter(resolved);
 
-    if (resolved.runUltracite && !ultraciteQuiet) {
-      const linterHint =
-        resolved.ultraciteLinter === undefined
-          ? "Choose linter, frameworks, and editors in Ultracite's prompts below."
-          : `Using --linter ${resolved.ultraciteLinter} from your flags.`;
-      process.stdout.write(`\n${pc.cyan("ultracite")} — ${linterHint}\n\n`);
-      await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "interactive", {
-        ciSafe: false,
-        linter: resolved.ultraciteLinter,
-      });
+      await p.tasks([
+        {
+          enabled: resolved.nonInteractive,
+          task: async (message) => {
+            message?.("ultracite init (quiet)…");
+            await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "quiet", {
+              linter,
+            });
+            return "ultracite init complete";
+          },
+          title: "ultracite init",
+        },
+      ]);
+
+      if (!resolved.nonInteractive) {
+        process.stdout.write(
+          `\n${pc.cyan("ultracite")} — Linter: ${linter}. Continue in Ultracite for frameworks, editors, and hooks.\n\n`,
+        );
+        await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "interactive", {
+          ciSafe: false,
+          linter,
+        });
+      }
     }
 
     const manifest = buildVernoManifest({ projectName: resolved.name, resolved });

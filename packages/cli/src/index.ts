@@ -29,7 +29,7 @@ program
   .option("--shadcn-preset <name>", "shadcn preset (e.g. nova)")
   .option(
     "--linter <id>",
-    "biome | oxlint | eslint (ultracite add-on; -y default oxlint; interactive uses Ultracite unless set)",
+    "biome | oxlint | eslint (ultracite add-on; -y default oxlint; interactive wizard asks unless set)",
   )
   .option("--no-install", "Skip dependency install")
   .option("--no-git", "Skip git init")

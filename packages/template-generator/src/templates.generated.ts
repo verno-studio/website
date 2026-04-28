@@ -81,7 +81,7 @@ dist
 
   Post-create (if you skipped hooks): install deps, run \`shadcn\` in \`packages/design-system\` when
   needed, and \`ultracite\` at the repo root{{#if ultracite}}
-    (\`ultracite init\` picks Biome vs Oxlint vs ESLint){{/if}}. To switch the shadcn preset later,
+    (\`verno create\` passes \`ultracite init --linter\`; or run \`ultracite init\` and use \`--linter\` / interactive Ultracite for the rest){{/if}}. To switch the shadcn preset later,
   from the repo root: \`cd packages/design-system && npx shadcn@latest apply --preset
   YOUR_PRESET_CODE\` (or \`pnpm dlx\` / \`bun x\` as you prefer)
 
@@ -222,7 +222,7 @@ export default nextConfig;
   "type": "module",
   "scripts": {
     "build": "next build",
-    "dev": "next dev {{#if turborepo}}--port 3000{{/if}}",
+    "dev": "next dev{{#if turborepo}} --port 3000{{/if}}",
     "start": "next start",
     "typecheck": "next typegen && tsgo --noEmit"
   },
