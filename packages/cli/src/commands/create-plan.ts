@@ -2,6 +2,7 @@ import { join } from "node:path";
 import type { AddonId, FrontendId, PackageId, PackageManager } from "@verno/template-generator";
 import {
   getPmInstallCommand,
+  getShadcnAddAllCommand,
   getShadcnBootstrapCommand,
   getUltraciteInitCommand,
 } from "../pm-exec";
@@ -14,7 +15,7 @@ export const getShadcnWorkingDirectory = (
 ): string =>
   monorepoWithDesignSystem ? join(projectDir, "packages", "design-system") : projectDir;
 
-export type CreateStepId = "scaffold" | "install" | "shadcn" | "ultracite" | "git";
+export type CreateStepId = "scaffold" | "install" | "shadcn" | "shadcn-all" | "ultracite" | "git";
 
 export interface CreateCommandSpec {
   file: string;
@@ -115,20 +116,34 @@ export const buildCreatePlan = (
   }
 
   if (resolved.useShadcn) {
+    const monorepoWithDesignSystem = resolvedHasDesignSystem(resolved);
     const sh = getShadcnBootstrapCommand(resolved.packageManager, {
-      monorepoWithDesignSystem: resolvedHasDesignSystem(resolved),
+      monorepoWithDesignSystem,
       preset: resolved.shadcnPreset,
     });
+    const addAll = getShadcnAddAllCommand(resolved.packageManager, { monorepoWithDesignSystem });
     steps.push({
       command: { args: sh.args, cwd: projectDir, file: sh.file },
       id: "shadcn",
       label: "Run shadcn init",
       willRun: true,
     });
+    steps.push({
+      command: { args: addAll.args, cwd: projectDir, file: addAll.file },
+      id: "shadcn-all",
+      label: "Run shadcn add --all (registry UI components)",
+      willRun: true,
+    });
   } else {
     steps.push({
       id: "shadcn",
       label: "Run shadcn init",
+      skippedReason: "Skipped (--ui none, --skip-shadcn, or declined)",
+      willRun: false,
+    });
+    steps.push({
+      id: "shadcn-all",
+      label: "Run shadcn add --all",
       skippedReason: "Skipped (--ui none, --skip-shadcn, or declined)",
       willRun: false,
     });

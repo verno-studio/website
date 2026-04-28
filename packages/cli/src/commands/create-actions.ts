@@ -11,6 +11,7 @@ import type {
 } from "@verno/template-generator";
 import {
   getPmInstallCommand,
+  getShadcnAddAllCommand,
   getShadcnBootstrapCommand,
   getUltraciteInitCommand,
 } from "../pm-exec";
@@ -242,15 +243,23 @@ export const runShadcnIfEnabled = async (options: {
   if (!options.enabled) {
     return;
   }
-  const sh = getShadcnBootstrapCommand(options.packageManager, {
-    monorepoWithDesignSystem: options.monorepoWithDesignSystem,
-    preset: options.preset,
-  });
-  await runProcess(sh.file, sh.args, {
-    ciSafe: false,
-    cwd: options.projectDir,
-    stepId: "shadcn",
-  });
+  const commands = [
+    getShadcnBootstrapCommand(options.packageManager, {
+      monorepoWithDesignSystem: options.monorepoWithDesignSystem,
+      preset: options.preset,
+    }),
+    getShadcnAddAllCommand(options.packageManager, {
+      monorepoWithDesignSystem: options.monorepoWithDesignSystem,
+    }),
+  ] as const;
+
+  for (const command of commands) {
+    await runProcess(command.file, command.args, {
+      ciSafe: false,
+      cwd: options.projectDir,
+      stepId: "shadcn",
+    });
+  }
 };
 
 export const runUltraciteIfEnabled = async (
