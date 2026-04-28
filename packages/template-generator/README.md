@@ -18,7 +18,7 @@ File bodies and optional path segments can use **Handlebars** (e.g. `{{projectNa
    - Include the new layer id from [`resolveLayerStack`](src/layers/registry.ts) when the relevant add-on or package is selected (merge order: later layers win on path clashes).
 2. **On disk** — Create `templates/<layerId>/` with the files to embed.
 3. **Regenerate** — `bun run generate:templates` (the script reads `LAYERS` and `toLayerOutputKey` from the registry).
-4. **Post-processing** — For dependency or config rewrites, add a `(tree, config) => tree` function and append it to `defaultPostProcessors` in [`src/processors/index.ts`](src/processors/index.ts) (see `runPostProcessPipeline`).
+4. **Post-processing** — For dependency or config rewrites, add a `(vfs, config) => void` processor and append it to `defaultPostProcessors` in [`src/processors/index.ts`](src/processors/index.ts) (see `runPostProcessPipeline` and `applyDependencyCatalog`).
 
 ## API
 
