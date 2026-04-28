@@ -1,4 +1,4 @@
-import type { PackageManager, TemplateId } from "@verno/template-generator";
+import type { PackageManager } from "@verno/template-generator";
 import { getShadcnExecSpec, getUltraciteExecSpec } from "@verno/template-generator";
 
 export const getPmInstallCommand = (
@@ -18,15 +18,14 @@ export const getPmInstallCommand = (
 
 export const getShadcnBootstrapCommand = (
   pm: PackageManager,
-  options: { readonly preset: string; readonly template: TemplateId },
+  options: { readonly preset: string; readonly monorepoWithDesignSystem: boolean },
 ): { readonly file: string; readonly args: readonly string[] } => {
   const shadcnSpec = getShadcnExecSpec();
   const afterInit = ["init", "-t", "next", "-p", options.preset, "-y"] as const;
-  // Monorepo: run from repo root so shadcn detects bun/pnpm from the workspace lockfile; the package has no lockfile.
-  const cwdFlag =
-    options.template === "next-turborepo"
-      ? (["-c", "packages/design-system"] as const)
-      : ([] as const);
+  // Monorepo + design-system: run from repo root so shadcn detects bun/pnpm from the workspace lockfile.
+  const cwdFlag = options.monorepoWithDesignSystem
+    ? (["-c", "packages/design-system"] as const)
+    : ([] as const);
   const initArgs = [...afterInit, ...cwdFlag];
   // Avoid `bun x shadcn@latest`: Bun often stalls after resolving the ephemeral CLI lockfile on some setups (e.g. WSL2).
   if (pm === "bun") {

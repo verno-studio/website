@@ -4,17 +4,24 @@ import pc from "picocolors";
 import { dimPath, renderVernoTitle } from "../ui";
 import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } from "../errors";
 import { runInteractiveCreateWizard } from "./create-prompts";
-import { resolveCreateInputsNonInteractive } from "./create-args";
+import {
+  resolveCreateInputsNonInteractive,
+  resolvedHasDesignSystem,
+  resolvedUsesTurborepo,
+} from "./create-args";
 import type { CreateCommandOptions, ResolvedCreateInputs } from "./create-args";
 import {
   assertPathAvailable,
-  buildConfig,
+  buildVernoManifest,
+  ensureAppGlobalsBaseLayerAtEnd,
   getProjectPath,
-  runGitIfEnabled,
+  runGitInitAndCommitIfEnabled,
   runInstallIfEnabled,
   runShadcnIfEnabled,
   runUltraciteIfEnabled,
   scaffold,
+  toProjectConfig,
+  writeVernoManifest,
 } from "./create-actions";
 import { getNextStepHints } from "./create-next-steps";
 import { buildCreatePlan, getPlanSummary } from "./create-plan";
@@ -29,7 +36,10 @@ const printHumanDryRun = (args: {
   renderVernoTitle(false);
   process.stdout.write(`\n${pc.magenta("create — plan (dry run)")}\n\n`);
   process.stdout.write(`Project: ${args.projectName}\n`);
-  process.stdout.write(`Path:    ${dimPath(args.projectDir, false)}\n\n`);
+  process.stdout.write(`Path:    ${dimPath(args.projectDir, false)}\n`);
+  process.stdout.write(
+    `Stack:   ${args.plan.frontend} | add-ons: ${args.plan.addons.join(", ") || "none"} | packages: ${args.plan.packages.join(", ") || "—"}\n\n`,
+  );
   for (const step of args.plan.steps) {
     if (step.willRun) {
       const cmd = step.command
@@ -106,18 +116,20 @@ export const runCreate = async (args: {
     return;
   }
 
-  const config = buildConfig({
+  const config = toProjectConfig({
     name: resolved.name,
     npmScope: defaultNpmScopeFromProjectName(resolved.name),
     packageManager: resolved.packageManager,
+    resolved,
     shadcnPreset: resolved.shadcnPreset,
-    template: resolved.template,
   });
 
   try {
     assertPathAvailable(projectDir);
     const ultraciteQuiet = resolved.runUltracite && resolved.nonInteractive;
-    const deferGit = resolved.doGit && resolved.runUltracite && !resolved.nonInteractive;
+    const monorepo = resolvedUsesTurborepo(resolved);
+    const normalizeAppGlobalsLayer = (): Promise<void> =>
+      ensureAppGlobalsBaseLayerAtEnd(projectDir, monorepo);
 
     await p.tasks([
       {
@@ -146,13 +158,15 @@ export const runCreate = async (args: {
       );
       await runShadcnIfEnabled({
         enabled: true,
+        monorepoWithDesignSystem: resolvedHasDesignSystem(resolved),
         packageManager: resolved.packageManager,
         preset: resolved.shadcnPreset,
         projectDir,
-        template: resolved.template,
       });
       process.stdout.write("\n");
     }
+
+    await normalizeAppGlobalsLayer();
 
     await p.tasks([
       {
@@ -163,15 +177,6 @@ export const runCreate = async (args: {
           return "ultracite init complete";
         },
         title: "ultracite init",
-      },
-      {
-        enabled: resolved.doGit && !deferGit,
-        task: async (message) => {
-          message?.("git init…");
-          await runGitIfEnabled(true, projectDir);
-          return "Git ready";
-        },
-        title: "git init",
       },
     ]);
 
@@ -184,9 +189,10 @@ export const runCreate = async (args: {
       });
     }
 
-    if (deferGit) {
-      await runGitIfEnabled(true, projectDir);
-    }
+    const manifest = buildVernoManifest({ projectName: resolved.name, resolved });
+    await writeVernoManifest(projectDir, manifest);
+    await normalizeAppGlobalsLayer();
+    await runGitInitAndCommitIfEnabled(resolved.doGit, projectDir);
   } catch (error) {
     if (error instanceof ProcessFailedError) {
       process.stderr.write(`${pc.red("Error:")} ${error.message}\n`);

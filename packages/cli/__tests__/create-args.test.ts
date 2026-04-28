@@ -7,18 +7,20 @@ import {
 describe("toCreateCommandOptions", () => {
   test("normalizes commander-style flags", () => {
     const o = toCreateCommandOptions({
+      addons: "turborepo,ultracite",
+      codeQuality: "biome",
       dryRun: true,
       packageManager: "npm",
       skipShadcn: true,
       skipUltracite: true,
-      template: "next-turborepo",
       yes: true,
     });
     expect(o.dryRun).toBe(true);
     expect(o.yes).toBe(true);
     expect(o.skipShadcn).toBe(true);
     expect(o.skipUltracite).toBe(true);
-    expect(o.template).toBe("next-turborepo");
+    expect(o.addons).toBe("turborepo,ultracite");
+    expect(o.codeQuality).toBe("biome");
     expect(o.packageManager).toBe("npm");
   });
 
@@ -34,8 +36,9 @@ describe("toCreateCommandOptions", () => {
 });
 
 describe("resolveCreateInputsNonInteractive", () => {
-  test("applies --skip-shadcn and --skip-ultracite", () => {
+  test("applies --skip-shadcn and filters ultracite via --skip-ultracite", () => {
     const r = resolveCreateInputsNonInteractive("x", {
+      addons: "ultracite",
       dryRun: false,
       noGit: false,
       noInstall: false,
@@ -46,19 +49,30 @@ describe("resolveCreateInputsNonInteractive", () => {
     expect(r.useShadcn).toBe(false);
     expect(r.runUltracite).toBe(false);
     expect(r.nonInteractive).toBe(true);
+    expect(r.addons.includes("ultracite")).toBe(false);
   });
 
-  test("parses short-style options via toCreateCommandOptions", () => {
+  test("parses addons and default code quality for ultracite", () => {
     const r = resolveCreateInputsNonInteractive(
       "app",
       toCreateCommandOptions({
+        addons: "ultracite",
         packageManager: "npm",
-        template: "next-app",
         yes: true,
       }),
     );
     expect(r.packageManager).toBe("npm");
-    expect(r.template).toBe("next-app");
+    expect(r.addons).toContain("ultracite");
+    expect(r.codeQuality).toBe("oxlint-oxfmt");
     expect(r.nonInteractive).toBe(true);
+  });
+
+  test("turborepo defaults workspace packages when --packages omitted", () => {
+    const r = resolveCreateInputsNonInteractive(
+      "mono",
+      toCreateCommandOptions({ addons: "turborepo", yes: true }),
+    );
+    expect(r.addons).toContain("turborepo");
+    expect(r.packages).toEqual(["typescript-config", "design-system"]);
   });
 });

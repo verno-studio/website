@@ -14,18 +14,27 @@ program
 
 program
   .command("create")
-  .description("Scaffold a Next.js app or Turborepo monorepo")
+  .description("Scaffold a composable Next.js app (optional Turborepo + workspace packages)")
   .argument("[name]", "Project directory name")
   .option("-y, --yes", "Non-interactive mode (requires project name)", false)
   .option("--dry-run", "Print the plan without writing files or running hooks", false)
-  .option("-T, --template <id>", "next-app | next-turborepo")
+  .option("--frontend <id>", "next (default: next)", "next")
+  .option("--addons <list>", "Comma-separated: turborepo, ultracite (e.g. turborepo,ultracite)")
+  .option(
+    "--packages <list>",
+    "Comma-separated workspace packages when using turborepo: typescript-config, design-system",
+  )
+  .option(
+    "--code-quality <id>",
+    "biome | oxlint-oxfmt | eslint-prettier (with ultracite; default when -y: oxlint-oxfmt)",
+  )
   .option("-p, --package-manager <pm>", "bun | pnpm | npm")
   .option("--ui <mode>", "shadcn | none")
   .option("--shadcn-preset <name>", "shadcn preset (e.g. nova)")
   .option("--no-install", "Skip dependency install")
   .option("--no-git", "Skip git init")
   .option("--skip-shadcn", "Skip shadcn bootstrap")
-  .option("--skip-ultracite", "Skip ultracite init")
+  .option("--skip-ultracite", "Skip ultracite add-on and ultracite init")
   .action(async (name: string | undefined, opts) => {
     await runCreate({
       name,

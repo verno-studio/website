@@ -4,14 +4,15 @@ import { getProjectPath } from "../src/commands/create-actions";
 import { resolveCreateInputsNonInteractive } from "../src/commands/create-args";
 
 describe("buildCreatePlan", () => {
-  test("builds step list for next-app with all hooks", () => {
+  test("builds step list for single app with all hooks", () => {
     const r = resolveCreateInputsNonInteractive("demo", {
+      addons: "ultracite",
+      codeQuality: "oxlint-oxfmt",
       dryRun: false,
       noGit: false,
       noInstall: false,
       skipShadcn: false,
       skipUltracite: false,
-      template: "next-app",
       yes: true,
     });
     const projectDir = getProjectPath(r.name);
@@ -29,7 +30,6 @@ describe("buildCreatePlan", () => {
       packageManager: "pnpm",
       skipShadcn: true,
       skipUltracite: true,
-      template: "next-app",
       ui: "none",
       yes: true,
     });

@@ -1,14 +1,24 @@
 import { join } from "node:path";
-import type { PackageManager, TemplateId } from "@verno/template-generator";
+import type {
+  AddonId,
+  CodeQualityId,
+  FrontendId,
+  PackageId,
+  PackageManager,
+} from "@verno/template-generator";
 import {
   getPmInstallCommand,
   getShadcnBootstrapCommand,
   getUltraciteInitCommand,
 } from "../pm-exec";
 import type { ResolvedCreateInputs } from "./create-args";
+import { resolvedHasDesignSystem } from "./create-args";
 
-export const getShadcnWorkingDirectory = (projectDir: string, template: TemplateId): string =>
-  template === "next-turborepo" ? join(projectDir, "packages", "design-system") : projectDir;
+export const getShadcnWorkingDirectory = (
+  projectDir: string,
+  monorepoWithDesignSystem: boolean,
+): string =>
+  monorepoWithDesignSystem ? join(projectDir, "packages", "design-system") : projectDir;
 
 export type CreateStepId = "scaffold" | "install" | "shadcn" | "ultracite" | "git";
 
@@ -29,7 +39,10 @@ export interface CreateStepPlan {
 export interface CreatePlanSummary {
   projectName: string;
   projectDir: string;
-  template: TemplateId;
+  frontend: FrontendId;
+  addons: readonly AddonId[];
+  packages: readonly PackageId[];
+  codeQuality?: CodeQualityId;
   packageManager: PackageManager;
   doInstall: boolean;
   doGit: boolean;
@@ -48,7 +61,10 @@ export interface CreatePlanSummary {
 export const toPlanSummaryJson = (p: {
   projectName: string;
   projectDir: string;
-  template: TemplateId;
+  frontend: FrontendId;
+  addons: readonly AddonId[];
+  packages: readonly PackageId[];
+  codeQuality?: CodeQualityId;
   packageManager: PackageManager;
   doInstall: boolean;
   doGit: boolean;
@@ -57,9 +73,13 @@ export const toPlanSummaryJson = (p: {
   shadcnPreset: string;
   steps: readonly CreateStepPlan[];
 }): CreatePlanSummary => ({
+  addons: p.addons,
+  codeQuality: p.codeQuality,
   doGit: p.doGit,
   doInstall: p.doInstall,
+  frontend: p.frontend,
   packageManager: p.packageManager,
+  packages: p.packages,
   projectDir: p.projectDir,
   projectName: p.projectName,
   runUltracite: p.runUltracite,
@@ -73,7 +93,6 @@ export const toPlanSummaryJson = (p: {
     skippedReason: s.skippedReason,
     willRun: s.willRun,
   })),
-  template: p.template,
   useShadcn: p.useShadcn,
 });
 
@@ -106,8 +125,8 @@ export const buildCreatePlan = (
 
   if (resolved.useShadcn) {
     const sh = getShadcnBootstrapCommand(resolved.packageManager, {
+      monorepoWithDesignSystem: resolvedHasDesignSystem(resolved),
       preset: resolved.shadcnPreset,
-      template: resolved.template,
     });
     steps.push({
       command: { args: sh.args, cwd: projectDir, file: sh.file },
@@ -139,22 +158,21 @@ export const buildCreatePlan = (
     steps.push({
       id: "ultracite",
       label: "Run ultracite init",
-      skippedReason: "Skipped (--skip-ultracite or declined in wizard)",
+      skippedReason: "Skipped (ultracite add-on off, --skip-ultracite, or declined)",
       willRun: false,
     });
   }
 
   if (resolved.doGit) {
     steps.push({
-      command: { args: ["init"], cwd: projectDir, file: "git" },
       id: "git",
-      label: "Initialize git repository",
+      label: "Initialize git repository and create initial commit (Verno Studio)",
       willRun: true,
     });
   } else {
     steps.push({
       id: "git",
-      label: "Initialize git repository",
+      label: "Initialize git repository and create initial commit (Verno Studio)",
       skippedReason: "Skipped (--no-git or declined in wizard)",
       willRun: false,
     });
@@ -169,14 +187,17 @@ export const getPlanSummary = (
   steps: readonly CreateStepPlan[],
 ) =>
   toPlanSummaryJson({
+    addons: resolved.addons,
+    codeQuality: resolved.codeQuality,
     doGit: resolved.doGit,
     doInstall: resolved.doInstall,
+    frontend: resolved.frontend,
     packageManager: resolved.packageManager,
+    packages: resolved.packages,
     projectDir,
     projectName: resolved.name,
     runUltracite: resolved.runUltracite,
     shadcnPreset: resolved.shadcnPreset,
     steps,
-    template: resolved.template,
     useShadcn: resolved.useShadcn,
   });
