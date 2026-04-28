@@ -1,10 +1,27 @@
 {
-  "name": "verno",
+  "name": "@vernostudio/cli",
   "version": "0.0.0",
-  "private": true,
-  "description": "Verno CLI: scaffold Next.js and Turborepo projects with shadcn and Ultracite.",
+  "description": "Verno Studio CLI: scaffold Next.js and Turborepo projects with shadcn and Ultracite.",
+  "keywords": [
+    "cli",
+    "monorepo",
+    "next.js",
+    "shadcn",
+    "turborepo",
+    "ultracite",
+    "vernostudio"
+  ],
+  "bugs": {
+    "url": "https://github.com/verno-studio/website/issues"
+  },
+  "license": "MIT",
+  "author": "Noppakorn Kaewsalabnil <hello@pungrumpy.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/verno-studio/website.git"
+  },
   "bin": {
-    "@verno/cli": "./dist/index.mjs",
+    "@vernostudio/cli": "./dist/index.mjs",
     "verno": "./dist/index.mjs",
     "vernostudio": "./dist/index.mjs"
   },
@@ -20,6 +37,10 @@
       "import": "./dist/index.mjs",
       "default": "./dist/index.mjs"
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsdown",
