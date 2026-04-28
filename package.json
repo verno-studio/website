@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
-    "@typescript/native-preview": "^7.0.0-dev.20260427.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260428.1",
     "oxfmt": "^0.47.0",
     "oxlint": "^1.62.0",
     "turbo": "^2.9.6",
