@@ -1,8 +1,23 @@
 export {
+  type AddonId,
+  ADDON_IDS,
+  assertValidProjectConfig,
+  type CodeQualityId,
+  CODE_QUALITY_IDS,
+  type FrontendId,
+  FRONTENDS,
+  type PackageId,
+  PACKAGE_IDS,
   type PackageManager,
   type ProjectConfig,
-  type TemplateId,
+  type UiMode,
   defaultNpmScopeFromProjectName,
+  hasAddon,
+  hasDesignSystem,
+  hasPackage,
+  hasTypescriptConfigPackage,
+  InvalidProjectConfigError,
+  isMonorepo,
 } from "./config";
 export {
   DEPENDENCY_VERSIONS,
@@ -17,9 +32,10 @@ export {
 } from "./catalog/tooling";
 export { buildInterpolatedFileTree, generate } from "./generator";
 export {
-  buildTemplateVarMap,
+  buildHandlebarsContext,
   componentsStyleFromShadcnPreset,
   DEFAULT_COMPONENTS_STYLE,
+  type HandlebarsTemplateContext,
 } from "./build-template-vars";
 export { interpolate } from "./interpolate";
 export { mergeFileTrees, type FileTree, scoped } from "./paths";
@@ -34,12 +50,13 @@ export type {
 export { FileWriteError } from "./file-write-error";
 export { GeneratorError } from "./generator-error";
 export { VirtualFileSystem, virtualTreeFromFileTree } from "./core/virtual-fs";
-export { listKeysForTemplate, mergeTemplateLayers } from "./core/embed-templates";
+export { listKeysForProjectConfig, mergeTemplateLayers } from "./core/embed-templates";
 export {
   LAYERS,
   type LayerDefinition,
   type LayerLayout,
-  TEMPLATE_LAYER_STACKS,
+  resolveLayerStack,
+  stripHbsExtension,
   toLayerOutputKey,
 } from "./layers/registry";
 export {

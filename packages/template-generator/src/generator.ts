@@ -1,7 +1,8 @@
 import { Result } from "better-result";
+import { assertValidProjectConfig } from "./config";
 import type { ProjectConfig } from "./config";
 import { mergeTemplateLayers } from "./core/embed-templates";
-import { applyTemplateVars } from "./core/template-processor";
+import { applyTemplateVars, renderTemplatePathIfNeeded } from "./core/template-processor";
 import { VirtualFileSystem, virtualTreeFromFileTree } from "./core/virtual-fs";
 import { GeneratorError } from "./generator-error";
 import { defaultPostProcessors, runPostProcessPipeline } from "./processors";
@@ -11,7 +12,8 @@ import type { GeneratorOptions, VirtualFileTree } from "./types";
 const toInterpolatedFileTree = (merged: Map<string, string>, config: ProjectConfig): FileTree => {
   const vfs = new VirtualFileSystem();
   for (const [rel, raw] of merged) {
-    vfs.writeFile(rel, applyTemplateVars(raw, config));
+    const outRel = renderTemplatePathIfNeeded(rel, config);
+    vfs.writeFile(outRel, applyTemplateVars(raw, config));
   }
   return vfs.toFileTree();
 };
@@ -30,10 +32,11 @@ export const generate = (options: GeneratorOptions): Result<VirtualFileTree, Gen
     },
     try: () => {
       const { config } = options;
-      const merged = mergeTemplateLayers(config.template);
+      assertValidProjectConfig(config);
+      const merged = mergeTemplateLayers(config);
       if (merged.size === 0) {
         throw new GeneratorError({
-          message: `No embedded template files for template "${config.template}".`,
+          message: "No embedded template files for the given project configuration.",
           phase: "initialization",
         });
       }
@@ -43,5 +46,7 @@ export const generate = (options: GeneratorOptions): Result<VirtualFileTree, Gen
     },
   });
 
-export const buildInterpolatedFileTree = (config: ProjectConfig): FileTree =>
-  toInterpolatedFileTree(mergeTemplateLayers(config.template), config);
+export const buildInterpolatedFileTree = (config: ProjectConfig): FileTree => {
+  assertValidProjectConfig(config);
+  return toInterpolatedFileTree(mergeTemplateLayers(config), config);
+};

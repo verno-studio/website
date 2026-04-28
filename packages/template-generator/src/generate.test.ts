@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { access, constants, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import type { ProjectConfig } from "./config";
 import { defaultNpmScopeFromProjectName, generate, writeTree } from "./index";
 
 let dir: string;
@@ -14,6 +15,36 @@ afterEach(async () => {
   await rm(dir, { force: true, recursive: true });
 });
 
+const singleApp = (overrides: Partial<ProjectConfig> = {}): ProjectConfig => ({
+  addons: [],
+  frontend: "next",
+  npmScope: "testapp",
+  packageManager: "bun",
+  packages: [],
+  projectName: "test-app",
+  ui: "none",
+  ...overrides,
+});
+
+const monorepoWithDs = (overrides: Partial<ProjectConfig> = {}): ProjectConfig =>
+  singleApp({
+    addons: ["turborepo", "ultracite"],
+    codeQuality: "oxlint-oxfmt",
+    npmScope: "mono",
+    packages: ["typescript-config", "design-system"],
+    projectName: "mono",
+    shadcnPreset: "lyra",
+    ...overrides,
+  });
+
+/** First line of the app-owned base block in `frontends/next/app/globals.css.hbs`. */
+const vernoAppGlobalsBaseMarker = "/* This layer is by Verno Studio */" as const;
+
+const expectSingleAppGlobalsBaseLayer = (globalsCss: string): void => {
+  expect(globalsCss.split(vernoAppGlobalsBaseMarker).length - 1).toBe(1);
+  expect(globalsCss.trimEnd().endsWith("}")).toBe(true);
+};
+
 describe("defaultNpmScopeFromProjectName", () => {
   test("slugifies and strips invalid characters", () => {
     expect(defaultNpmScopeFromProjectName("My App!")).toBe("my-app");
@@ -21,14 +52,14 @@ describe("defaultNpmScopeFromProjectName", () => {
 });
 
 describe("generate + writeTree", () => {
-  test("next-app writes key files", async () => {
+  test("single Next app writes key files", async () => {
     const out = join(dir, "next-app");
-    const config = {
+    const config = singleApp({
+      addons: ["ultracite"],
+      codeQuality: "oxlint-oxfmt",
       npmScope: "testapp",
-      packageManager: "bun" as const,
       projectName: "test-app",
-      template: "next-app" as const,
-    };
+    });
     const gen = generate({ config });
     const tree = gen.unwrap();
     expect(tree.fileCount).toBeGreaterThan(0);
@@ -38,16 +69,16 @@ describe("generate + writeTree", () => {
     await access(join(out, "package.json"), constants.R_OK);
     await access(join(out, "app", "page.tsx"), constants.R_OK);
     await access(join(out, "next.config.ts"), constants.R_OK);
+    const pkgRaw = await readFile(join(out, "package.json"), "utf-8");
+    const pkg = JSON.parse(pkgRaw) as { devDependencies?: Record<string, string> };
+    expect(pkg.devDependencies?.ultracite).toBeDefined();
+    const globalsCss = await readFile(join(out, "app", "globals.css"), "utf-8");
+    expectSingleAppGlobalsBaseLayer(globalsCss);
   });
 
-  test("next-turborepo writes monorepo layout", async () => {
+  test("Turborepo writes monorepo layout", async () => {
     const out = join(dir, "mono");
-    const config = {
-      npmScope: "mono",
-      packageManager: "bun" as const,
-      projectName: "mono",
-      template: "next-turborepo" as const,
-    };
+    const config = monorepoWithDs({ npmScope: "mono", projectName: "mono" });
     const gen = generate({ config });
     const tree = gen.unwrap();
     const writeResult = await writeTree(tree, out);
@@ -56,18 +87,19 @@ describe("generate + writeTree", () => {
     await access(join(out, "apps", "web", "package.json"), constants.R_OK);
     await access(join(out, "packages", "typescript-config", "base.json"), constants.R_OK);
     await access(join(out, "packages", "design-system", "package.json"), constants.R_OK);
+    const rootPkgRaw = await readFile(join(out, "package.json"), "utf-8");
+    const rootPkg = JSON.parse(rootPkgRaw) as { devDependencies?: Record<string, string> };
+    expect(rootPkg.devDependencies?.ultracite).toBeDefined();
   });
 
-  test("next-turborepo writes design-system shadcn config and app imports design-system CSS", async () => {
+  test("monorepo writes design-system shadcn config and app imports design-system CSS", async () => {
     const out = join(dir, "mono-ds");
     const ds = "@acme/design-system";
-    const config = {
+    const config = monorepoWithDs({
       npmScope: "acme",
-      packageManager: "bun" as const,
       projectName: "my-app",
       shadcnPreset: "lyra",
-      template: "next-turborepo" as const,
-    };
+    });
     const gen = generate({ config });
     const tree = gen.unwrap();
     const writeResult = await writeTree(tree, out);
@@ -81,12 +113,14 @@ describe("generate + writeTree", () => {
 
     const appCss = await readFile(join(out, "apps", "web", "app", "globals.css"), "utf-8");
     expect(appCss).toContain(`@import "${ds}/styles/globals.css";`);
+    expectSingleAppGlobalsBaseLayer(appCss);
 
     const dsGlobals = await readFile(
       join(out, "packages", "design-system", "styles", "globals.css"),
       "utf-8",
     );
     expect(dsGlobals).toContain(`@import "shadcn/tailwind.css";`);
+    expect(dsGlobals).not.toContain(vernoAppGlobalsBaseMarker);
 
     const utils = await readFile(
       join(out, "packages", "design-system", "lib", "utils.ts"),

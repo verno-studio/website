@@ -1,0 +1,29 @@
+#
+{{projectName}}
+
+{{#if turborepo}}
+
+  Turborepo + Next.js scaffolded with Verno.
+
+  {{#if hasTypescriptConfigPackage}}
+    Shared TypeScript config: `{{tsConfigName}}`.
+  {{/if}}
+  {{#if hasDesignSystem}}
+    Design system package: `{{dsName}}` (shadcn + Tailwind v4).
+  {{/if}}
+
+  Post-create (if you skipped hooks): install deps, run `shadcn` in `packages/design-system` when
+  needed, and `ultracite` at the repo root{{#if ultracite}}
+    (`ultracite init` picks Biome vs Oxlint vs ESLint){{/if}}. To switch the shadcn preset later,
+  from the repo root: `cd packages/design-system && npx shadcn@latest apply --preset
+  YOUR_PRESET_CODE` (or `pnpm dlx` / `bun x` as you prefer)
+
+{{else}}
+
+  Next.js app (Verno). npm scope: `@{{npmScope}}`. Post-create: run `shadcn` and `ultracite` in this
+  directory if you skipped them during `verno create`.
+
+{{/if}}
+
+To apply a different shadcn preset on an existing project: run `shadcn@latest apply --preset
+YOUR_PRESET_CODE` (see [shadcn CLI](https://ui.shadcn.com/docs/cli)).

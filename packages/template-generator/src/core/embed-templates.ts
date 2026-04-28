@@ -1,22 +1,27 @@
-import type { TemplateId } from "../config";
-import { TEMPLATE_LAYER_STACKS } from "../layers/registry";
+import type { ProjectConfig } from "../config";
+import { hasAddon } from "../config";
 import { EMBEDDED_BY_LAYER } from "../templates.generated";
+import { resolveLayerStack } from "../layers/registry";
 
 const embedded = EMBEDDED_BY_LAYER as Record<string, ReadonlyMap<string, string>>;
 
-export const mergeTemplateLayers = (template: TemplateId): Map<string, string> => {
+const appsWebPrefix = (layerId: string, config: ProjectConfig): string =>
+  layerId === "frontends/next" && hasAddon(config, "turborepo") ? "apps/web/" : "";
+
+export const mergeTemplateLayers = (config: ProjectConfig): Map<string, string> => {
   const out = new Map<string, string>();
-  for (const layer of TEMPLATE_LAYER_STACKS[template]) {
+  for (const layer of resolveLayerStack(config)) {
     const chunk = embedded[layer];
     if (chunk === undefined) {
       continue;
     }
+    const prefix = appsWebPrefix(layer, config);
     for (const [key, val] of chunk) {
-      out.set(key, val);
+      out.set(`${prefix}${key}`, val);
     }
   }
   return out;
 };
 
-export const listKeysForTemplate = (template: TemplateId): string[] =>
-  [...mergeTemplateLayers(template).keys()].toSorted((a, b) => a.localeCompare(b));
+export const listKeysForProjectConfig = (config: ProjectConfig): string[] =>
+  [...mergeTemplateLayers(config).keys()].toSorted((a, b) => a.localeCompare(b));

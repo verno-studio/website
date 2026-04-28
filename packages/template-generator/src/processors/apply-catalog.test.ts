@@ -1,25 +1,39 @@
 import { describe, expect, test } from "bun:test";
+import type { ProjectConfig } from "../config";
 import { buildInterpolatedFileTree } from "../generator";
 import { applyDependencyCatalog } from "./apply-catalog";
 import { scoped } from "../paths";
 import { DEPENDENCY_VERSIONS } from "../catalog/dependencies";
 import { TOOLING } from "../catalog/tooling";
 
+const appWithUltracite: ProjectConfig = {
+  addons: ["ultracite"],
+  codeQuality: "oxlint-oxfmt",
+  frontend: "next",
+  npmScope: "a",
+  packageManager: "bun",
+  packages: [],
+  projectName: "a",
+  ui: "none",
+};
+
+const fullMonorepo: ProjectConfig = {
+  addons: ["turborepo", "ultracite"],
+  codeQuality: "oxlint-oxfmt",
+  frontend: "next",
+  npmScope: "acme",
+  packageManager: "pnpm",
+  packages: ["typescript-config", "design-system"],
+  projectName: "mono",
+  shadcnPreset: "a2r6bw",
+  ui: "none",
+};
+
 describe("applyDependencyCatalog", () => {
-  test("applies the same app dependency versions to next-app", () => {
+  test("applies the same app dependency versions to a single Next app with ultracite", () => {
     const tree = applyDependencyCatalog(
-      buildInterpolatedFileTree({
-        npmScope: "a",
-        packageManager: "bun",
-        projectName: "a",
-        template: "next-app",
-      }),
-      {
-        npmScope: "a",
-        packageManager: "bun",
-        projectName: "a",
-        template: "next-app",
-      },
+      buildInterpolatedFileTree(appWithUltracite),
+      appWithUltracite,
     );
     const pkg = JSON.parse(tree["package.json"] ?? "{}") as {
       dependencies: Record<string, string>;
@@ -32,14 +46,7 @@ describe("applyDependencyCatalog", () => {
   });
 
   test("wires monorepo workspace and catalog versions", () => {
-    const config = {
-      npmScope: "acme",
-      packageManager: "pnpm" as const,
-      projectName: "mono",
-      shadcnPreset: "a2r6bw",
-      template: "next-turborepo" as const,
-    };
-    const tree = applyDependencyCatalog(buildInterpolatedFileTree(config), config);
+    const tree = applyDependencyCatalog(buildInterpolatedFileTree(fullMonorepo), fullMonorepo);
     const ds = scoped("acme", "design-system");
     const tsc = scoped("acme", "typescript-config");
     const root = JSON.parse(tree["package.json"] ?? "{}") as {

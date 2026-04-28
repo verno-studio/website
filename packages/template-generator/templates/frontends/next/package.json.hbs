@@ -1,0 +1,21 @@
+{
+  "name": "{{#if turborepo}}web{{else}}{{projectName}}{{/if}}",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev --port 3000",
+    "start": "next start",
+    "typecheck": "next typegen && tsgo --noEmit"
+  },
+  "dependencies": {
+{{#if hasDesignSystem}}    "{{dsName}}": "workspace:*"
+{{/if}}  },
+{{#if turborepo}}
+  "devDependencies": {}
+{{else}}
+  "devDependencies": {},
+  "packageManager": "{{packageManagerField}}"
+{{/if}}
+}

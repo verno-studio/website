@@ -1,4 +1,5 @@
 import type { ProjectConfig } from "../config";
+import { hasAddon, hasDesignSystem, hasPackage, isMonorepo } from "../config";
 import {
   mergeDependenciesFromCatalog,
   parsePackageJson,
@@ -22,37 +23,29 @@ const withPackageJson = (
   return { ...tree, [relPath]: stringifyPackageJson(pkg) };
 };
 
-const nextAppDeps: {
-  dependencies: readonly ManagedDependency[];
-  devDependencies: readonly ManagedDependency[];
-} = {
+const nextAppRuntimeDeps: { dependencies: readonly ManagedDependency[] } = {
   dependencies: ["next", "react", "react-dom"],
-  devDependencies: [
-    "@tailwindcss/postcss",
-    "@types/node",
-    "@types/react",
-    "@types/react-dom",
-    "tailwindcss",
-    "typescript",
-    "ultracite",
-  ],
 };
 
-const monorepoRootDevDeps: readonly ManagedDependency[] = ["turbo", "typescript", "ultracite"];
+/** Shared by single-app root and `apps/web` in the Turborepo layout. */
+const nextWebAppDevDependencies: readonly ManagedDependency[] = [
+  "@tailwindcss/postcss",
+  "@types/node",
+  "@types/react",
+  "@types/react-dom",
+  "@typescript/native-preview",
+  "tailwindcss",
+  "typescript",
+];
+
+const monorepoRootSharedDevDeps: readonly ManagedDependency[] = ["turbo", "typescript"];
 
 const webAppDeps: {
   dependencies: readonly ManagedDependency[];
   devDependencies: readonly ManagedDependency[];
 } = {
   dependencies: ["next", "react", "react-dom"],
-  devDependencies: [
-    "@tailwindcss/postcss",
-    "@types/node",
-    "@types/react",
-    "@types/react-dom",
-    "tailwindcss",
-    "typescript",
-  ],
+  devDependencies: nextWebAppDevDependencies,
 };
 
 const designSystemDeps: {
@@ -68,50 +61,75 @@ const designSystemDeps: {
     "tailwindcss",
     "tw-animate-css",
   ],
-  devDependencies: ["@types/react", "@types/react-dom", "shadcn", "typescript"],
+  devDependencies: [
+    "@types/react",
+    "@types/react-dom",
+    "@typescript/native-preview",
+    "shadcn",
+    "typescript",
+  ],
   peerDependencies: ["react", "react-dom"],
 };
 
-const applyMonorepoCatalog = (
-  tree: FileTree,
-  options: { readonly tsConfigName: string },
-): FileTree => {
+const devDepsWithOptionalUltracite = (
+  config: ProjectConfig,
+  base: readonly ManagedDependency[],
+) => {
+  const out: ManagedDependency[] = [...base];
+  if (hasAddon(config, "ultracite")) {
+    out.push("ultracite");
+  }
+  return out;
+};
+
+const applyMonorepoCatalog = (tree: FileTree, config: ProjectConfig): FileTree => {
+  const tsConfigName = scoped(config.npmScope, "typescript-config");
+  const dsName = scoped(config.npmScope, "design-system");
+
   let t = withPackageJson(tree, "package.json", (pkg) => {
-    mergeDependenciesFromCatalog(pkg, { devDependencies: monorepoRootDevDeps });
+    mergeDependenciesFromCatalog(pkg, {
+      devDependencies: devDepsWithOptionalUltracite(config, monorepoRootSharedDevDeps),
+    });
   });
 
   t = withPackageJson(t, "apps/web/package.json", (pkg) => {
     mergeDependenciesFromCatalog(pkg, {
       dependencies: webAppDeps.dependencies,
-      devDependencies: webAppDeps.devDependencies,
+      devDependencies: devDepsWithOptionalUltracite(config, webAppDeps.devDependencies),
     });
-    const devDeps = pkg.devDependencies as Record<string, string>;
-    devDeps[options.tsConfigName] = "workspace:*";
+    if (hasPackage(config, "typescript-config")) {
+      const devDeps = pkg.devDependencies as Record<string, string>;
+      devDeps[tsConfigName] = "workspace:*";
+    }
+    if (hasDesignSystem(config)) {
+      const deps = pkg.dependencies as Record<string, string>;
+      deps[dsName] = "workspace:*";
+    }
   });
 
-  t = withPackageJson(t, "packages/design-system/package.json", (pkg) => {
-    mergeDependenciesFromCatalog(pkg, {
-      dependencies: designSystemDeps.dependencies,
-      devDependencies: designSystemDeps.devDependencies,
-      peerDependencies: designSystemDeps.peerDependencies,
+  if (hasDesignSystem(config)) {
+    t = withPackageJson(t, "packages/design-system/package.json", (pkg) => {
+      mergeDependenciesFromCatalog(pkg, {
+        dependencies: designSystemDeps.dependencies,
+        devDependencies: designSystemDeps.devDependencies,
+        peerDependencies: designSystemDeps.peerDependencies,
+      });
+      const devDeps = pkg.devDependencies as Record<string, string>;
+      devDeps[tsConfigName] = "workspace:*";
     });
-    const devDeps = pkg.devDependencies as Record<string, string>;
-    devDeps[options.tsConfigName] = "workspace:*";
-  });
+  }
 
   return t;
 };
 
 export const applyDependencyCatalog = (tree: FileTree, config: ProjectConfig): FileTree => {
-  if (config.template === "next-app") {
+  if (!isMonorepo(config)) {
     return withPackageJson(tree, "package.json", (pkg) => {
       mergeDependenciesFromCatalog(pkg, {
-        dependencies: nextAppDeps.dependencies,
-        devDependencies: nextAppDeps.devDependencies,
+        dependencies: nextAppRuntimeDeps.dependencies,
+        devDependencies: devDepsWithOptionalUltracite(config, nextWebAppDevDependencies),
       });
     });
   }
-
-  const tsConfigName = scoped(config.npmScope, "typescript-config");
-  return applyMonorepoCatalog(tree, { tsConfigName });
+  return applyMonorepoCatalog(tree, config);
 };
