@@ -15,6 +15,8 @@ import {
   parseUltraciteLinterFlag,
 } from "./create-args";
 import type { CreateCommandOptions, ResolvedCreateInputs, UiMode } from "./create-args";
+import type { UltraciteLinterId } from "../ultracite-linter";
+import { DEFAULT_ULTRACITE_LINTER } from "../ultracite-linter";
 
 const exitOnCancel = (value: unknown): void => {
   if (p.isCancel(value)) {
@@ -74,7 +76,7 @@ const readAddonsInteractive = async (options: CreateCommandOptions): Promise<Add
           value: "turborepo",
         },
         {
-          hint: "Runs `ultracite init` (you choose linter there)",
+          hint: "`ultracite init` after install; linter in wizard or `--linter`",
           label: "Ultracite (lint + format)",
           value: "ultracite",
         },
@@ -218,6 +220,30 @@ const packagesSummary = (pkgs: readonly PackageId[], turborepoOn: boolean): stri
   return pkgs.length > 0 ? pkgs.join(", ") : "none";
 };
 
+const readUltraciteLinter = async (
+  options: CreateCommandOptions,
+  ultraciteOn: boolean,
+): Promise<UltraciteLinterId | undefined> => {
+  const fromFlag = parseUltraciteLinterFlag(options, ultraciteOn);
+  if (!ultraciteOn) {
+    return undefined;
+  }
+  if (fromFlag !== undefined) {
+    return fromFlag;
+  }
+  return assertValue(
+    await p.select<UltraciteLinterId>({
+      initialValue: DEFAULT_ULTRACITE_LINTER,
+      message: "Ultracite linter (passed as --linter)",
+      options: [
+        { label: "Oxlint + Oxfmt", value: "oxlint" },
+        { label: "Biome", value: "biome" },
+        { label: "ESLint + Prettier + Stylelint", value: "eslint" },
+      ],
+    }),
+  );
+};
+
 export const runInteractiveCreateWizard = async (args: {
   readonly name?: string;
   readonly options: CreateCommandOptions;
@@ -240,7 +266,7 @@ export const runInteractiveCreateWizard = async (args: {
   const turborepoOn = addons.includes("turborepo");
   const packages = await readPackagesInteractive(options, turborepoOn);
   const ultraciteOn = addons.includes("ultracite");
-  const ultraciteLinter = parseUltraciteLinterFlag(options, ultraciteOn);
+  const ultraciteLinter = await readUltraciteLinter(options, ultraciteOn);
 
   p.log.step("Tooling — package manager and UI");
   const packageManager = await readPackageManager(options);
@@ -253,14 +279,9 @@ export const runInteractiveCreateWizard = async (args: {
 
   const useShadcn = ui === "shadcn" && !hasSkipShadcn;
   const runUltracite = ultraciteOn;
-
-  let ultraciteSummary = "no";
-  if (runUltracite) {
-    ultraciteSummary =
-      ultraciteLinter === undefined
-        ? "yes — ultracite init (choose linter in Ultracite, after install)"
-        : `yes — ultracite init with --linter ${ultraciteLinter} (after install)`;
-  }
+  const ultraciteSummary = runUltracite
+    ? `yes — ultracite init --linter ${ultraciteLinter ?? DEFAULT_ULTRACITE_LINTER} (after install)`
+    : "no";
 
   const summaryLines: string[] = [
     `Name:           ${name}`,

@@ -183,11 +183,11 @@ export const runCreate = async (args: {
     ]);
 
     if (resolved.runUltracite && !ultraciteQuiet) {
-      const linterHint =
-        resolved.ultraciteLinter === undefined
-          ? "Choose linter, frameworks, and editors in Ultracite's prompts below."
-          : `Using --linter ${resolved.ultraciteLinter} from your flags.`;
-      process.stdout.write(`\n${pc.cyan("ultracite")} — ${linterHint}\n\n`);
+      const prefix =
+        resolved.ultraciteLinter === undefined ? "" : `Linter: ${resolved.ultraciteLinter}. `;
+      process.stdout.write(
+        `\n${pc.cyan("ultracite")} — ${prefix}Continue in Ultracite for frameworks, editors, and hooks.\n\n`,
+      );
       await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "interactive", {
         ciSafe: false,
         linter: resolved.ultraciteLinter,
