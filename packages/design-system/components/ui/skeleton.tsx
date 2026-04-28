@@ -1,4 +1,4 @@
-import { cn } from "@verno/design-system/lib/utils"
+import { cn } from "@vernostudio/design-system/lib/utils"
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   return (

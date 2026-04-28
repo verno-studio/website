@@ -5,8 +5,8 @@ import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
 
-import { cn } from "@verno/design-system/lib/utils"
-import { Button } from "@verno/design-system/components/ui/button"
+import { cn } from "@vernostudio/design-system/lib/utils"
+import { Button } from "@vernostudio/design-system/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 
 type CarouselApi = UseEmblaCarouselType[1]

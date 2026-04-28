@@ -1,4 +1,4 @@
-import { cn } from "@verno/design-system/lib/utils"
+import { cn } from "@vernostudio/design-system/lib/utils"
 
 function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   return (

@@ -4,24 +4,24 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 
-import { useIsMobile } from "@verno/design-system/hooks/use-mobile"
-import { cn } from "@verno/design-system/lib/utils"
-import { Button } from "@verno/design-system/components/ui/button"
-import { Input } from "@verno/design-system/components/ui/input"
-import { Separator } from "@verno/design-system/components/ui/separator"
+import { useIsMobile } from "@vernostudio/design-system/hooks/use-mobile"
+import { cn } from "@vernostudio/design-system/lib/utils"
+import { Button } from "@vernostudio/design-system/components/ui/button"
+import { Input } from "@vernostudio/design-system/components/ui/input"
+import { Separator } from "@vernostudio/design-system/components/ui/separator"
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@verno/design-system/components/ui/sheet"
-import { Skeleton } from "@verno/design-system/components/ui/skeleton"
+} from "@vernostudio/design-system/components/ui/sheet"
+import { Skeleton } from "@vernostudio/design-system/components/ui/skeleton"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@verno/design-system/components/ui/tooltip"
+} from "@vernostudio/design-system/components/ui/tooltip"
 import { PanelLeftIcon } from "lucide-react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"

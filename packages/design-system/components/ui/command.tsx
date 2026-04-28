@@ -3,18 +3,18 @@
 import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 
-import { cn } from "@verno/design-system/lib/utils"
+import { cn } from "@vernostudio/design-system/lib/utils"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@verno/design-system/components/ui/dialog"
+} from "@vernostudio/design-system/components/ui/dialog"
 import {
   InputGroup,
   InputGroupAddon,
-} from "@verno/design-system/components/ui/input-group"
+} from "@vernostudio/design-system/components/ui/input-group"
 import { SearchIcon, CheckIcon } from "lucide-react"
 
 function Command({

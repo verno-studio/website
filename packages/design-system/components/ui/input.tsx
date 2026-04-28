@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@verno/design-system/lib/utils"
+import { cn } from "@vernostudio/design-system/lib/utils"
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (

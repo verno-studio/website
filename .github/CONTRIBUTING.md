@@ -56,7 +56,7 @@ For package-specific work, use Bun's workspace filters. For example:
 ```sh
 bun --filter verno run dev
 bun --filter verno run test
-bun --filter @verno/template-generator run test
+bun --filter @vernostudio/template-generator run test
 ```
 
 ## Code Standards

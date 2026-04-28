@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { getShadcnExecSpec, getUltraciteExecSpec } from "@verno/template-generator";
+import { getShadcnExecSpec, getUltraciteExecSpec } from "@vernostudio/template-generator";
 import {
   getShadcnBootstrapCommand,
   getShadcnAddAllCommand,

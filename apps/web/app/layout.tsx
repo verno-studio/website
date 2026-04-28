@@ -1,6 +1,6 @@
 import "./globals.css";
-import { fonts } from "@verno/design-system/lib/fonts";
-import { DesignSystemProvider } from "@verno/design-system/components/providers/client";
+import { fonts } from "@vernostudio/design-system/lib/fonts";
+import { DesignSystemProvider } from "@vernostudio/design-system/components/providers/client";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { url } from "@/lib/url";
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   title,
   twitter: {
     card: "summary_large_image",
-    creatorId: "@verno.studio",
+    creatorId: "@vernostudio",
     description,
     images: [
       {

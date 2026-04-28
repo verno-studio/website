@@ -1,5 +1,5 @@
-import type { PackageManager } from "@verno/template-generator";
-import { getShadcnExecSpec, getUltraciteExecSpec } from "@verno/template-generator";
+import type { PackageManager } from "@vernostudio/template-generator";
+import { getShadcnExecSpec, getUltraciteExecSpec } from "@vernostudio/template-generator";
 import type { UltraciteLinterId } from "./ultracite-linter";
 
 export const getPmInstallCommand = (

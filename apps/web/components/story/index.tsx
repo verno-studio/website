@@ -29,7 +29,7 @@ export const Story = () => (
       </ExternalLink>
       , and TypeScript, with a real{" "}
       <code className="text-foreground font-mono text-sm bg-muted px-1">
-        @verno/design-system
+        @vernostudio/design-system
       </code>{" "}
       you can fork, extend, and keep coherent as the product grows.
     </p>

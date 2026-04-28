@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import type { AddonId, FrontendId, PackageId, PackageManager } from "@verno/template-generator";
+import type { AddonId, FrontendId, PackageId, PackageManager } from "@vernostudio/template-generator";
 import {
   getPmInstallCommand,
   getShadcnAddAllCommand,

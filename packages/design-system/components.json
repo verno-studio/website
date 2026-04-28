@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@verno/design-system/components",
-    "utils": "@verno/design-system/lib/utils",
-    "ui": "@verno/design-system/components/ui",
-    "lib": "@verno/design-system/lib",
-    "hooks": "@verno/design-system/hooks"
+    "components": "@vernostudio/design-system/components",
+    "utils": "@vernostudio/design-system/lib/utils",
+    "ui": "@vernostudio/design-system/components/ui",
+    "lib": "@vernostudio/design-system/lib",
+    "hooks": "@vernostudio/design-system/hooks"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

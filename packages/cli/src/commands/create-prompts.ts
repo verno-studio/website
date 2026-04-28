@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import type { AddonId, PackageId, PackageManager } from "@verno/template-generator";
+import type { AddonId, PackageId, PackageManager } from "@vernostudio/template-generator";
 import { UserCancelledError } from "../errors";
 import { renderVernoTitle } from "../ui";
 import {

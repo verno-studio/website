@@ -1,8 +1,8 @@
 "use client";
 
 import { ThemeProvider } from "next-themes";
-import { TooltipProvider } from "@verno/design-system/components/ui/tooltip";
-import { Toaster } from "@verno/design-system/components/ui/sonner";
+import { TooltipProvider } from "@vernostudio/design-system/components/ui/tooltip";
+import { Toaster } from "@vernostudio/design-system/components/ui/sonner";
 import type { PropsWithChildren } from "react";
 
 export const DesignSystemProvider = ({ children }: PropsWithChildren) => (

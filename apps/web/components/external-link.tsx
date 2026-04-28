@@ -1,4 +1,4 @@
-import { cn } from "@verno/design-system/lib/utils";
+import { cn } from "@vernostudio/design-system/lib/utils";
 import type { ComponentProps } from "react";
 
 export const ExternalLink = ({ href, children, className, ...props }: ComponentProps<"a">) => (

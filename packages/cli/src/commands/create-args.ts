@@ -1,5 +1,5 @@
-import type { AddonId, FrontendId, PackageId, PackageManager } from "@verno/template-generator";
-import { ADDON_IDS, FRONTENDS, PACKAGE_IDS } from "@verno/template-generator";
+import type { AddonId, FrontendId, PackageId, PackageManager } from "@vernostudio/template-generator";
+import { ADDON_IDS, FRONTENDS, PACKAGE_IDS } from "@vernostudio/template-generator";
 import type { UltraciteLinterId } from "../ultracite-linter";
 import {
   DEFAULT_ULTRACITE_LINTER,

@@ -1,4 +1,4 @@
-import type { PackageManager } from "@verno/template-generator";
+import type { PackageManager } from "@vernostudio/template-generator";
 import type { ResolvedCreateInputs } from "./create-args";
 import { resolvedHasDesignSystem, resolvedUsesTurborepo } from "./create-args";
 

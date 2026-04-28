@@ -23,7 +23,7 @@ File bodies and optional path segments can use **Handlebars** (e.g. `{{projectNa
 ## API
 
 ```ts
-import { generate, writeTree } from "@verno/template-generator";
+import { generate, writeTree } from "@vernostudio/template-generator";
 
 const tree = generate({
   config: {
@@ -46,8 +46,8 @@ const paths = writeResult.unwrap();
 
 Subpath exports (built output):
 
-- `@verno/template-generator/fs-writer` — `writeTree` only
-- `@verno/template-generator/template-reader` — `mergeTemplateLayers`, `EMBEDDED_BY_LAYER`, etc.
+- `@vernostudio/template-generator/fs-writer` — `writeTree` only
+- `@vernostudio/template-generator/template-reader` — `mergeTemplateLayers`, `EMBEDDED_BY_LAYER`, etc.
 
 ## Development
 

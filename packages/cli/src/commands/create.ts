@@ -1,5 +1,5 @@
 import * as p from "@clack/prompts";
-import { defaultNpmScopeFromProjectName } from "@verno/template-generator";
+import { defaultNpmScopeFromProjectName } from "@vernostudio/template-generator";
 import pc from "picocolors";
 import { dimPath, renderVernoTitle } from "../ui";
 import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } from "../errors";
