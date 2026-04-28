@@ -2,7 +2,7 @@
 
 One command from zero to a **Next.js** app with optional **Turborepo**, workspace **packages**, **shadcn/ui**, and **Ultracite** — wired through the official CLIs.
 
-![Package Downloads](https://shieldcn.dev/npm/dw/@vernostudio/cli)
+![Package Downloads](https://shieldcn.dev/npm/dy/@vernostudio/cli)
 ![Package Version](https://shieldcn.dev/npm/v/@vernostudio/cli)
 ![Package License](https://shieldcn.dev/github/license/verno-studio/website)
 
