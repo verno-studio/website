@@ -1,6 +1,7 @@
 {
   "name": "@vernostudio/template-generator",
   "version": "0.0.0",
+  "private": true,
   "description": "Verno Studio Template Generator: generate templates for Verno Studio projects.",
   "keywords": [
     "cli",
@@ -39,10 +40,6 @@
       "import": "./dist/template-reader.mjs",
       "default": "./dist/template-reader.mjs"
     }
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "generate:templates": "bun run scripts/generate-template-registry.ts",
