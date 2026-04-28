@@ -54,6 +54,10 @@ export class VirtualFileSystem {
     return JSON.parse(raw) as unknown;
   }
 
+  public deleteFile(relativePath: string): boolean {
+    return this.files.delete(normalizePosixPath(relativePath));
+  }
+
   public writeFile(relativePath: string, content: string): void {
     const k = normalizePosixPath(relativePath);
     this.files.set(k, content);
