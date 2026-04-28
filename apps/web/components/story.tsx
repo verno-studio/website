@@ -2,7 +2,7 @@ import { ExternalLink } from "./external-link";
 import { Installer } from "./installer";
 
 export const Story = () => (
-  <article className="grid max-w-2xl gap-6 text-pretty text-sm text-muted-foreground sm:text-base">
+  <article className="grid gap-6 text-pretty text-sm text-muted-foreground sm:text-base">
     <p>
       Today, starters can do in minutes what used to take days. But the surface is shallow. Nothing
       ships taste at the speed tools ship code.
