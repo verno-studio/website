@@ -29,7 +29,6 @@ const singleApp = (overrides: Partial<ProjectConfig> = {}): ProjectConfig => ({
 const monorepoWithDs = (overrides: Partial<ProjectConfig> = {}): ProjectConfig =>
   singleApp({
     addons: ["turborepo", "ultracite"],
-    codeQuality: "oxlint-oxfmt",
     npmScope: "mono",
     packages: ["typescript-config", "design-system"],
     projectName: "mono",
@@ -56,7 +55,6 @@ describe("generate + writeTree", () => {
     const out = join(dir, "next-app");
     const config = singleApp({
       addons: ["ultracite"],
-      codeQuality: "oxlint-oxfmt",
       npmScope: "testapp",
       projectName: "test-app",
     });

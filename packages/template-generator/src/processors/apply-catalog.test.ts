@@ -9,7 +9,6 @@ import { applyDependencyCatalog } from "./apply-catalog";
 
 const appWithUltracite: ProjectConfig = {
   addons: ["ultracite"],
-  codeQuality: "oxlint-oxfmt",
   frontend: "next",
   npmScope: "a",
   packageManager: "bun",
@@ -20,7 +19,6 @@ const appWithUltracite: ProjectConfig = {
 
 const fullMonorepo: ProjectConfig = {
   addons: ["turborepo", "ultracite"],
-  codeQuality: "oxlint-oxfmt",
   frontend: "next",
   npmScope: "acme",
   packageManager: "pnpm",

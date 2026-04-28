@@ -2,8 +2,6 @@ export {
   type AddonId,
   ADDON_IDS,
   assertValidProjectConfig,
-  type CodeQualityId,
-  CODE_QUALITY_IDS,
   type FrontendId,
   FRONTENDS,
   type PackageId,

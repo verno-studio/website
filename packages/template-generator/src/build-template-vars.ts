@@ -1,4 +1,4 @@
-import type { CodeQualityId, ProjectConfig } from "./config";
+import type { ProjectConfig } from "./config";
 import { hasAddon, hasDesignSystem, hasTypescriptConfigPackage, isMonorepo } from "./config";
 import { packageManagerField } from "./catalog/tooling";
 import { scoped } from "./paths";
@@ -44,39 +44,12 @@ export interface HandlebarsTemplateContext {
   readonly ultracite: boolean;
   readonly hasDesignSystem: boolean;
   readonly hasTypescriptConfigPackage: boolean;
-  readonly codeQuality: string;
-  readonly codeQualityBiome: boolean;
-  readonly codeQualityOxlintOxfmt: boolean;
-  readonly codeQualityEslintPrettier: boolean;
 }
-
-const codeQualityFlags = (
-  id: CodeQualityId | undefined,
-): Pick<
-  HandlebarsTemplateContext,
-  "codeQuality" | "codeQualityBiome" | "codeQualityOxlintOxfmt" | "codeQualityEslintPrettier"
-> => {
-  if (id === undefined) {
-    return {
-      codeQuality: "",
-      codeQualityBiome: false,
-      codeQualityEslintPrettier: false,
-      codeQualityOxlintOxfmt: false,
-    };
-  }
-  return {
-    codeQuality: id,
-    codeQualityBiome: id === "biome",
-    codeQualityEslintPrettier: id === "eslint-prettier",
-    codeQualityOxlintOxfmt: id === "oxlint-oxfmt",
-  };
-};
 
 /** Values passed to Handlebars for every template file and optional templated paths. */
 export const buildHandlebarsContext = (config: ProjectConfig): HandlebarsTemplateContext => {
   const dsName = scoped(config.npmScope, "design-system");
   const tsConfigName = scoped(config.npmScope, "typescript-config");
-  const cq = codeQualityFlags(config.codeQuality);
   return {
     componentsStyle: componentsStyleFromShadcnPreset(config.shadcnPreset),
     dsName,
@@ -91,6 +64,5 @@ export const buildHandlebarsContext = (config: ProjectConfig): HandlebarsTemplat
     turborepo: isMonorepo(config),
     ui: config.ui,
     ultracite: hasAddon(config, "ultracite"),
-    ...cq,
   };
 };

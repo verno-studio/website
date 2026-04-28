@@ -13,14 +13,6 @@ export type PackageId = "typescript-config" | "design-system";
 
 export const PACKAGE_IDS: readonly PackageId[] = ["typescript-config", "design-system"] as const;
 
-export type CodeQualityId = "biome" | "oxlint-oxfmt" | "eslint-prettier";
-
-export const CODE_QUALITY_IDS: readonly CodeQualityId[] = [
-  "biome",
-  "eslint-prettier",
-  "oxlint-oxfmt",
-] as const;
-
 export type UiMode = "none" | "shadcn";
 
 export interface ProjectConfig {
@@ -31,8 +23,6 @@ export interface ProjectConfig {
   readonly addons: readonly AddonId[];
   /** Workspace packages; only when `turborepo` is enabled. */
   readonly packages: readonly PackageId[];
-  /** Meaningful when `ultracite` addon is enabled (used in template context / summary). */
-  readonly codeQuality?: CodeQualityId;
   readonly ui: UiMode;
   readonly shadcnPreset?: string;
 }
@@ -106,22 +96,6 @@ export const assertValidProjectConfig = (config: ProjectConfig): void => {
   if (hasPackage(config, "design-system") && !hasPackage(config, "typescript-config")) {
     throw new InvalidProjectConfigError(
       "design-system package requires typescript-config in the same workspace.",
-    );
-  }
-
-  if (config.codeQuality !== undefined && !hasAddon(config, "ultracite")) {
-    throw new InvalidProjectConfigError(
-      "codeQuality is only valid when the ultracite addon is enabled.",
-    );
-  }
-
-  if (config.codeQuality !== undefined && !CODE_QUALITY_IDS.includes(config.codeQuality)) {
-    throw new InvalidProjectConfigError(`Unknown codeQuality "${config.codeQuality}".`);
-  }
-
-  if (hasAddon(config, "ultracite") && config.codeQuality === undefined) {
-    throw new InvalidProjectConfigError(
-      "codeQuality is required when the ultracite addon is enabled (e.g. oxlint-oxfmt).",
     );
   }
 };
