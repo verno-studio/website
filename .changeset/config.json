@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["web", "@verno/design-system", "@verno/template-generator", "@verno/typescript-config"]
+  "ignore": ["web", "@verno/design-system", "@verno/typescript-config"]
 }
