@@ -38,7 +38,7 @@ node packages/cli/dist/index.mjs create my-app -y --addons ultracite
 - `-p, --package-manager` — `bun` | `pnpm` | `npm`
 - `--ui shadcn|none` — run shadcn after install (default: shadcn)
 - `--shadcn-preset` — e.g. `nova` (default: `nova`)
-- `--linter` — `biome` | `oxlint` | `eslint` (with **ultracite**; passed to `ultracite init --linter`). With **`-y`**, defaults to **`oxlint`** if omitted. **Interactive** `create` does **not** ask for a linter in Verno—you choose in **Ultracite's** `init` flow—unless you pass `--linter` explicitly.
+- `--linter` — `biome` | `oxlint` | `eslint` (with **ultracite**; passed to `ultracite init --linter`). With **`-y`**, defaults to **`oxlint`** if omitted. **Interactive** `create` asks for a linter in the Verno wizard unless you pass **`--linter`** on the CLI.
 - `--no-install` — skip package install
 - `--skip-shadcn` / `--skip-ultracite` — skip shadcn or omit ultracite (and its init)
 - `--no-git` — skip `git init`
@@ -49,5 +49,5 @@ node packages/cli/dist/index.mjs create my-app -y --addons ultracite
 1. Write template files (see `@verno/template-generator`).
 2. `install` (unless `--no-install`).
 3. `shadcn` bootstrap (unless `--ui none` or `--skip-shadcn`): app root, or `packages/design-system` when that workspace package exists.
-4. `ultracite init` (when **ultracite** is in `--addons` and not `--skip-ultracite`). **Interactive** runs without `--linter` so Ultracite prompts for the stack; **`-y`** passes **`--linter`** (default **`oxlint`**) with **`--quiet`**. Ultracite still handles frameworks, editors, and installs.
+4. `ultracite init` (when **ultracite** is in `--addons` and not `--skip-ultracite`). **Interactive** passes **`--linter`** from the wizard (or from CLI **`--linter`** when set). **`-y`** uses **`--linter`** (default **`oxlint`**) with **`--quiet`**. Ultracite still handles frameworks, editors, and installs in its own prompts where applicable.
 5. `git init` (unless `--no-git`).

@@ -135,7 +135,7 @@ export interface ResolvedCreateInputs {
   readonly frontend: FrontendId;
   readonly addons: readonly AddonId[];
   readonly packages: readonly PackageId[];
-  /** `ultracite init --linter` when set; quiet `-y` defaults to oxlint; interactive defers to Ultracite unless `--linter` is passed. */
+  /** Always set when ultracite add-on runs: CLI `--linter`, or interactive wizard, or `-y` default. */
   readonly ultraciteLinter?: UltraciteLinterId;
   readonly ui: UiMode;
   readonly useShadcn: boolean;

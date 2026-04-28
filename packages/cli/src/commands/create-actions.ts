@@ -160,7 +160,7 @@ export interface VernoManifest {
   readonly shadcnPreset?: string;
   readonly studio: "Verno Studio";
   readonly ui: UiMode;
-  /** Present when Verno invoked `ultracite init` with `--linter`. */
+  /** Linter passed to `ultracite init --linter` when the ultracite add-on ran (wizard, CLI flag, or `-y` default). */
   readonly ultraciteLinter?: UltraciteLinterId;
 }
 
