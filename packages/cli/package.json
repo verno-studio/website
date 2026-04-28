@@ -21,7 +21,6 @@
     "url": "git+https://github.com/verno-studio/website.git"
   },
   "bin": {
-    "@vernostudio/cli": "./dist/index.mjs",
     "verno": "./dist/index.mjs",
     "vernostudio": "./dist/index.mjs"
   },
