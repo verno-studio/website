@@ -1,6 +1,6 @@
 {
   "name": "verno",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Verno CLI: scaffold Next.js and Turborepo projects with shadcn and Ultracite.",
   "bin": {
