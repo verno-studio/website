@@ -3,12 +3,10 @@ import "./globals.css";
 import type { Metadata } from "next";
 {{#if hasDesignSystem}}
 import { DesignSystemProvider } from "{{dsName}}/components/providers/client";
-import { fonts, sans } from "{{dsName}}/lib/fonts";
-import { cn } from "{{dsName}}/lib/utils";
+import { fonts } from "{{dsName}}/lib/fonts";
 {{else}}
 import { DesignSystemProvider } from "@/components/providers/client";
-import { fonts, sans } from "@/lib/fonts";
-import { cn } from "@/lib/utils";
+import { fonts } from "@/lib/fonts";
 {{/if}}
 import type { ReactNode } from "react";
 {{else}}

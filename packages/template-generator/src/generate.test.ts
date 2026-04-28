@@ -149,8 +149,7 @@ describe("generate + writeTree", () => {
     const layout = await readFile(join(out, "app", "layout.tsx"), "utf-8");
     expect(layout).toContain("DesignSystemProvider");
     expect(layout).toContain("@/lib/fonts");
-    expect(layout).toContain("@/lib/utils");
-    expect(layout).toContain("cn(");
+    expect(layout).toContain("className={fonts}");
 
     const fontsSrc = await readFile(join(out, "lib", "fonts.ts"), "utf-8");
     expect(fontsSrc).toContain("export const fonts");
@@ -183,8 +182,7 @@ describe("generate + writeTree", () => {
     const layout = await readFile(join(out, "apps", "web", "app", "layout.tsx"), "utf-8");
     expect(layout).toContain("DesignSystemProvider");
     expect(layout).toContain(`${ds}/lib/fonts`);
-    expect(layout).toContain(`${ds}/lib/utils`);
-    expect(layout).toContain("cn(");
+    expect(layout).toContain("className={fonts}");
 
     await access(join(out, "packages", "design-system", "lib", "utils.ts"), constants.R_OK);
   });

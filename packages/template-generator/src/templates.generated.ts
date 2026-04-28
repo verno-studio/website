@@ -159,12 +159,10 @@ YOUR_PRESET_CODE\` (see [shadcn CLI](https://ui.shadcn.com/docs/cli)).`]
 import type { Metadata } from "next";
 {{#if hasDesignSystem}}
 import { DesignSystemProvider } from "{{dsName}}/components/providers/client";
-import { fonts, sans } from "{{dsName}}/lib/fonts";
-import { cn } from "{{dsName}}/lib/utils";
+import { fonts } from "{{dsName}}/lib/fonts";
 {{else}}
 import { DesignSystemProvider } from "@/components/providers/client";
-import { fonts, sans } from "@/lib/fonts";
-import { cn } from "@/lib/utils";
+import { fonts } from "@/lib/fonts";
 {{/if}}
 import type { ReactNode } from "react";
 {{else}}
@@ -229,17 +227,18 @@ export default Home;
 `],
     ["components/providers/client.tsx", `"use client";
 
-import type { FC, ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
-import { Toaster } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
+import type { PropsWithChildren } from "react";
 
-export const DesignSystemProvider: FC<{ readonly children: ReactNode }> = ({ children }) => (
-  <>
-    <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
+export const DesignSystemProvider = ({ children }: PropsWithChildren) => (
+  <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
+    <TooltipProvider delayDuration={0}>
       {children}
-    </ThemeProvider>
-    <Toaster />
-  </>
+      <Toaster />
+    </TooltipProvider>
+  </ThemeProvider>
 );
 `],
     ["lib/fonts.ts", `import { cn } from "./utils";
@@ -405,17 +404,18 @@ export default config;
 `],
     ["packages/design-system/components/providers/client.tsx", `"use client";
 
-import type { FC, ReactNode } from "react";
 import { ThemeProvider } from "next-themes";
-import { Toaster } from "sonner";
+import { TooltipProvider } from "../ui/tooltip";
+import { Toaster } from "../ui/sonner";
+import type { PropsWithChildren } from "react";
 
-export const DesignSystemProvider: FC<{ readonly children: ReactNode }> = ({ children }) => (
-  <>
-    <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
+export const DesignSystemProvider = ({ children }: PropsWithChildren) => (
+  <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
+    <TooltipProvider delayDuration={0}>
       {children}
-    </ThemeProvider>
-    <Toaster />
-  </>
+      <Toaster />
+    </TooltipProvider>
+  </ThemeProvider>
 );
 `],
     ["packages/design-system/lib/fonts.ts", `import { cn } from "./utils";
