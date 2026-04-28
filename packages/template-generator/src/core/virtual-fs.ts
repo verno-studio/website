@@ -1,6 +1,9 @@
 import type { ProjectConfig } from "../config";
 import type { FileTree } from "../paths";
+import { packageJsonString } from "../templates/strings";
 import type { VirtualDirectory, VirtualFile, VirtualFileTree } from "../types";
+
+const normalizePosixPath = (relativePath: string): string => relativePath.replaceAll("\\", "/");
 
 const dirnamePosix = (p: string): string => {
   const i = p.lastIndexOf("/");
@@ -35,9 +38,32 @@ const sortChildren = (node: VirtualDirectory): void => {
 export class VirtualFileSystem {
   private readonly files = new Map<string, string>();
 
+  public exists(relativePath: string): boolean {
+    return this.files.has(normalizePosixPath(relativePath));
+  }
+
+  public readFile(relativePath: string): string | undefined {
+    return this.files.get(normalizePosixPath(relativePath));
+  }
+
+  public readJson(relativePath: string): unknown {
+    const raw = this.readFile(relativePath);
+    if (raw === undefined) {
+      throw new Error(`Missing file in tree: ${relativePath}`);
+    }
+    return JSON.parse(raw) as unknown;
+  }
+
   public writeFile(relativePath: string, content: string): void {
-    const k = relativePath.replaceAll("\\", "/");
+    const k = normalizePosixPath(relativePath);
     this.files.set(k, content);
+  }
+
+  public writeJson(relativePath: string, data: Record<string, unknown>): void {
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+      throw new Error("writeJson expects a plain object");
+    }
+    this.writeFile(relativePath, packageJsonString(data));
   }
 
   public getFileCount(): number {
@@ -123,15 +149,20 @@ export class VirtualFileSystem {
   }
 }
 
+export const virtualFileSystemFromFileTree = (tree: FileTree): VirtualFileSystem => {
+  const vfs = new VirtualFileSystem();
+  for (const [k, v] of Object.entries(tree)) {
+    vfs.writeFile(k, v);
+  }
+  return vfs;
+};
+
 export const virtualTreeFromFileTree = (
   tree: FileTree,
   rootName: string,
   config: ProjectConfig,
 ): VirtualFileTree => {
-  const vfs = new VirtualFileSystem();
-  for (const [k, v] of Object.entries(tree)) {
-    vfs.writeFile(k, v);
-  }
+  const vfs = virtualFileSystemFromFileTree(tree);
   const { root, fileCount, directoryCount } = vfs.toVirtualFileTree(rootName);
   return { config, directoryCount, fileCount, root };
 };
