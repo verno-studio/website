@@ -1,4 +1,4 @@
-import { cn } from "@verno/design-system/lib/utils";
+import { cn } from "./utils";
 import {
   Geist as createSans,
   Instrument_Serif as createSerif,
@@ -28,3 +28,5 @@ export const fonts = cn(
   serif.variable,
   "touch-manipulation font-sans antialiased",
 );
+
+export { mono, sans, serif };
