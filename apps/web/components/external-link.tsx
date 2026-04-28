@@ -1,4 +1,5 @@
 import { cn } from "@vernostudio/design-system/lib/utils";
+import { ArrowUpRightIcon } from "lucide-react";
 import type { ComponentProps } from "react";
 
 export const ExternalLink = ({ href, children, className, ...props }: ComponentProps<"a">) => (
@@ -13,5 +14,6 @@ export const ExternalLink = ({ href, children, className, ...props }: ComponentP
     {...props}
   >
     {children}
+    <ArrowUpRightIcon aria-hidden className="inline-block size-3 align-baseline" />
   </a>
 );

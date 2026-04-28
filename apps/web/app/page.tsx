@@ -1,5 +1,5 @@
 import { Hero } from "@/components/hero";
-import { Story } from "@/components/story/index";
+import { Story } from "@/components/story";
 
 const Home = () => (
   <>
