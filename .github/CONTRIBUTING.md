@@ -4,7 +4,7 @@ Thanks for your interest in contributing to Verno Studio. This repository is a B
 
 ## Source Code
 
-The source code is hosted on GitHub at [PunGrumpy/verno.studio](https://github.com/PunGrumpy/verno.studio).
+The source code is hosted on GitHub at [verno-studio/website](https://github.com/verno-studio/website).
 
 ## Project Structure
 
@@ -20,8 +20,8 @@ The source code is hosted on GitHub at [PunGrumpy/verno.studio](https://github.c
 2. Clone your fork:
 
    ```sh
-   git clone https://github.com/PunGrumpy/verno.studio.git
-   cd verno.studio
+   git clone git@github.com:verno-studio/website.git
+   cd website
    ```
 
 3. Install dependencies with Bun:
@@ -112,7 +112,7 @@ The release workflow runs on `main`, executes tests and build, then uses Changes
 
 ## Reporting Issues
 
-Use the GitHub [issue tracker](https://github.com/PunGrumpy/verno.studio/issues) to report bugs or request features.
+Use the GitHub [issue tracker](https://github.com/verno-studio/website/issues) to report bugs or request features.
 
 For bug reports, please include:
 
