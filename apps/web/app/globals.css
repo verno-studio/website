@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @import "@vernostudio/design-system/styles/globals.css";
+
+:root,
+.light {
+  --radius: 0.5rem !important;
+}
