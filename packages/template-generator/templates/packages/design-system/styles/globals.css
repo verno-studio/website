@@ -135,6 +135,7 @@
   --sidebar-ring: oklch(0.72 0 0);
 }
 
+/* This layer is by PunGrumpy */
 @layer base {
   ::after,
   ::before,
