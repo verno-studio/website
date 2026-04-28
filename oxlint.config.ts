@@ -9,5 +9,6 @@ export default defineConfig({
   ignorePatterns: [
     "packages/design-system/components/ui",
     "packages/template-generator/src/templates.generated.ts",
+    "packages/template-generator/templates/**/*.hbs",
   ],
 });
