@@ -22,15 +22,9 @@ const serif = createSerif({
   weight: "400",
 });
 
-/**
- * Vars + coarse defaults for `<html>`. Scaffold also exports {@link sans} for `sans.className` on `<body>`.
- * Standalone apps mirror this file at repo `lib/fonts.ts`.
- */
 export const fonts = cn(
   sans.variable,
   mono.variable,
   serif.variable,
   "touch-manipulation font-sans antialiased",
 );
-
-export { mono, sans, serif };

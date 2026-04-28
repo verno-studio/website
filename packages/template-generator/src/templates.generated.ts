@@ -183,8 +183,8 @@ interface RootLayoutProps {
 const RootLayout = ({ children }: RootLayoutProps) =>
 {{#if useShadcn}}
 (
-  <html className={fonts} lang="en" suppressHydrationWarning>
-    <body className={cn(sans.className, "min-h-dvh bg-background antialiased font-sans text-foreground")}>
+  <html lang="en" suppressHydrationWarning>
+    <body className={fonts}>
       <DesignSystemProvider>{children}</DesignSystemProvider>
     </body>
   </html>
@@ -242,8 +242,7 @@ export const DesignSystemProvider: FC<{ readonly children: ReactNode }> = ({ chi
   </>
 );
 `],
-    ["lib/fonts.ts", `// Same definitions as packages/design-system/lib/fonts.ts — edit both together.
-import { cn } from "./utils";
+    ["lib/fonts.ts", `import { cn } from "./utils";
 import {
   Geist as createSans,
   Instrument_Serif as createSerif,
@@ -273,8 +272,6 @@ export const fonts = cn(
   serif.variable,
   "touch-manipulation font-sans antialiased",
 );
-
-export { mono, sans, serif };
 `],
     ["lib/utils.ts", `import { clsx } from "clsx";
 import type { ClassValue } from "clsx";
@@ -445,18 +442,12 @@ const serif = createSerif({
   weight: "400",
 });
 
-/**
- * Vars + coarse defaults for \`<html>\`. Scaffold also exports {@link sans} for \`sans.className\` on \`<body>\`.
- * Standalone apps mirror this file at repo \`lib/fonts.ts\`.
- */
 export const fonts = cn(
   sans.variable,
   mono.variable,
   serif.variable,
   "touch-manipulation font-sans antialiased",
 );
-
-export { mono, sans, serif };
 `],
     ["packages/design-system/lib/utils.ts", `import { clsx } from "clsx";
 import type { ClassValue } from "clsx";

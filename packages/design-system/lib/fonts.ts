@@ -28,5 +28,3 @@ export const fonts = cn(
   serif.variable,
   "touch-manipulation font-sans antialiased",
 );
-
-export { mono, sans, serif };
