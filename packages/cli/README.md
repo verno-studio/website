@@ -32,8 +32,6 @@ Spin up a new project from the stack this repo ships. Pick add-ons, answer promp
 | **shadcn**             | `shadcn init` (preset `nova` by default) + `shadcn add --all` — app root, or `packages/design-system` when that package exists |
 | **Ultracite**          | `ultracite init` with linter **`oxlint`**, **`biome`**, or **`eslint`** (`ultracite init --linter`)                            |
 
-Templates come from [`@verno/template-generator`](../template-generator/README.md). With **`--ui shadcn`**, the scaffold includes e.g. `components/providers/client` and `lib/fonts` (**`--ui none`** omits them).
-
 ### Non-interactive and dry runs
 
 - **`-y` / `--yes`** — no prompts; project name is required (e.g. `verno create my-app -y`).
@@ -85,7 +83,3 @@ Global:
   -v, --version              Show CLI version
   -h, --help                 Show help (verno --help; verno create --help for create flags)
 ```
-
-## License
-
-[MIT](../LICENSE)
