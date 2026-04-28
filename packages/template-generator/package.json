@@ -1,7 +1,24 @@
 {
-  "name": "@verno/template-generator",
+  "name": "@vernostudio/template-generator",
   "version": "0.0.0",
-  "private": true,
+  "description": "Verno Studio Template Generator: generate templates for Verno Studio projects.",
+  "keywords": [
+    "cli",
+    "template-generator",
+    "typescript",
+    "vernostudio",
+    "virtual-fs"
+  ],
+  "bugs": {
+    "url": "https://github.com/verno-studio/website/issues"
+  },
+  "license": "MIT",
+  "author": "Noppakorn Kaewsalabnil <hello@pungrumpy.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/verno-studio/website.git",
+    "directory": "packages/template-generator"
+  },
   "files": [
     "dist"
   ],
@@ -22,6 +39,10 @@
       "import": "./dist/template-reader.mjs",
       "default": "./dist/template-reader.mjs"
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "generate:templates": "bun run scripts/generate-template-registry.ts",
