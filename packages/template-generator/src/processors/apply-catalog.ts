@@ -1,34 +1,16 @@
 import type { ProjectConfig } from "../config";
 import { hasAddon, hasDesignSystem, hasPackage, isMonorepo } from "../config";
-import {
-  mergeDependenciesFromCatalog,
-  parsePackageJson,
-  stringifyPackageJson,
-} from "../catalog/package-json";
+import type { VirtualFileSystem } from "../core/virtual-fs";
 import { scoped } from "../paths";
-import type { FileTree } from "../paths";
-import type { ManagedDependency } from "../catalog/dependencies";
+import { addPackageDependency } from "../utils/add-deps";
+import type { AvailableDependencies } from "../utils/add-deps";
 
-const withPackageJson = (
-  tree: FileTree,
-  relPath: string,
-  fn: (pkg: Record<string, unknown>) => void,
-): FileTree => {
-  const raw = tree[relPath];
-  if (raw === undefined) {
-    throw new Error(`Missing file in tree: ${relPath}`);
-  }
-  const pkg = parsePackageJson(raw);
-  fn(pkg);
-  return { ...tree, [relPath]: stringifyPackageJson(pkg) };
-};
-
-const nextAppRuntimeDeps: { dependencies: readonly ManagedDependency[] } = {
+const nextAppRuntimeDeps: { dependencies: readonly AvailableDependencies[] } = {
   dependencies: ["next", "react", "react-dom"],
 };
 
 /** Shared by single-app root and `apps/web` in the Turborepo layout. */
-const nextWebAppDevDependencies: readonly ManagedDependency[] = [
+const nextWebAppDevDependencies: readonly AvailableDependencies[] = [
   "@tailwindcss/postcss",
   "@types/node",
   "@types/react",
@@ -38,20 +20,20 @@ const nextWebAppDevDependencies: readonly ManagedDependency[] = [
   "typescript",
 ];
 
-const monorepoRootSharedDevDeps: readonly ManagedDependency[] = ["turbo", "typescript"];
+const monorepoRootSharedDevDeps: readonly AvailableDependencies[] = ["turbo", "typescript"];
 
 const webAppDeps: {
-  dependencies: readonly ManagedDependency[];
-  devDependencies: readonly ManagedDependency[];
+  dependencies: readonly AvailableDependencies[];
+  devDependencies: readonly AvailableDependencies[];
 } = {
   dependencies: ["next", "react", "react-dom"],
   devDependencies: nextWebAppDevDependencies,
 };
 
 const designSystemDeps: {
-  dependencies: readonly ManagedDependency[];
-  devDependencies: readonly ManagedDependency[];
-  peerDependencies: readonly ManagedDependency[];
+  dependencies: readonly AvailableDependencies[];
+  devDependencies: readonly AvailableDependencies[];
+  peerDependencies: readonly AvailableDependencies[];
 } = {
   dependencies: [
     "class-variance-authority",
@@ -73,63 +55,64 @@ const designSystemDeps: {
 
 const devDepsWithOptionalUltracite = (
   config: ProjectConfig,
-  base: readonly ManagedDependency[],
-) => {
-  const out: ManagedDependency[] = [...base];
-  if (hasAddon(config, "ultracite")) {
-    out.push("ultracite");
+  base: readonly AvailableDependencies[],
+): readonly AvailableDependencies[] => {
+  if (!hasAddon(config, "ultracite")) {
+    return base;
   }
-  return out;
+  return [...base, "ultracite"];
 };
 
-const applyMonorepoCatalog = (tree: FileTree, config: ProjectConfig): FileTree => {
+const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): void => {
   const tsConfigName = scoped(config.npmScope, "typescript-config");
   const dsName = scoped(config.npmScope, "design-system");
 
-  let t = withPackageJson(tree, "package.json", (pkg) => {
-    mergeDependenciesFromCatalog(pkg, {
-      devDependencies: devDepsWithOptionalUltracite(config, monorepoRootSharedDevDeps),
-    });
+  addPackageDependency({
+    devDependencies: devDepsWithOptionalUltracite(config, monorepoRootSharedDevDeps),
+    packagePath: "package.json",
+    vfs,
   });
 
-  t = withPackageJson(t, "apps/web/package.json", (pkg) => {
-    mergeDependenciesFromCatalog(pkg, {
-      dependencies: webAppDeps.dependencies,
-      devDependencies: devDepsWithOptionalUltracite(config, webAppDeps.devDependencies),
-    });
-    if (hasPackage(config, "typescript-config")) {
-      const devDeps = pkg.devDependencies as Record<string, string>;
-      devDeps[tsConfigName] = "workspace:*";
-    }
-    if (hasDesignSystem(config)) {
-      const deps = pkg.dependencies as Record<string, string>;
-      deps[dsName] = "workspace:*";
-    }
+  const webWorkspacePins: {
+    customDependencies?: Record<string, string>;
+    customDevDependencies?: Record<string, string>;
+  } = {};
+  if (hasDesignSystem(config)) {
+    webWorkspacePins.customDependencies = { [dsName]: "workspace:*" };
+  }
+  if (hasPackage(config, "typescript-config")) {
+    webWorkspacePins.customDevDependencies = { [tsConfigName]: "workspace:*" };
+  }
+
+  addPackageDependency({
+    ...webWorkspacePins,
+    dependencies: webAppDeps.dependencies,
+    devDependencies: devDepsWithOptionalUltracite(config, webAppDeps.devDependencies),
+    packagePath: "apps/web/package.json",
+    vfs,
   });
 
   if (hasDesignSystem(config)) {
-    t = withPackageJson(t, "packages/design-system/package.json", (pkg) => {
-      mergeDependenciesFromCatalog(pkg, {
-        dependencies: designSystemDeps.dependencies,
-        devDependencies: designSystemDeps.devDependencies,
-        peerDependencies: designSystemDeps.peerDependencies,
-      });
-      const devDeps = pkg.devDependencies as Record<string, string>;
-      devDeps[tsConfigName] = "workspace:*";
+    addPackageDependency({
+      customDevDependencies: { [tsConfigName]: "workspace:*" },
+      dependencies: designSystemDeps.dependencies,
+      devDependencies: designSystemDeps.devDependencies,
+      packagePath: "packages/design-system/package.json",
+      peerDependencies: designSystemDeps.peerDependencies,
+      vfs,
     });
   }
-
-  return t;
 };
 
-export const applyDependencyCatalog = (tree: FileTree, config: ProjectConfig): FileTree => {
+export const applyDependencyCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): void => {
   if (!isMonorepo(config)) {
-    return withPackageJson(tree, "package.json", (pkg) => {
-      mergeDependenciesFromCatalog(pkg, {
-        dependencies: nextAppRuntimeDeps.dependencies,
-        devDependencies: devDepsWithOptionalUltracite(config, nextWebAppDevDependencies),
-      });
+    addPackageDependency({
+      dependencies: nextAppRuntimeDeps.dependencies,
+      devDependencies: devDepsWithOptionalUltracite(config, nextWebAppDevDependencies),
+      packagePath: "package.json",
+      vfs,
     });
+    return;
   }
-  return applyMonorepoCatalog(tree, config);
+  applyMonorepoCatalog(vfs, config);
 };

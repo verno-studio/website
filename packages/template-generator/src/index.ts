@@ -20,10 +20,15 @@ export {
   isMonorepo,
 } from "./config";
 export {
-  DEPENDENCY_VERSIONS,
+  addPackageDependency,
+  dependencyVersionMap,
   getDependencyVersion,
-  type ManagedDependency,
-} from "./catalog/dependencies";
+  parsePackageJson,
+  stringifyPackageJson,
+  type AddPackageDependencyOptions,
+  type AvailableDependencies,
+  type PackageJsonRecord,
+} from "./utils/add-deps";
 export {
   getShadcnExecSpec,
   getUltraciteExecSpec,
@@ -49,7 +54,11 @@ export type {
 } from "./types";
 export { FileWriteError } from "./file-write-error";
 export { GeneratorError } from "./generator-error";
-export { VirtualFileSystem, virtualTreeFromFileTree } from "./core/virtual-fs";
+export {
+  VirtualFileSystem,
+  virtualFileSystemFromFileTree,
+  virtualTreeFromFileTree,
+} from "./core/virtual-fs";
 export { listKeysForProjectConfig, mergeTemplateLayers } from "./core/embed-templates";
 export {
   LAYERS,
@@ -63,6 +72,6 @@ export {
   applyDependencyCatalog,
   defaultPostProcessors,
   runPostProcessPipeline,
-  type FileTreeProcessor,
+  type VirtualFileSystemProcessor,
 } from "./processors";
 export { EMBEDDED_BY_LAYER, TEMPLATE_COUNT } from "./templates.generated";

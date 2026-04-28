@@ -1,14 +1,17 @@
 import { describe, expect, test } from "bun:test";
-import { runPostProcessPipeline } from "./pipeline";
-import type { FileTreeProcessor } from "./pipeline";
 import type { ProjectConfig } from "../config";
+import { VirtualFileSystem } from "../core/virtual-fs";
+import { runPostProcessPipeline } from "./pipeline";
+import type { VirtualFileSystemProcessor } from "./pipeline";
 
-const pipelineAppendOne: FileTreeProcessor = (tree) => ({ ...tree, "a.txt": "1" });
+const pipelineAppendOne: VirtualFileSystemProcessor = (vfs) => {
+  vfs.writeFile("a.txt", "1");
+};
 
-const pipelineAppendTwo: FileTreeProcessor = (tree) => ({
-  ...tree,
-  "a.txt": `${tree["a.txt"]}2`,
-});
+const pipelineAppendTwo: VirtualFileSystemProcessor = (vfs) => {
+  const cur = vfs.readFile("a.txt") ?? "";
+  vfs.writeFile("a.txt", `${cur}2`);
+};
 
 const minimalConfig: ProjectConfig = {
   addons: [],
@@ -22,7 +25,8 @@ const minimalConfig: ProjectConfig = {
 
 describe("runPostProcessPipeline", () => {
   test("runs processors in order", () => {
-    const out = runPostProcessPipeline({}, minimalConfig, [pipelineAppendOne, pipelineAppendTwo]);
-    expect(out["a.txt"]).toBe("12");
+    const vfs = new VirtualFileSystem();
+    runPostProcessPipeline(vfs, minimalConfig, [pipelineAppendOne, pipelineAppendTwo]);
+    expect(vfs.readFile("a.txt")).toBe("12");
   });
 });

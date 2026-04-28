@@ -3,7 +3,11 @@ import { assertValidProjectConfig } from "./config";
 import type { ProjectConfig } from "./config";
 import { mergeTemplateLayers } from "./core/embed-templates";
 import { applyTemplateVars, renderTemplatePathIfNeeded } from "./core/template-processor";
-import { VirtualFileSystem, virtualTreeFromFileTree } from "./core/virtual-fs";
+import {
+  VirtualFileSystem,
+  virtualFileSystemFromFileTree,
+  virtualTreeFromFileTree,
+} from "./core/virtual-fs";
 import { GeneratorError } from "./generator-error";
 import { defaultPostProcessors, runPostProcessPipeline } from "./processors";
 import type { FileTree } from "./paths";
@@ -41,8 +45,9 @@ export const generate = (options: GeneratorOptions): Result<VirtualFileTree, Gen
         });
       }
       const interpolated = toInterpolatedFileTree(merged, config);
-      const processed = runPostProcessPipeline(interpolated, config, defaultPostProcessors);
-      return virtualTreeFromFileTree(processed, config.projectName, config);
+      const vfs = virtualFileSystemFromFileTree(interpolated);
+      runPostProcessPipeline(vfs, config, defaultPostProcessors);
+      return virtualTreeFromFileTree(vfs.toFileTree(), config.projectName, config);
     },
   });
 
