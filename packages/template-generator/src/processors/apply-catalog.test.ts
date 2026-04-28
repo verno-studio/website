@@ -71,4 +71,40 @@ describe("applyDependencyCatalog", () => {
     expect(design.devDependencies[tsc]).toBe("workspace:*");
     expect(design.peerDependencies.react).toBe(dependencyVersionMap.react);
   });
+
+  test("when ui is shadcn, adds ThemeProvider/toast deps to design-system and next.js for fonts", () => {
+    const config: ProjectConfig = { ...fullMonorepo, ui: "shadcn" };
+    const vfs = virtualFileSystemFromFileTree(buildInterpolatedFileTree(config));
+    applyDependencyCatalog(vfs, config);
+    const tree = vfs.toFileTree();
+    const ds = scoped("acme", "design-system");
+    const web = JSON.parse(tree["apps/web/package.json"] ?? "{}") as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    const design = JSON.parse(tree["packages/design-system/package.json"] ?? "{}") as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    expect(design.dependencies?.["next-themes"]).toBe(dependencyVersionMap["next-themes"]);
+    expect(design.dependencies?.sonner).toBe(dependencyVersionMap.sonner);
+    expect(design.devDependencies?.next).toBe(dependencyVersionMap.next);
+    expect(web.dependencies?.[ds]).toBe("workspace:*");
+    expect(web.dependencies?.["next-themes"]).toBeUndefined();
+    expect(web.dependencies?.sonner).toBeUndefined();
+    expect(web.dependencies?.clsx).toBeUndefined();
+    expect(web.dependencies?.["tailwind-merge"]).toBeUndefined();
+  });
+
+  test("single app ui shadcn adds clsx and tailwind-merge for lib/utils cn()", () => {
+    const config: ProjectConfig = { ...appWithUltracite, ui: "shadcn" };
+    const vfs = virtualFileSystemFromFileTree(buildInterpolatedFileTree(config));
+    applyDependencyCatalog(vfs, config);
+    const tree = vfs.toFileTree();
+    const pkg = JSON.parse(tree["package.json"] ?? "{}") as {
+      dependencies?: Record<string, string>;
+    };
+    expect(pkg.dependencies?.clsx).toBe(dependencyVersionMap.clsx);
+    expect(pkg.dependencies?.["tailwind-merge"]).toBe(dependencyVersionMap["tailwind-merge"]);
+  });
 });

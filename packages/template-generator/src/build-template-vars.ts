@@ -40,6 +40,7 @@ export interface HandlebarsTemplateContext {
   readonly shadcnPreset: string;
   readonly frontend: string;
   readonly ui: string;
+  readonly useShadcn: boolean;
   readonly turborepo: boolean;
   readonly ultracite: boolean;
   readonly hasDesignSystem: boolean;
@@ -64,5 +65,6 @@ export const buildHandlebarsContext = (config: ProjectConfig): HandlebarsTemplat
     turborepo: isMonorepo(config),
     ui: config.ui,
     ultracite: hasAddon(config, "ultracite"),
+    useShadcn: config.ui === "shadcn",
   };
 };

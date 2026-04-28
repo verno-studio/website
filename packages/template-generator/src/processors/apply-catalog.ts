@@ -30,6 +30,11 @@ const webAppDeps: {
   devDependencies: nextWebAppDevDependencies,
 };
 
+const SHADCN_UI_RUNTIME: readonly AvailableDependencies[] = ["next-themes", "sonner"];
+
+/** `lib/utils.ts` (cn) in standalone / apps/web when there is no workspace design-system package. */
+const SHADCN_STANDALONE_LIB_UTILS: readonly AvailableDependencies[] = ["clsx", "tailwind-merge"];
+
 const designSystemDeps: {
   dependencies: readonly AvailableDependencies[];
   devDependencies: readonly AvailableDependencies[];
@@ -66,6 +71,7 @@ const devDepsWithOptionalUltracite = (
 const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): void => {
   const tsConfigName = scoped(config.npmScope, "typescript-config");
   const dsName = scoped(config.npmScope, "design-system");
+  const uiShadcn = config.ui === "shadcn";
 
   addPackageDependency({
     devDependencies: devDepsWithOptionalUltracite(config, monorepoRootSharedDevDeps),
@@ -84,19 +90,31 @@ const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): vo
     webWorkspacePins.customDevDependencies = { [tsConfigName]: "workspace:*" };
   }
 
+  const webRuntimeDependencies: AvailableDependencies[] = [...webAppDeps.dependencies];
+  if (uiShadcn && !hasDesignSystem(config)) {
+    webRuntimeDependencies.push(...SHADCN_UI_RUNTIME, ...SHADCN_STANDALONE_LIB_UTILS);
+  }
+
   addPackageDependency({
     ...webWorkspacePins,
-    dependencies: webAppDeps.dependencies,
+    dependencies: webRuntimeDependencies,
     devDependencies: devDepsWithOptionalUltracite(config, webAppDeps.devDependencies),
     packagePath: "apps/web/package.json",
     vfs,
   });
 
   if (hasDesignSystem(config)) {
+    const dsDependencies = [...designSystemDeps.dependencies];
+    const dsDevDependencies = [...designSystemDeps.devDependencies];
+    if (uiShadcn) {
+      dsDependencies.push(...SHADCN_UI_RUNTIME);
+      dsDevDependencies.push("next");
+    }
+
     addPackageDependency({
       customDevDependencies: { [tsConfigName]: "workspace:*" },
-      dependencies: designSystemDeps.dependencies,
-      devDependencies: designSystemDeps.devDependencies,
+      dependencies: dsDependencies,
+      devDependencies: dsDevDependencies,
       packagePath: "packages/design-system/package.json",
       peerDependencies: designSystemDeps.peerDependencies,
       vfs,
@@ -106,8 +124,12 @@ const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): vo
 
 export const applyDependencyCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): void => {
   if (!isMonorepo(config)) {
+    const dependencies: AvailableDependencies[] = [...nextAppRuntimeDeps.dependencies];
+    if (config.ui === "shadcn") {
+      dependencies.push(...SHADCN_UI_RUNTIME, ...SHADCN_STANDALONE_LIB_UTILS);
+    }
     addPackageDependency({
-      dependencies: nextAppRuntimeDeps.dependencies,
+      dependencies,
       devDependencies: devDepsWithOptionalUltracite(config, nextWebAppDevDependencies),
       packagePath: "package.json",
       vfs,

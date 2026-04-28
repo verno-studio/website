@@ -46,8 +46,8 @@ node packages/cli/dist/index.mjs create my-app -y --addons ultracite
 
 ## Flow
 
-1. Write template files (see `@verno/template-generator`).
+1. Write template files (see `@verno/template-generator`), including **`components/providers/client`** (`DesignSystemProvider`) and **`lib/fonts`** when `--ui shadcn` (not when `--ui none`).
 2. `install` (unless `--no-install`).
-3. `shadcn` bootstrap (unless `--ui none` or `--skip-shadcn`): app root, or `packages/design-system` when that workspace package exists.
+3. `shadcn init` plus `shadcn add --all` (unless `--ui none` or `--skip-shadcn`): app root, or `packages/design-system` when that workspace package exists.
 4. `ultracite init` (when **ultracite** is in `--addons` and not `--skip-ultracite`). **Interactive** passes **`--linter`** from the wizard (or from CLI **`--linter`** when set). **`-y`** uses **`--linter`** (default **`oxlint`**) with **`--quiet`**. Ultracite still handles frameworks, editors, and installs in its own prompts where applicable.
 5. `git init` (unless `--no-git`).

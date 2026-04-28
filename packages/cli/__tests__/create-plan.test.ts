@@ -20,6 +20,7 @@ describe("buildCreatePlan", () => {
     expect(steps.find((s) => s.id === "scaffold")?.willRun).toBe(true);
     expect(steps.find((s) => s.id === "install")?.willRun).toBe(true);
     expect(steps.find((s) => s.id === "shadcn")?.command?.file).toBe("npx");
+    expect(steps.find((s) => s.id === "shadcn-all")?.command?.args).toContain("--all");
     const ultra = steps.find((s) => s.id === "ultracite")?.command;
     expect(ultra?.args).toContain("--linter");
     expect(ultra?.args).toContain("oxlint");

@@ -1,6 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import { getShadcnExecSpec, getUltraciteExecSpec } from "@verno/template-generator";
-import { getShadcnBootstrapCommand, getUltraciteInitCommand } from "../src/pm-exec";
+import {
+  getShadcnBootstrapCommand,
+  getShadcnAddAllCommand,
+  getUltraciteInitCommand,
+} from "../src/pm-exec";
 
 describe("getShadcnBootstrapCommand", () => {
   const spec = getShadcnExecSpec();
@@ -27,6 +31,21 @@ describe("getShadcnBootstrapCommand", () => {
       "-c",
       "packages/design-system",
     ]);
+  });
+});
+
+describe("getShadcnAddAllCommand", () => {
+  const spec = getShadcnExecSpec();
+
+  test("invokes add --all at app root when not using a design-system cwd", () => {
+    const cmd = getShadcnAddAllCommand("bun", { monorepoWithDesignSystem: false });
+    expect(cmd.file).toBe("npx");
+    expect(cmd.args).toEqual(["--yes", spec, "add", "--all", "-y"]);
+  });
+
+  test("monorepo + design-system passes the same -c path as init", () => {
+    const cmd = getShadcnAddAllCommand("pnpm", { monorepoWithDesignSystem: true });
+    expect(cmd.args).toEqual(["dlx", spec, "add", "--all", "-y", "-c", "packages/design-system"]);
   });
 });
 
