@@ -33,7 +33,6 @@ const tree = generate({
     frontend: "next",
     addons: ["ultracite"],
     packages: [],
-    codeQuality: "oxlint-oxfmt",
     ui: "shadcn",
     shadcnPreset: "nova",
   },
