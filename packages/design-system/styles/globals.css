@@ -151,7 +151,7 @@
   }
   html {
     font-feature-settings: "ss01";
-    text-rendering: optimizelegibility;
+    text-rendering: optimizeLegibility;
   }
   body {
     @apply min-h-dvh;
