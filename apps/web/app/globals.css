@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@vernostudio/design-system/styles/globals.css";
+@import "@vernostudio/design-system/styles/dotmatrix-loader.css";
 
 :root,
 .light {
