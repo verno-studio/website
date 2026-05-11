@@ -19,6 +19,7 @@ import type { UltraciteInitMode } from "../pm-exec";
 import { runProcess } from "../run";
 import type { ResolvedCreateInputs, UiMode } from "./create-args";
 import type { UltraciteLinterId } from "../ultracite-linter";
+import { getShadcnWorkingDirectory } from "./create-plan";
 
 /** Sync with `packages/template-generator/templates/frontends/next/app/globals.css.hbs`. */
 export const VERNO_APP_GLOBALS_BASE_MARKER = "/* This layer is by Verno Studio */" as const;
@@ -244,9 +245,10 @@ export const runShadcnIfEnabled = async (options: {
     return;
   }
 
-  const workingDir = options.monorepoWithDesignSystem
-    ? join(options.projectDir, "packages", "design-system")
-    : options.projectDir;
+  const workingDir = getShadcnWorkingDirectory(
+    options.projectDir,
+    options.monorepoWithDesignSystem,
+  );
 
   // shadcn apply/add requires a detected framework (Next.js, Vite, etc.).
   // We write a temporary dummy config to ensure detection passes in all environments.
@@ -254,29 +256,25 @@ export const runShadcnIfEnabled = async (options: {
   await writeFile(dummyConfigPath, "export default {};\n", "utf-8");
 
   try {
-    const commands = [
-      getShadcnBootstrapCommand(options.packageManager, {
-        monorepoWithDesignSystem: options.monorepoWithDesignSystem,
-        preset: options.preset,
-      }),
-      getShadcnAddAllCommand(options.packageManager, {
-        monorepoWithDesignSystem: options.monorepoWithDesignSystem,
-      }),
-    ] as const;
+    const bootstrap = getShadcnBootstrapCommand(options.packageManager, {
+      monorepoWithDesignSystem: options.monorepoWithDesignSystem,
+      preset: options.preset,
+    });
+    const addAll = getShadcnAddAllCommand(options.packageManager, {
+      monorepoWithDesignSystem: options.monorepoWithDesignSystem,
+    });
 
-    for (const command of commands) {
-      await runProcess(command.file, command.args, {
+    for (const cmd of [bootstrap, addAll]) {
+      await runProcess(cmd.file, cmd.args, {
         ciSafe: false,
         cwd: options.projectDir,
         stepId: "shadcn",
       });
     }
   } finally {
-    try {
-      await rm(dummyConfigPath, { force: true });
-    } catch {
-      // Ignored during cleanup
-    }
+    await rm(dummyConfigPath, { force: true }).catch(() => {
+      /* ignore cleanup errors */
+    });
   }
 };
 

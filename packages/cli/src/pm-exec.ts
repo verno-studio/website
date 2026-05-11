@@ -7,47 +7,40 @@ export const getPmInstallCommand = (
 ): {
   readonly file: string;
   readonly args: readonly string[];
-} => {
-  if (pm === "bun") {
-    return { args: ["install"], file: "bun" };
-  }
-  if (pm === "pnpm") {
-    return { args: ["install"], file: "pnpm" };
-  }
-  return { args: ["install"], file: "npm" };
-};
+} => ({
+  args: ["install"],
+  file: pm,
+});
 
-const shadcnCwdArgs = (
+const getShadcnCwdArgs = (
   monorepoWithDesignSystem: boolean,
 ): readonly ["-c", "packages/design-system"] | [] =>
   monorepoWithDesignSystem ? ["-c", "packages/design-system"] : [];
 
 const buildShadcnCliInvocation = (
   pm: PackageManager,
-  shadcnSpec: string,
   subcommands: readonly string[],
 ): { readonly args: readonly string[]; readonly file: string } => {
+  const spec = getShadcnExecSpec();
   // Avoid `bun x shadcn@latest`: Bun often stalls after resolving the ephemeral CLI lockfile on some setups (e.g. WSL2).
   if (pm === "bun") {
-    return { args: ["--yes", shadcnSpec, ...subcommands], file: "npx" };
+    return { args: ["--yes", spec, ...subcommands], file: "npx" };
   }
   if (pm === "pnpm") {
-    return { args: ["dlx", shadcnSpec, ...subcommands], file: "pnpm" };
+    return { args: ["dlx", spec, ...subcommands], file: "pnpm" };
   }
-  return { args: ["--yes", shadcnSpec, ...subcommands], file: "npx" };
+  return { args: ["--yes", spec, ...subcommands], file: "npx" };
 };
 
 export const getShadcnBootstrapCommand = (
   pm: PackageManager,
   options: { readonly preset: string; readonly monorepoWithDesignSystem: boolean },
 ): { readonly file: string; readonly args: readonly string[] } => {
-  const shadcnSpec = getShadcnExecSpec();
-  const cwdFlag = shadcnCwdArgs(options.monorepoWithDesignSystem);
+  const cwdArgs = getShadcnCwdArgs(options.monorepoWithDesignSystem);
 
   // We always use 'apply' because we scaffold a starting 'components.json' from our templates.
   // This bypasses the interactive/guessing nature of 'init' and ensures consistent setup.
-  const applyArgs = ["apply", "--preset", options.preset, "-y", ...cwdFlag] as const;
-  return buildShadcnCliInvocation(pm, shadcnSpec, [...applyArgs]);
+  return buildShadcnCliInvocation(pm, ["apply", "--preset", options.preset, "-y", ...cwdArgs]);
 };
 
 /** Adds every component from the default registry after {@link getShadcnBootstrapCommand}. */
@@ -55,10 +48,8 @@ export const getShadcnAddAllCommand = (
   pm: PackageManager,
   options: { readonly monorepoWithDesignSystem: boolean },
 ): { readonly file: string; readonly args: readonly string[] } => {
-  const shadcnSpec = getShadcnExecSpec();
-  const cwdFlag = shadcnCwdArgs(options.monorepoWithDesignSystem);
-  const addArgs = ["add", "--all", "-y", ...cwdFlag] as const;
-  return buildShadcnCliInvocation(pm, shadcnSpec, [...addArgs]);
+  const cwdArgs = getShadcnCwdArgs(options.monorepoWithDesignSystem);
+  return buildShadcnCliInvocation(pm, ["add", "--all", "-y", ...cwdArgs]);
 };
 
 /** `interactive`: Ultracite TUI; `quiet`: non-interactive (`-y`, adds `--quiet`). */
