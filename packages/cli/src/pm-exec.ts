@@ -42,10 +42,12 @@ export const getShadcnBootstrapCommand = (
   options: { readonly preset: string; readonly monorepoWithDesignSystem: boolean },
 ): { readonly file: string; readonly args: readonly string[] } => {
   const shadcnSpec = getShadcnExecSpec();
-  // Monorepo + design-system: run from repo root so shadcn detects bun/pnpm from the workspace lockfile.
   const cwdFlag = shadcnCwdArgs(options.monorepoWithDesignSystem);
-  const initArgs = ["init", "-t", "next", "-p", options.preset, "-y", ...cwdFlag] as const;
-  return buildShadcnCliInvocation(pm, shadcnSpec, [...initArgs]);
+
+  // We always use 'apply' because we scaffold a starting 'components.json' from our templates.
+  // This bypasses the interactive/guessing nature of 'init' and ensures consistent setup.
+  const applyArgs = ["apply", "--preset", options.preset, "-y", ...cwdFlag] as const;
+  return buildShadcnCliInvocation(pm, shadcnSpec, [...applyArgs]);
 };
 
 /** Adds every component from the default registry after {@link getShadcnBootstrapCommand}. */

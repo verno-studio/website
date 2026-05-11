@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { generate, writeTree } from "@vernostudio/template-generator";
 import type {
@@ -243,22 +243,40 @@ export const runShadcnIfEnabled = async (options: {
   if (!options.enabled) {
     return;
   }
-  const commands = [
-    getShadcnBootstrapCommand(options.packageManager, {
-      monorepoWithDesignSystem: options.monorepoWithDesignSystem,
-      preset: options.preset,
-    }),
-    getShadcnAddAllCommand(options.packageManager, {
-      monorepoWithDesignSystem: options.monorepoWithDesignSystem,
-    }),
-  ] as const;
 
-  for (const command of commands) {
-    await runProcess(command.file, command.args, {
-      ciSafe: false,
-      cwd: options.projectDir,
-      stepId: "shadcn",
-    });
+  const workingDir = options.monorepoWithDesignSystem
+    ? join(options.projectDir, "packages", "design-system")
+    : options.projectDir;
+
+  // shadcn apply/add requires a detected framework (Next.js, Vite, etc.).
+  // We write a temporary dummy config to ensure detection passes in all environments.
+  const dummyConfigPath = join(workingDir, "vite.config.ts");
+  await writeFile(dummyConfigPath, "export default {};\n", "utf-8");
+
+  try {
+    const commands = [
+      getShadcnBootstrapCommand(options.packageManager, {
+        monorepoWithDesignSystem: options.monorepoWithDesignSystem,
+        preset: options.preset,
+      }),
+      getShadcnAddAllCommand(options.packageManager, {
+        monorepoWithDesignSystem: options.monorepoWithDesignSystem,
+      }),
+    ] as const;
+
+    for (const command of commands) {
+      await runProcess(command.file, command.args, {
+        ciSafe: false,
+        cwd: options.projectDir,
+        stepId: "shadcn",
+      });
+    }
+  } finally {
+    try {
+      await rm(dummyConfigPath, { force: true });
+    } catch {
+      // Ignored during cleanup
+    }
   }
 };
 

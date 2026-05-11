@@ -130,7 +130,7 @@ export const buildCreatePlan = (
     steps.push({
       command: { args: sh.args, cwd: projectDir, file: sh.file },
       id: "shadcn",
-      label: "Run shadcn init",
+      label: "Run shadcn init / apply",
       willRun: true,
     });
     steps.push({
@@ -142,7 +142,7 @@ export const buildCreatePlan = (
   } else {
     steps.push({
       id: "shadcn",
-      label: "Run shadcn init",
+      label: "Run shadcn init / apply",
       skippedReason: "Skipped (--ui none, --skip-shadcn, or declined)",
       willRun: false,
     });
