@@ -16,16 +16,14 @@ describe("getShadcnBootstrapCommand", () => {
     expect(cmd.args).toEqual(["--yes", spec, "init", "-t", "next", "-p", preset, "-y"]);
   });
 
-  test("monorepo + design-system adds -c packages/design-system so the CLI runs from repo root", () => {
+  test("monorepo + design-system adds -c packages/design-system so the CLI runs from repo root and uses apply instead of init", () => {
     const cmd = getShadcnBootstrapCommand("npm", { monorepoWithDesignSystem: true, preset });
     expect(cmd.file).toBe("npx");
     expect(cmd.args).toEqual([
       "--yes",
       spec,
-      "init",
-      "-t",
-      "next",
-      "-p",
+      "apply",
+      "--preset",
       preset,
       "-y",
       "-c",
