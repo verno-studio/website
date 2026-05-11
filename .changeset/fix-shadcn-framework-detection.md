@@ -1,5 +1,6 @@
 ---
 "@vernostudio/cli": patch
+"@vernostudio/template-generator": patch
 ---
 
-Fix shadcn framework detection failing in custom Turborepo packages by switching to `shadcn apply` when initializing `design-system`
+Unify shadcn initialization across all project types (Single App and Turborepo) to use `shadcn apply` with a pre-scaffolded `components.json`. This fixes framework detection issues in custom packages by using a temporary configuration file during execution.
