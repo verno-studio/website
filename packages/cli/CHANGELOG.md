@@ -1,5 +1,11 @@
 # @vernostudio/cli
 
+## 0.1.2
+
+### Patch Changes
+
+- edd8acb: Unify shadcn initialization across all project types (Single App and Turborepo) to use `shadcn apply` with a pre-scaffolded `components.json`. This fixes framework detection issues in custom packages by using a temporary configuration file during execution.
+
 ## 0.1.1
 
 ### Patch Changes
