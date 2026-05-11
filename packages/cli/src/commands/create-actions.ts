@@ -19,6 +19,7 @@ import type { UltraciteInitMode } from "../pm-exec";
 import { runProcess } from "../run";
 import type { ResolvedCreateInputs, UiMode } from "./create-args";
 import type { UltraciteLinterId } from "../ultracite-linter";
+import { getShadcnWorkingDirectory } from "./create-plan";
 
 /** Sync with `packages/template-generator/templates/frontends/next/app/globals.css.hbs`. */
 export const VERNO_APP_GLOBALS_BASE_MARKER = "/* This layer is by Verno Studio */" as const;
@@ -244,7 +245,10 @@ export const runShadcnIfEnabled = async (options: {
     return;
   }
 
-  const workingDir = getShadcnWorkingDirectory(options.projectDir, options.monorepoWithDesignSystem);
+  const workingDir = getShadcnWorkingDirectory(
+    options.projectDir,
+    options.monorepoWithDesignSystem,
+  );
 
   // shadcn apply/add requires a detected framework (Next.js, Vite, etc.).
   // We write a temporary dummy config to ensure detection passes in all environments.
