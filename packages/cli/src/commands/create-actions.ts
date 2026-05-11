@@ -244,11 +244,14 @@ export const runShadcnIfEnabled = async (options: {
     return;
   }
 
-  let dummyConfigPath: string | undefined;
-  if (options.monorepoWithDesignSystem) {
-    dummyConfigPath = join(options.projectDir, "packages", "design-system", "vite.config.ts");
-    await writeFile(dummyConfigPath, "export default {};\n", "utf-8");
-  }
+  const workingDir = options.monorepoWithDesignSystem
+    ? join(options.projectDir, "packages", "design-system")
+    : options.projectDir;
+
+  // shadcn apply/add requires a detected framework (Next.js, Vite, etc.).
+  // We write a temporary dummy config to ensure detection passes in all environments.
+  const dummyConfigPath = join(workingDir, "vite.config.ts");
+  await writeFile(dummyConfigPath, "export default {};\n", "utf-8");
 
   try {
     const commands = [
@@ -269,12 +272,10 @@ export const runShadcnIfEnabled = async (options: {
       });
     }
   } finally {
-    if (dummyConfigPath) {
-      try {
-        await rm(dummyConfigPath, { force: true });
-      } catch {
-        // Ignored during cleanup
-      }
+    try {
+      await rm(dummyConfigPath, { force: true });
+    } catch {
+      // Ignored during cleanup
     }
   }
 };

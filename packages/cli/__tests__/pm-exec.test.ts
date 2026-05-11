@@ -10,13 +10,13 @@ describe("getShadcnBootstrapCommand", () => {
   const spec = getShadcnExecSpec();
   const preset = "a2r6bw";
 
-  test("passes arbitrary preset to init for app root (uses npx when package manager is bun)", () => {
+  test("passes arbitrary preset to apply for app root (uses npx when package manager is bun)", () => {
     const cmd = getShadcnBootstrapCommand("bun", { monorepoWithDesignSystem: false, preset });
     expect(cmd.file).toBe("npx");
-    expect(cmd.args).toEqual(["--yes", spec, "init", "-t", "next", "-p", preset, "-y"]);
+    expect(cmd.args).toEqual(["--yes", spec, "apply", "--preset", preset, "-y"]);
   });
 
-  test("monorepo + design-system adds -c packages/design-system so the CLI runs from repo root and uses apply instead of init", () => {
+  test("monorepo + design-system adds -c packages/design-system so the CLI runs from repo root and uses apply", () => {
     const cmd = getShadcnBootstrapCommand("npm", { monorepoWithDesignSystem: true, preset });
     expect(cmd.file).toBe("npx");
     expect(cmd.args).toEqual([

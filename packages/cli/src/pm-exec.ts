@@ -44,15 +44,10 @@ export const getShadcnBootstrapCommand = (
   const shadcnSpec = getShadcnExecSpec();
   const cwdFlag = shadcnCwdArgs(options.monorepoWithDesignSystem);
 
-  // Monorepo + design-system: The design-system package is framework-agnostic.
-  // shadcn's 'init -t next' expects Next.js config which isn't present, so we use 'apply'.
-  if (options.monorepoWithDesignSystem) {
-    const applyArgs = ["apply", "--preset", options.preset, "-y", ...cwdFlag] as const;
-    return buildShadcnCliInvocation(pm, shadcnSpec, [...applyArgs]);
-  }
-
-  const initArgs = ["init", "-t", "next", "-p", options.preset, "-y", ...cwdFlag] as const;
-  return buildShadcnCliInvocation(pm, shadcnSpec, [...initArgs]);
+  // We always use 'apply' because we scaffold a starting 'components.json' from our templates.
+  // This bypasses the interactive/guessing nature of 'init' and ensures consistent setup.
+  const applyArgs = ["apply", "--preset", options.preset, "-y", ...cwdFlag] as const;
+  return buildShadcnCliInvocation(pm, shadcnSpec, [...applyArgs]);
 };
 
 /** Adds every component from the default registry after {@link getShadcnBootstrapCommand}. */
