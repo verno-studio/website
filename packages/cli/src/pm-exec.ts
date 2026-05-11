@@ -42,8 +42,15 @@ export const getShadcnBootstrapCommand = (
   options: { readonly preset: string; readonly monorepoWithDesignSystem: boolean },
 ): { readonly file: string; readonly args: readonly string[] } => {
   const shadcnSpec = getShadcnExecSpec();
-  // Monorepo + design-system: run from repo root so shadcn detects bun/pnpm from the workspace lockfile.
   const cwdFlag = shadcnCwdArgs(options.monorepoWithDesignSystem);
+
+  // Monorepo + design-system: The design-system package is framework-agnostic.
+  // shadcn's 'init -t next' expects Next.js config which isn't present, so we use 'apply'.
+  if (options.monorepoWithDesignSystem) {
+    const applyArgs = ["apply", "--preset", options.preset, "-y", ...cwdFlag] as const;
+    return buildShadcnCliInvocation(pm, shadcnSpec, [...applyArgs]);
+  }
+
   const initArgs = ["init", "-t", "next", "-p", options.preset, "-y", ...cwdFlag] as const;
   return buildShadcnCliInvocation(pm, shadcnSpec, [...initArgs]);
 };

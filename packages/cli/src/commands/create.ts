@@ -166,7 +166,7 @@ export const runCreate = async (args: {
     if (resolved.useShadcn) {
       process.stdout.write(
         `\n${pc.cyan("shadcn")} — ${pc.dim(
-          "init + add --all (full output below; can take several minutes)",
+          "bootstrap (init/apply) + add --all (full output below; can take several minutes)",
         )}\n\n`,
       );
       await runShadcnIfEnabled({
