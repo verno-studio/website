@@ -108,29 +108,17 @@ export const CodeBlock = ({ code, lang, className }: CodeBlockProps) => {
 
   return (
     <pre
-      className={cn(className, "p-4 text-sm")}
+      className={cn(className, "p-4 text-sm bg-sidebar")}
       data-language={lang}
       style={{
         backgroundColor: result?.bg,
         color: result?.fg,
       }}
     >
-      <code className="[counter-increment:line_0] [counter-reset:line]">
+      <code>
         {output.map((row, index) => (
           <span
-            className={cn(
-              "block",
-              "before:content-[counter(line)]",
-              "before:inline-block",
-              "before:[counter-increment:line]",
-              "before:w-6",
-              "before:mr-5",
-              "before:text-[13px]",
-              "before:text-right",
-              "before:text-muted-foreground/50",
-              "before:font-mono",
-              "before:select-none",
-            )}
+            className="block min-h-lh font-mono"
             // eslint-disable-next-line react/no-array-index-key -- tokens have no unique ID
             key={`line-${String(index)}`}
           >

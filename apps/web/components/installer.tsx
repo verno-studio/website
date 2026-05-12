@@ -7,7 +7,7 @@ interface InstallerProps {
 
 export const Installer = ({ command }: InstallerProps) => (
   <div className="relative w-full overflow-hidden bg-card rounded-lg shadow-sm">
-    <CodeBlock code={command} lang="bash" className="[&_code>span]:before:hidden" />
+    <CodeBlock code={command} lang="bash" />
     <CopyButton value={command} className="absolute right-2.5 top-2.5" />
   </div>
 );
