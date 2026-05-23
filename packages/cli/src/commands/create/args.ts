@@ -9,21 +9,19 @@ import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import { parseAddonsArg } from "../shared/addons";
 import { splitCommaList } from "../shared/comma-list";
+import {
+  DEFAULT_SHADCN_PRESET,
+  isPackageManager,
+  isUiMode,
+  PACKAGE_MANAGERS,
+} from "../shared/input-primitives";
+import type { UiMode } from "../shared/input-primitives";
 import { parseUltraciteLinterFlag } from "../shared/ultracite";
 
-export const PACKAGE_MANAGERS: readonly PackageManager[] = ["bun", "pnpm", "npm"];
-export const DEFAULT_SHADCN_PRESET = "nova";
+export { DEFAULT_SHADCN_PRESET, isPackageManager, isUiMode, PACKAGE_MANAGERS, type UiMode };
 
 export const isFrontendId = (value: string | undefined): value is FrontendId =>
   value !== undefined && (FRONTENDS as readonly string[]).includes(value);
-
-export const isPackageManager = (value: string | undefined): value is PackageManager =>
-  value === "bun" || value === "pnpm" || value === "npm";
-
-export type UiMode = "none" | "shadcn";
-
-export const isUiMode = (value: string | undefined): value is UiMode =>
-  value === "shadcn" || value === "none";
 
 export const isPackageId = (value: string): value is PackageId =>
   (PACKAGE_IDS as readonly string[]).includes(value);
