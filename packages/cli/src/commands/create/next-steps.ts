@@ -1,6 +1,6 @@
 import type { PackageManager } from "@vernostudio/template-generator";
-import type { ResolvedCreateInputs } from "./create-args";
-import { resolvedHasDesignSystem, resolvedUsesTurborepo } from "./create-args";
+import type { ResolvedCreateInputs } from "./args";
+import { resolvedHasDesignSystem, resolvedUsesTurborepo } from "./args";
 
 const shadcnRunner = (packageManager: PackageManager): string => {
   if (packageManager === "bun") {

@@ -3,10 +3,10 @@ import { writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { parsePackageJson } from "@vernostudio/template-generator";
 import type { PackageJsonRecord, PackageManager, AddonId } from "@vernostudio/template-generator";
-import type { ResolvedInitInputs, UiMode } from "./init-args";
-import type { UltraciteLinterId } from "../ultracite-linter";
-import { readCliPackageVersion } from "../cli-version";
-import { VERNO_MANIFEST_DIR } from "../constants";
+import type { ResolvedInitInputs, UiMode } from "./args";
+import type { UltraciteLinterId } from "../../ultracite-linter";
+import { readCliPackageVersion } from "../../cli-version";
+import { VERNO_MANIFEST_DIR } from "../../constants";
 
 export interface VernoManifest {
   readonly addons: readonly AddonId[];

@@ -1,13 +1,8 @@
-import {
-  DEFAULT_ULTRACITE_LINTER,
-  ULTRACITE_LINTER_IDS,
-  isUltraciteLinterId,
-} from "../ultracite-linter";
-import type { UltraciteLinterId } from "../ultracite-linter";
+import { DEFAULT_ULTRACITE_LINTER } from '../../ultracite-linter';
+import type { UltraciteLinterId } from '../../ultracite-linter';
 import type { AddonId, PackageManager } from "@vernostudio/template-generator";
-import { parseAddonsArg, parseUltraciteLinterFlag } from "./create-args";
-
-export { parseAddonsArg };
+import { parseAddonsArg } from "../shared/addons";
+import { parseUltraciteLinterFlag } from "../shared/ultracite";
 
 export const DEFAULT_SHADCN_PRESET = "nova";
 
@@ -21,11 +16,7 @@ export const isUiMode = (value: string | undefined): value is UiMode =>
 export const isPackageManager = (value: string | undefined): value is PackageManager =>
   value === "bun" || value === "pnpm" || value === "npm";
 
-export type { AddonId, PackageManager, UltraciteLinterId };
-
-export { DEFAULT_ULTRACITE_LINTER, ULTRACITE_LINTER_IDS, isUltraciteLinterId };
-
-/** Raw CLI flags for `vero init`. */
+/** Raw CLI flags for `verno init`. */
 export interface InitCommandOptions {
   readonly dryRun: boolean;
   readonly yes: boolean;
@@ -63,7 +54,7 @@ export const toInitCommandOptions = (raw: {
   yes: raw.yes ?? false,
 });
 
-/** Normalized inputs for `vero init`. */
+/** Normalized inputs for `verno init`. */
 export interface ResolvedInitInputs {
   readonly doInstall: boolean;
   readonly nonInteractive: boolean;
@@ -107,10 +98,7 @@ const resolveUiNonInteractive = (options: InitCommandOptions): UiMode => {
 export const resolveInitInputsNonInteractive = (
   options: InitCommandOptions,
 ): ResolvedInitInputs => {
-  let addons: AddonId[] = [];
-  if (options.addons !== undefined && options.addons.length > 0) {
-    addons = parseAddonsArg(options.addons);
-  }
+  let addons = parseAddonsArg(options.addons);
   if (options.skipUltracite) {
     addons = addons.filter((a) => a !== "ultracite");
   }
@@ -118,15 +106,8 @@ export const resolveInitInputsNonInteractive = (
   const packageManager = resolvePackageManagerNonInteractive(options);
   const ui = resolveUiNonInteractive(options);
   const ultraciteOn = addons.includes("ultracite");
-
-  // Validate --linter regardless of ultracite status
-  if (options.linter !== undefined && options.linter.length > 0 && !ultraciteOn) {
-    throw new Error("--linter requires ultracite in --addons.");
-  }
-
-  const ultraciteLinter = ultraciteOn
-    ? (parseUltraciteLinterFlag(options, ultraciteOn) ?? DEFAULT_ULTRACITE_LINTER)
-    : undefined;
+  const flagged = parseUltraciteLinterFlag(options, ultraciteOn);
+  const ultraciteLinter = ultraciteOn ? (flagged ?? DEFAULT_ULTRACITE_LINTER) : undefined;
 
   const useShadcn = ui === "shadcn" && !options.skipShadcn;
 
@@ -136,7 +117,7 @@ export const resolveInitInputsNonInteractive = (
     nonInteractive: true,
     packageManager: packageManager ?? "bun",
     runUltracite: ultraciteOn,
-    shadcnPreset: options.shadcnPreset ?? "nova",
+    shadcnPreset: options.shadcnPreset ?? DEFAULT_SHADCN_PRESET,
     ui,
     ultraciteLinter,
     useShadcn,

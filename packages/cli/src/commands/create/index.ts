@@ -1,16 +1,16 @@
 import * as p from "@clack/prompts";
 import { defaultNpmScopeFromProjectName } from "@vernostudio/template-generator";
 import pc from "picocolors";
-import { dimPath, renderVernoTitle } from "../ui";
-import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } from "../errors";
-import { runInteractiveCreateWizard } from "./create-prompts";
+import { dimPath, renderVernoTitle } from "../../ui";
+import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } from "../../errors";
+import { runInteractiveCreateWizard } from "./prompts";
 import {
   resolveCreateInputsNonInteractive,
   resolvedHasDesignSystem,
   resolvedUsesTurborepo,
-} from "./create-args";
-import type { CreateCommandOptions, ResolvedCreateInputs } from "./create-args";
-import type { UltraciteLinterId } from "../ultracite-linter";
+} from "./args";
+import type { CreateCommandOptions, ResolvedCreateInputs } from "./args";
+import type { UltraciteLinterId } from "../../ultracite-linter";
 import {
   assertPathAvailable,
   buildVernoManifest,
@@ -23,10 +23,10 @@ import {
   scaffold,
   toProjectConfig,
   writeVernoManifest,
-} from "./create-actions";
-import { getNextStepHints } from "./create-next-steps";
-import { buildCreatePlan, getPlanSummary } from "./create-plan";
-import type { CreatePlanSummary } from "./create-plan";
+} from "./actions";
+import { getNextStepHints } from "./next-steps";
+import { buildCreatePlan, getPlanSummary } from "./plan";
+import type { CreatePlanSummary } from "./plan";
 
 const requireUltraciteLinter = (resolved: ResolvedCreateInputs): UltraciteLinterId => {
   const l = resolved.ultraciteLinter;

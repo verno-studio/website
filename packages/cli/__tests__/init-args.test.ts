@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { resolveInitInputsNonInteractive, toInitCommandOptions } from "../src/commands/init-args";
+import { resolveInitInputsNonInteractive, toInitCommandOptions } from "../src/commands/init/args";
 
 describe("toInitCommandOptions", () => {
   test("normalizes commander-style flags", () => {

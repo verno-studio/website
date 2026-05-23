@@ -14,21 +14,21 @@ import {
   getShadcnAddAllCommand,
   getShadcnBootstrapCommand,
   getUltraciteInitCommand,
-} from "../pm-exec";
-import type { UltraciteInitMode } from "../pm-exec";
-import { runProcess } from "../run";
-import type { ResolvedCreateInputs, UiMode } from "./create-args";
-import type { UltraciteLinterId } from "../ultracite-linter";
-import { ensureAppGlobalsBaseLayerAtEnd } from "../app-globals";
-import { readCliPackageVersion } from "../cli-version";
-import { getShadcnWorkingDirectory } from "./create-plan";
+} from "../../pm-exec";
+import type { UltraciteInitMode } from "../../pm-exec";
+import { runProcess } from "../../run";
+import type { ResolvedCreateInputs, UiMode } from "./args";
+import type { UltraciteLinterId } from "../../ultracite-linter";
+import { ensureAppGlobalsBaseLayerAtEnd } from "../../app-globals";
+import { readCliPackageVersion } from "../../cli-version";
+import { getShadcnWorkingDirectory } from "./plan";
 import {
   VERNO_INITIAL_COMMIT_BODY,
   VERNO_INITIAL_COMMIT_SUBJECT,
   VERNO_MANIFEST_DIR,
-} from "../constants";
+} from "../../constants";
 
-export { ensureAppGlobalsBaseLayerAtEnd } from "../app-globals";
+export { ensureAppGlobalsBaseLayerAtEnd } from "../../app-globals";
 
 export interface VernoManifest {
   readonly addons: readonly AddonId[];

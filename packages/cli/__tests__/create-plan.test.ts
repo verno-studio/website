@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import type { ResolvedCreateInputs } from "../src/commands/create-args";
-import { buildCreatePlan, getPlanSummary } from "../src/commands/create-plan";
-import { getProjectPath } from "../src/commands/create-actions";
-import { resolveCreateInputsNonInteractive } from "../src/commands/create-args";
+import type { ResolvedCreateInputs } from "../src/commands/create/args";
+import { buildCreatePlan, getPlanSummary } from "../src/commands/create/plan";
+import { getProjectPath } from "../src/commands/create/actions";
+import { resolveCreateInputsNonInteractive } from "../src/commands/create/args";
 
 describe("buildCreatePlan", () => {
   test("builds step list for single app with all hooks", () => {

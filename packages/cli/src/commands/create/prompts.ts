@@ -1,8 +1,10 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import type { AddonId, PackageId, PackageManager } from "@vernostudio/template-generator";
-import { UserCancelledError } from "../errors";
-import { renderVernoTitle } from "../ui";
+import { UserCancelledError } from "../../errors";
+import { renderVernoTitle } from "../../ui";
+import { parseAddonsArg } from "../shared/addons";
+import { parseUltraciteLinterFlag } from "../shared/ultracite";
 import {
   DEFAULT_SHADCN_PRESET,
   DEFAULT_WORKSPACE_PACKAGES,
@@ -10,13 +12,11 @@ import {
   isPackageManager,
   isUiMode,
   PACKAGE_MANAGERS,
-  parseAddonsArg,
   parsePackagesArg,
-  parseUltraciteLinterFlag,
-} from "./create-args";
-import type { CreateCommandOptions, ResolvedCreateInputs, UiMode } from "./create-args";
-import type { UltraciteLinterId } from "../ultracite-linter";
-import { DEFAULT_ULTRACITE_LINTER } from "../ultracite-linter";
+} from "./args";
+import type { CreateCommandOptions, ResolvedCreateInputs, UiMode } from "./args";
+import { DEFAULT_ULTRACITE_LINTER } from '../../ultracite-linter';
+import type { UltraciteLinterId } from '../../ultracite-linter';
 
 const exitOnCancel = (value: unknown): void => {
   if (p.isCancel(value)) {

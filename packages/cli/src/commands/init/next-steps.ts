@@ -1,6 +1,6 @@
 import type { PackageManager } from "@vernostudio/template-generator";
-import type { ResolvedInitInputs } from "./init-args";
-import type { DetectedState } from "./init-actions";
+import type { ResolvedInitInputs } from "./args";
+import type { DetectedState } from "./actions";
 
 const shadcnRunner = (packageManager: PackageManager): string => {
   if (packageManager === "bun") {

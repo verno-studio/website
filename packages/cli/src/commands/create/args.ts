@@ -4,13 +4,12 @@ import type {
   PackageId,
   PackageManager,
 } from "@vernostudio/template-generator";
-import { ADDON_IDS, FRONTENDS, PACKAGE_IDS } from "@vernostudio/template-generator";
-import type { UltraciteLinterId } from "../ultracite-linter";
-import {
-  DEFAULT_ULTRACITE_LINTER,
-  ULTRACITE_LINTER_IDS,
-  isUltraciteLinterId,
-} from "../ultracite-linter";
+import { FRONTENDS, PACKAGE_IDS } from "@vernostudio/template-generator";
+import { DEFAULT_ULTRACITE_LINTER } from '../../ultracite-linter';
+import type { UltraciteLinterId } from '../../ultracite-linter';
+import { parseAddonsArg } from "../shared/addons";
+import { splitCommaList } from "../shared/comma-list";
+import { parseUltraciteLinterFlag } from "../shared/ultracite";
 
 export const PACKAGE_MANAGERS: readonly PackageManager[] = ["bun", "pnpm", "npm"];
 export const DEFAULT_SHADCN_PRESET = "nova";
@@ -26,32 +25,8 @@ export type UiMode = "none" | "shadcn";
 export const isUiMode = (value: string | undefined): value is UiMode =>
   value === "shadcn" || value === "none";
 
-export const isAddonId = (value: string): value is AddonId =>
-  (ADDON_IDS as readonly string[]).includes(value);
-
 export const isPackageId = (value: string): value is PackageId =>
   (PACKAGE_IDS as readonly string[]).includes(value);
-
-const splitCommaList = (raw: string | undefined): string[] =>
-  raw === undefined || raw.trim().length === 0
-    ? []
-    : raw
-        .split(",")
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0);
-
-export const parseAddonsArg = (raw: string | undefined): AddonId[] => {
-  const out: AddonId[] = [];
-  for (const part of splitCommaList(raw)) {
-    if (!isAddonId(part)) {
-      throw new Error(`Invalid addon "${part}". Use: ${ADDON_IDS.join(", ")}`);
-    }
-    if (!out.includes(part)) {
-      out.push(part);
-    }
-  }
-  return out;
-};
 
 export const parsePackagesArg = (raw: string | undefined): PackageId[] => {
   const out: PackageId[] = [];
@@ -203,26 +178,6 @@ const resolveWorkspacePackagesNonInteractive = (
   return ensureTypescriptWithDesignSystem(packages);
 };
 
-export const parseUltraciteLinterFlag = (
-  options: { readonly linter?: string },
-  ultraciteOn: boolean,
-): UltraciteLinterId | undefined => {
-  if (!ultraciteOn) {
-    if (options.linter !== undefined && options.linter.length > 0) {
-      throw new Error("--linter requires ultracite in --addons.");
-    }
-    return undefined;
-  }
-  const raw = options.linter;
-  if (raw !== undefined && raw.length > 0) {
-    if (!isUltraciteLinterId(raw)) {
-      throw new Error(`Invalid --linter. Use: ${ULTRACITE_LINTER_IDS.join(" | ")}`);
-    }
-    return raw;
-  }
-  return undefined;
-};
-
 export const resolveCreateInputsNonInteractive = (
   name: string,
   options: CreateCommandOptions,
@@ -255,7 +210,7 @@ export const resolveCreateInputsNonInteractive = (
     nonInteractive: true,
     packageManager,
     packages,
-    runUltracite: addons.includes("ultracite"),
+    runUltracite: ultraciteOn,
     shadcnPreset: options.shadcnPreset ?? DEFAULT_SHADCN_PRESET,
     ui,
     ultraciteLinter,

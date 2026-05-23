@@ -1,27 +1,27 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
-import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } from "../errors";
-import { renderVernoTitle } from "../ui";
-import { runInteractiveInitWizard } from "./init-prompts";
-import { resolveInitInputsNonInteractive } from "./init-args";
-import type { InitCommandOptions, ResolvedInitInputs } from "./init-args";
-import { buildInitPlan, getInitPlanSummary } from "./init-plan";
-import type { InitPlanSummary } from "./init-plan";
+import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } from "../../errors";
+import { renderVernoTitle } from "../../ui";
+import { runInteractiveInitWizard } from "./prompts";
+import { resolveInitInputsNonInteractive } from "./args";
+import type { InitCommandOptions, ResolvedInitInputs } from "./args";
+import { buildInitPlan, getInitPlanSummary } from "./plan";
+import type { InitPlanSummary } from "./plan";
 import {
   detectProjectState,
   restructureForTurborepo,
   buildVernoManifest,
   writeVernoManifest,
-} from "./init-actions";
-import type { DetectedState } from "./init-actions";
+} from "./actions";
+import type { DetectedState } from "./actions";
 import {
   runInstallIfEnabled,
   runShadcnIfEnabled,
   runUltraciteIfEnabled,
   ensureAppGlobalsBaseLayerAtEnd,
-} from "./create-actions";
-import { getNextStepHints } from "./init-next-steps";
-import type { UltraciteLinterId } from "../ultracite-linter";
+} from "../create/actions";
+import { getNextStepHints } from "./next-steps";
+import type { UltraciteLinterId } from "../../ultracite-linter";
 
 const requireUltraciteLinter = (resolved: ResolvedInitInputs): UltraciteLinterId => {
   const l = resolved.ultraciteLinter;
