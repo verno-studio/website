@@ -1,7 +1,6 @@
 {
   "extends": "@vernostudio/typescript-config/base.json",
   "compilerOptions": {
-    "noEmit": true,
     "rootDir": ".",
     "types": ["bun"]
   },
