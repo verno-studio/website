@@ -15,8 +15,8 @@ import {
   parsePackagesArg,
 } from "./args";
 import type { CreateCommandOptions, ResolvedCreateInputs, UiMode } from "./args";
-import { DEFAULT_ULTRACITE_LINTER } from '../../ultracite-linter';
-import type { UltraciteLinterId } from '../../ultracite-linter';
+import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
+import type { UltraciteLinterId } from "../../ultracite-linter";
 
 const exitOnCancel = (value: unknown): void => {
   if (p.isCancel(value)) {

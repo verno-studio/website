@@ -1,5 +1,5 @@
-import { DEFAULT_ULTRACITE_LINTER } from '../../ultracite-linter';
-import type { UltraciteLinterId } from '../../ultracite-linter';
+import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
+import type { UltraciteLinterId } from "../../ultracite-linter";
 import type { AddonId, PackageManager } from "@vernostudio/template-generator";
 import { parseAddonsArg } from "../shared/addons";
 import { parseUltraciteLinterFlag } from "../shared/ultracite";

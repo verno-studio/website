@@ -5,8 +5,8 @@ import type {
   PackageManager,
 } from "@vernostudio/template-generator";
 import { FRONTENDS, PACKAGE_IDS } from "@vernostudio/template-generator";
-import { DEFAULT_ULTRACITE_LINTER } from '../../ultracite-linter';
-import type { UltraciteLinterId } from '../../ultracite-linter';
+import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
+import type { UltraciteLinterId } from "../../ultracite-linter";
 import { parseAddonsArg } from "../shared/addons";
 import { splitCommaList } from "../shared/comma-list";
 import { parseUltraciteLinterFlag } from "../shared/ultracite";

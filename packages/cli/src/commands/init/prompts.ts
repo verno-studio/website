@@ -5,8 +5,8 @@ import { renderVernoTitle } from "../../ui";
 import { parseAddonsArg } from "../shared/addons";
 import { parseUltraciteLinterFlag } from "../shared/ultracite";
 import type { AddonId, PackageManager } from "@vernostudio/template-generator";
-import { DEFAULT_ULTRACITE_LINTER } from '../../ultracite-linter';
-import type { UltraciteLinterId } from '../../ultracite-linter';
+import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
+import type { UltraciteLinterId } from "../../ultracite-linter";
 import { DEFAULT_SHADCN_PRESET, PACKAGE_MANAGERS, isPackageManager, isUiMode } from "./args";
 import type { InitCommandOptions, ResolvedInitInputs, UiMode } from "./args";
 

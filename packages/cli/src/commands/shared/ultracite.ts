@@ -1,5 +1,5 @@
-import { ULTRACITE_LINTER_IDS, isUltraciteLinterId } from '../../ultracite-linter';
-import type { UltraciteLinterId } from '../../ultracite-linter';
+import { ULTRACITE_LINTER_IDS, isUltraciteLinterId } from "../../ultracite-linter";
+import type { UltraciteLinterId } from "../../ultracite-linter";
 
 export const parseUltraciteLinterFlag = (
   options: { readonly linter?: string },
