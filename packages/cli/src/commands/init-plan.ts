@@ -202,7 +202,7 @@ export const buildInitPlan = (
 
   steps.push({
     id: "write-manifest",
-    label: "Write .vero/manifest.json",
+    label: "Write .verno/manifest.json",
     willRun: true,
   });
 

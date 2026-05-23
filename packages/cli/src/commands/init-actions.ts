@@ -6,6 +6,7 @@ import type { PackageJsonRecord, PackageManager, AddonId } from "@vernostudio/te
 import type { ResolvedInitInputs, UiMode } from "./init-args";
 import type { UltraciteLinterId } from "../ultracite-linter";
 import { readCliPackageVersion } from "../cli-version";
+import { VERNO_MANIFEST_DIR } from "../constants";
 
 export interface VernoManifest {
   readonly addons: readonly AddonId[];
@@ -53,7 +54,7 @@ export const writeVernoManifest = async (
   projectDir: string,
   manifest: VernoManifest,
 ): Promise<void> => {
-  const dir = join(projectDir, ".vero");
+  const dir = join(projectDir, VERNO_MANIFEST_DIR);
   await mkdir(dir, { recursive: true });
   const out = join(dir, "manifest.json");
   await writeFile(out, `${JSON.stringify(manifest, null, 2)}\n`, "utf-8");
@@ -70,7 +71,7 @@ export const detectPackageJson = (projectDir: string): PackageJsonRecord | null 
 };
 
 export const detectVernoManifest = (projectDir: string): VernoManifest | null => {
-  const path = join(projectDir, ".vero", "manifest.json");
+  const path = join(projectDir, VERNO_MANIFEST_DIR, "manifest.json");
   try {
     const raw = readFileSync(path, "utf-8");
     const parsed = JSON.parse(raw);

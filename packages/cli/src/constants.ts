@@ -1,3 +1,6 @@
+/** Project metadata directory written by `verno create` / `verno init`. */
+export const VERNO_MANIFEST_DIR = ".verno" as const;
+
 /** Sync with `packages/template-generator/templates/frontends/next/app/globals.css.hbs`. */
 export const VERNO_APP_GLOBALS_BASE_MARKER = "/* This layer is by Verno Studio */" as const;
 

@@ -22,7 +22,11 @@ import type { UltraciteLinterId } from "../ultracite-linter";
 import { ensureAppGlobalsBaseLayerAtEnd } from "../app-globals";
 import { readCliPackageVersion } from "../cli-version";
 import { getShadcnWorkingDirectory } from "./create-plan";
-import { VERNO_INITIAL_COMMIT_BODY, VERNO_INITIAL_COMMIT_SUBJECT } from "../constants";
+import {
+  VERNO_INITIAL_COMMIT_BODY,
+  VERNO_INITIAL_COMMIT_SUBJECT,
+  VERNO_MANIFEST_DIR,
+} from "../constants";
 
 export { ensureAppGlobalsBaseLayerAtEnd } from "../app-globals";
 
@@ -63,7 +67,7 @@ export const writeVernoManifest = async (
   projectDir: string,
   manifest: VernoManifest,
 ): Promise<void> => {
-  const dir = join(projectDir, ".vero");
+  const dir = join(projectDir, VERNO_MANIFEST_DIR);
   await mkdir(dir, { recursive: true });
   const out = join(dir, "manifest.json");
   await writeFile(out, `${JSON.stringify(manifest, null, 2)}\n`, "utf-8");

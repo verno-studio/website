@@ -39,10 +39,10 @@ describe("detectPackageJson", () => {
 });
 
 describe("detectVernoManifest", () => {
-  test("returns parsed manifest when .vero/manifest.json exists with verno generator", () => {
-    mkdirSync(join(TMP_DIR, ".vero"), { recursive: true });
+  test("returns parsed manifest when .verno/manifest.json exists with verno generator", () => {
+    mkdirSync(join(TMP_DIR, ".verno"), { recursive: true });
     writeFileSync(
-      join(TMP_DIR, ".vero", "manifest.json"),
+      join(TMP_DIR, ".verno", "manifest.json"),
       JSON.stringify({ addons: ["turborepo"], generator: "verno", projectName: "test" }),
     );
     const result = detectVernoManifest(TMP_DIR);
@@ -57,8 +57,8 @@ describe("detectVernoManifest", () => {
   });
 
   test("returns null when manifest has non-verno generator", () => {
-    mkdirSync(join(TMP_DIR, ".vero"), { recursive: true });
-    writeFileSync(join(TMP_DIR, ".vero", "manifest.json"), JSON.stringify({ generator: "other" }));
+    mkdirSync(join(TMP_DIR, ".verno"), { recursive: true });
+    writeFileSync(join(TMP_DIR, ".verno", "manifest.json"), JSON.stringify({ generator: "other" }));
     const result = detectVernoManifest(TMP_DIR);
     expect(result).toBeNull();
   });
