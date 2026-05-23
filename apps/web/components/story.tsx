@@ -2,7 +2,7 @@ import { ExternalLink } from "./external-link";
 import { Installer } from "./installer";
 
 export const Story = () => (
-  <article className="grid gap-6 text-pretty text-sm text-muted-foreground sm:text-base">
+  <article className="grid gap-6 [&_p]:text-pretty [&_p]:text-muted-foreground">
     <p>
       Today, starters can do in minutes what used to take days. But the surface is shallow. Nothing
       ships taste at the speed tools ship code.
@@ -17,7 +17,7 @@ export const Story = () => (
     <div className="flex flex-col gap-4">
       <p>
         One command from zero to a Next.js app with Turborepo, workspace packages, shadcn/ui, and
-        Ultracite:
+        Ultracite
       </p>
       <Installer command="bun x @vernostudio/cli create" />
     </div>
