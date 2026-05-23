@@ -2,7 +2,6 @@
   "extends": "@vernostudio/typescript-config/base.json",
   "compilerOptions": {
     "noEmit": true,
-    "rootDir": ".",
     "types": ["bun"],
     "paths": {
       "@vernostudio/template-generator": ["../template-generator/src/index.ts"]
