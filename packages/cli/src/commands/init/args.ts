@@ -2,19 +2,16 @@ import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import type { AddonId, PackageManager } from "@vernostudio/template-generator";
 import { parseAddonsArg } from "../shared/addons";
+import {
+  DEFAULT_SHADCN_PRESET,
+  isPackageManager,
+  isUiMode,
+  PACKAGE_MANAGERS,
+} from "../shared/input-primitives";
+import type { UiMode } from "../shared/input-primitives";
 import { parseUltraciteLinterFlag } from "../shared/ultracite";
 
-export const DEFAULT_SHADCN_PRESET = "nova";
-
-export const PACKAGE_MANAGERS: readonly PackageManager[] = ["bun", "pnpm", "npm"];
-
-export type UiMode = "none" | "shadcn";
-
-export const isUiMode = (value: string | undefined): value is UiMode =>
-  value === "shadcn" || value === "none";
-
-export const isPackageManager = (value: string | undefined): value is PackageManager =>
-  value === "bun" || value === "pnpm" || value === "npm";
+export { DEFAULT_SHADCN_PRESET, isPackageManager, isUiMode, PACKAGE_MANAGERS, type UiMode };
 
 /** Raw CLI flags for `verno init`. */
 export interface InitCommandOptions {

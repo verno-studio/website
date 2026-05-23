@@ -1,7 +1,7 @@
 import * as p from "@clack/prompts";
 import { defaultNpmScopeFromProjectName } from "@vernostudio/template-generator";
 import pc from "picocolors";
-import { dimPath, renderVernoTitle } from "../../ui";
+import { dimPath } from "../../ui";
 import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } from "../../errors";
 import { runInteractiveCreateWizard } from "./prompts";
 import {
@@ -10,84 +10,27 @@ import {
   resolvedUsesTurborepo,
 } from "./args";
 import type { CreateCommandOptions, ResolvedCreateInputs } from "./args";
-import type { UltraciteLinterId } from "../../ultracite-linter";
 import {
   assertPathAvailable,
   buildVernoManifest,
-  ensureAppGlobalsBaseLayerAtEnd,
   getProjectPath,
   runGitInitAndCommitIfEnabled,
-  runInstallIfEnabled,
-  runShadcnIfEnabled,
-  runUltraciteIfEnabled,
   scaffold,
   toProjectConfig,
   writeVernoManifest,
 } from "./actions";
 import { getNextStepHints } from "./next-steps";
 import { buildCreatePlan, getPlanSummary } from "./plan";
-import type { CreatePlanSummary } from "./plan";
-
-const requireUltraciteLinter = (resolved: ResolvedCreateInputs): UltraciteLinterId => {
-  const l = resolved.ultraciteLinter;
-  if (l === undefined) {
-    throw new CLIError(
-      "Ultracite init requires resolved.ultraciteLinter. Pass --linter with the ultracite add-on or use interactive create.",
-      { code: "ULTRACITE" },
-    );
-  }
-  return l;
-};
-
-const printHumanDryRun = (args: {
-  projectDir: string;
-  projectName: string;
-  nextSteps: readonly string[];
-  plan: CreatePlanSummary;
-}): void => {
-  renderVernoTitle(false);
-  process.stdout.write(`\n${pc.magenta("create — plan (dry run)")}\n\n`);
-  process.stdout.write(`Project: ${args.projectName}\n`);
-  process.stdout.write(`Path:    ${dimPath(args.projectDir, false)}\n`);
-  process.stdout.write(
-    `Stack:   ${args.plan.frontend} | add-ons: ${args.plan.addons.join(", ") || "none"} | packages: ${args.plan.packages.join(", ") || "—"}\n\n`,
-  );
-  for (const step of args.plan.steps) {
-    if (step.willRun) {
-      const cmd = step.command
-        ? ` → ${step.command.file} ${step.command.args.join(" ")} (cwd: ${step.command.cwd})`
-        : "";
-      process.stdout.write(`  [ ] ${step.label}${cmd}\n`);
-    } else {
-      process.stdout.write(
-        `  [skip] ${step.label}${step.skippedReason ? ` — ${step.skippedReason}` : ""}\n`,
-      );
-    }
-  }
-  process.stdout.write(`\nNext (after a real run):\n`);
-  for (const line of args.nextSteps) {
-    process.stdout.write(`  - ${line}\n`);
-  }
-  process.stdout.write(`\nRun without --dry-run to create the project.\n`);
-};
-
-const printHumanNextSteps = (name: string, nextSteps: readonly string[]): void => {
-  process.stdout.write(`\nDone. Next:\n`);
-  for (const line of nextSteps) {
-    process.stdout.write(`  ${line}\n`);
-  }
-  process.stdout.write(`\n`);
-  p.outro(`Project "${name}" is ready.`);
-};
+import { printDoneNextSteps, printStepPlanDryRun } from "../shared/command-ui";
+import { runInstallTask, runPostSetupPipeline } from "../shared/post-setup-pipeline";
 
 const resolveInputs = async (args: {
   name?: string;
   options: CreateCommandOptions;
 }): Promise<ResolvedCreateInputs> => {
   const { name, options } = args;
-  const useYes = options.yes;
 
-  if (useYes) {
+  if (options.yes) {
     if (!name) {
       throw new CLIError(
         "Project name is required with -y, --yes. Example: verno create my-app -y",
@@ -113,18 +56,25 @@ export const runCreate = async (args: {
   options: CreateCommandOptions;
 }): Promise<void> => {
   const { options } = args;
-  const { dryRun } = options;
-
   const resolved = await resolveInputs(args);
-
   const projectDir = getProjectPath(resolved.name);
   const { steps } = buildCreatePlan(resolved, projectDir);
   const plan = getPlanSummary(resolved, projectDir, steps);
   const nextSteps = getNextStepHints(resolved);
 
-  if (dryRun) {
+  if (options.dryRun) {
     assertPathAvailable(projectDir);
-    printHumanDryRun({ nextSteps, plan, projectDir, projectName: resolved.name });
+    printStepPlanDryRun({
+      footer: "Run without --dry-run to create the project.",
+      metaLines: [
+        `Project: ${resolved.name}`,
+        `Path:    ${dimPath(projectDir, false)}`,
+        `Stack:   ${plan.frontend} | add-ons: ${plan.addons.join(", ") || "none"} | packages: ${plan.packages.join(", ") || "—"}`,
+      ],
+      nextSteps,
+      steps,
+      title: "create — plan (dry run)",
+    });
     return;
   }
 
@@ -139,8 +89,6 @@ export const runCreate = async (args: {
   try {
     assertPathAvailable(projectDir);
     const monorepo = resolvedUsesTurborepo(resolved);
-    const normalizeAppGlobalsLayer = (): Promise<void> =>
-      ensureAppGlobalsBaseLayerAtEnd(projectDir, monorepo);
 
     await p.tasks([
       {
@@ -152,67 +100,37 @@ export const runCreate = async (args: {
         },
         title: "Scaffold project",
       },
-      {
-        enabled: resolved.doInstall,
-        task: async (message) => {
-          message?.("Installing dependencies…");
-          await runInstallIfEnabled(true, resolved.packageManager, projectDir);
-          return "Dependencies installed";
-        },
-        title: "Install dependencies",
-      },
     ]);
 
-    if (resolved.useShadcn) {
-      process.stdout.write(
-        `\n${pc.cyan("shadcn")} — ${pc.dim(
-          "bootstrap (init/apply) + add --all (full output below; can take several minutes)",
-        )}\n\n`,
-      );
-      await runShadcnIfEnabled({
-        enabled: true,
+    await runInstallTask({
+      doInstall: resolved.doInstall,
+      packageManager: resolved.packageManager,
+      projectDir,
+    });
+
+    await runPostSetupPipeline({
+      afterComplete: () => runGitInitAndCommitIfEnabled(resolved.doGit, projectDir),
+      commandName: "create",
+      monorepo,
+      packageManager: resolved.packageManager,
+      projectDir,
+      shadcn: {
+        bannerSuffix: "(full output below; can take several minutes)",
+        enabled: resolved.useShadcn,
         monorepoWithDesignSystem: resolvedHasDesignSystem(resolved),
-        packageManager: resolved.packageManager,
         preset: resolved.shadcnPreset,
-        projectDir,
-      });
-      process.stdout.write("\n");
-    }
-
-    await normalizeAppGlobalsLayer();
-
-    if (resolved.runUltracite) {
-      const linter = requireUltraciteLinter(resolved);
-
-      await p.tasks([
-        {
-          enabled: resolved.nonInteractive,
-          task: async (message) => {
-            message?.("ultracite init (quiet)…");
-            await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "quiet", {
-              linter,
-            });
-            return "ultracite init complete";
-          },
-          title: "ultracite init",
-        },
-      ]);
-
-      if (!resolved.nonInteractive) {
-        process.stdout.write(
-          `\n${pc.cyan("ultracite")} — Linter: ${linter}. Continue in Ultracite for frameworks, editors, and hooks.\n\n`,
-        );
-        await runUltraciteIfEnabled(true, resolved.packageManager, projectDir, "interactive", {
-          ciSafe: false,
-          linter,
-        });
-      }
-    }
-
-    const manifest = buildVernoManifest({ projectName: resolved.name, resolved });
-    await writeVernoManifest(projectDir, manifest);
-    await normalizeAppGlobalsLayer();
-    await runGitInitAndCommitIfEnabled(resolved.doGit, projectDir);
+      },
+      ultracite: {
+        enabled: resolved.runUltracite,
+        linter: resolved.ultraciteLinter,
+        nonInteractive: resolved.nonInteractive,
+      },
+      writeManifest: () =>
+        writeVernoManifest(
+          projectDir,
+          buildVernoManifest({ projectName: resolved.name, resolved }),
+        ),
+    });
   } catch (error) {
     if (error instanceof ProcessFailedError) {
       process.stderr.write(`${pc.red("Error:")} ${error.message}\n`);
@@ -223,5 +141,6 @@ export const runCreate = async (args: {
     }
     throw error;
   }
-  printHumanNextSteps(resolved.name, nextSteps);
+
+  printDoneNextSteps(`Project "${resolved.name}" is ready.`, nextSteps);
 };
