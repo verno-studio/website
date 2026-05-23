@@ -1,5 +1,5 @@
 {
   "ignore": {
-    "files": ["components/ui/**"]
+    "files": ["hooks/use-mobile.ts", "components/ui/**", "components/dot-matrix/**"]
   }
 }
