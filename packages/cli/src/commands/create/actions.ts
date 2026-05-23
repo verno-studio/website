@@ -19,7 +19,6 @@ import type { UltraciteInitMode } from "../../pm-exec";
 import { runProcess } from "../../run";
 import type { ResolvedCreateInputs, UiMode } from "./args";
 import type { UltraciteLinterId } from "../../ultracite-linter";
-import { ensureAppGlobalsBaseLayerAtEnd } from "../../app-globals";
 import { readCliPackageVersion } from "../../cli-version";
 import { getShadcnWorkingDirectory } from "./plan";
 import {
