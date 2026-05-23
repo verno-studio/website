@@ -37,52 +37,78 @@ const normalizeLang = (lang: string): BundledLanguage => {
   return "ts";
 };
 
-const renderInline = (nodes: InlineNode[]) =>
-  nodes.map((node, index) => {
-    const key = `${index}`;
-    if (node.type === "text") {
-      return <span key={key}>{node.value}</span>;
-    }
-    if (node.type === "code") {
-      return <code key={key}>{node.value}</code>;
-    }
-    if (node.type === "strong") {
-      return <strong key={key}>{renderInline(node.nodes)}</strong>;
-    }
-    if (node.type === "em") {
-      return <em key={key}>{renderInline(node.nodes)}</em>;
-    }
-    return (
-      <a
-        key={key}
-        href={node.href}
-        rel="noreferrer"
-        target="_blank"
-        className="underline underline-offset-4 decoration-muted-foreground/60 hover:decoration-foreground transition-colors duration-200 ease-out"
-      >
-        {node.label}
-      </a>
-    );
-  });
+const InlineContent = ({ nodes }: { nodes: InlineNode[] }) => (
+  <>
+    {nodes.map((node, index) => {
+      const key = `${index}`;
+      if (node.type === "text") {
+        return <span key={key}>{node.value}</span>;
+      }
+      if (node.type === "code") {
+        return <code key={key}>{node.value}</code>;
+      }
+      if (node.type === "strong") {
+        return (
+          <strong key={key}>
+            <InlineContent nodes={node.nodes} />
+          </strong>
+        );
+      }
+      if (node.type === "em") {
+        return (
+          <em key={key}>
+            <InlineContent nodes={node.nodes} />
+          </em>
+        );
+      }
+      return (
+        <a
+          key={key}
+          href={node.href}
+          rel="noreferrer"
+          target="_blank"
+          className="underline underline-offset-4 decoration-muted-foreground/60 hover:decoration-foreground transition-colors duration-200 ease-out"
+        >
+          {node.label}
+        </a>
+      );
+    })}
+  </>
+);
 
-const renderBlock = (block: ChangelogBlock, key: string) => {
+const Block = ({ block }: { block: ChangelogBlock }) => {
   if (block.type === "paragraph") {
-    return <p key={key}>{renderInline(block.nodes)}</p>;
+    return (
+      <p>
+        <InlineContent nodes={block.nodes} />
+      </p>
+    );
   }
   if (block.type === "list") {
     return (
-      <ul key={key}>
-        {block.items.map((item, index) => (
-          // oxlint-disable-next-line react/no-array-index-key -- stable order within an item
-          <li key={`${key}-${index}`}>{renderInline(item)}</li>
-        ))}
+      <ul>
+        {block.items.map((item) => {
+          const itemKey = item
+            .map((n) => {
+              if (n.type === "text" || n.type === "code") return n.value;
+              if (n.type === "link") return n.label;
+              return "";
+            })
+            .join("")
+            .slice(0, 40);
+          return (
+            <li key={itemKey}>
+              <InlineContent nodes={item} />
+            </li>
+          );
+        })}
       </ul>
     );
   }
-  return <CodeBlock key={key} code={block.code} lang={normalizeLang(block.lang)} />;
+  return <CodeBlock code={block.code} lang={normalizeLang(block.lang)} />;
 };
 
-export const KindBadge = ({ kind }: { kind: ChangeKind }) => (
+const KindBadge = ({ kind }: { kind: ChangeKind }) => (
   <span
     className={cn(
       "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider",
@@ -120,7 +146,9 @@ export const Release = ({ release }: { release: ChangelogRelease }) => (
                   {item.id.slice(0, 7)}
                 </a>
               </div>
-              {item.blocks.map((block, index) => renderBlock(block, `${item.id}-${index}`))}
+              {item.blocks.map((block, index) => (
+                <Block key={`${item.id}-${index}`} block={block} />
+              ))}
             </li>
           ))}
         </ul>
