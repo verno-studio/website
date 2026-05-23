@@ -48,7 +48,7 @@ const readProjectName = async (positionalName: string | undefined): Promise<stri
       if (!v) {
         return "Project name is required";
       }
-      if (!/^[a-z0-9-]+$/i.test(v)) {
+      if (!/^[a-z0-9-]+$/iu.test(v)) {
         return "Use letters, numbers, and hyphens only";
       }
     },

@@ -30,9 +30,9 @@ export interface ProjectConfig {
 export const defaultNpmScopeFromProjectName = (projectName: string): string => {
   const slug = projectName
     .toLowerCase()
-    .replaceAll(/[^a-z0-9-]/g, "-")
-    .replaceAll(/-+/g, "-")
-    .replaceAll(/^-|-$/g, "");
+    .replaceAll(/[^a-z0-9-]/gu, "-")
+    .replaceAll(/-+/gu, "-")
+    .replaceAll(/^-|-$/gu, "");
   if (slug.length > 0) {
     return slug;
   }

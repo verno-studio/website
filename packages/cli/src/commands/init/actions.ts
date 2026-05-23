@@ -188,10 +188,10 @@ export const detectProjectState = (projectDir: string): DetectedState => {
   const pkgJson = detectPackageJson(projectDir);
   const mono = detectMonorepo(projectDir);
 
-  let projectName = projectDir.split(/[/\\]/).pop() ?? "project";
+  let projectName = projectDir.split(/[/\\]/u).pop() ?? "project";
   const pkgName = pkgJson?.name as string | undefined;
   if (typeof pkgName === "string" && pkgName.length > 0) {
-    projectName = pkgName.replace(/^@[^/]+\//, "");
+    projectName = pkgName.replace(/^@[^/]+\//u, "");
   }
 
   return {
