@@ -1,5 +1,5 @@
-import { existsSync, readFileSync } from "node:fs";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { generate, writeTree } from "@vernostudio/template-generator";
 import type {
@@ -19,136 +19,16 @@ import type { UltraciteInitMode } from "../pm-exec";
 import { runProcess } from "../run";
 import type { ResolvedCreateInputs, UiMode } from "./create-args";
 import type { UltraciteLinterId } from "../ultracite-linter";
+import { ensureAppGlobalsBaseLayerAtEnd } from "../app-globals";
+import { readCliPackageVersion } from "../cli-version";
 import { getShadcnWorkingDirectory } from "./create-plan";
+import {
+  VERNO_INITIAL_COMMIT_BODY,
+  VERNO_INITIAL_COMMIT_SUBJECT,
+  VERNO_MANIFEST_DIR,
+} from "../constants";
 
-/** Sync with `packages/template-generator/templates/frontends/next/app/globals.css.hbs`. */
-export const VERNO_APP_GLOBALS_BASE_MARKER = "/* This layer is by Verno Studio */" as const;
-
-const VERNO_INITIAL_COMMIT_SUBJECT = "Initial commit from Verno Studio" as const;
-const VERNO_INITIAL_COMMIT_BODY = "Generated-by: Verno Studio" as const;
-
-const trimEndWhitespace = (value: string): string => value.replace(/\s+$/u, "");
-
-export const VERNO_APP_GLOBALS_BASE_LAYER = `${VERNO_APP_GLOBALS_BASE_MARKER}
-@layer base {
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    @apply border-border;
-  }
-  ::selection {
-    @apply bg-primary text-background;
-  }
-  * {
-    @apply border-border outline-ring/50;
-  }
-  html {
-    font-feature-settings: "ss01";
-    text-rendering: optimizeLegibility;
-  }
-  body {
-    @apply min-h-dvh;
-    @apply bg-background text-foreground;
-  }
-  input::placeholder,
-  textarea::placeholder {
-    @apply text-muted-foreground;
-  }
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    @apply cursor-pointer;
-  }
-  a[target="_blank"],
-  a[target="_blank"] *,
-  a[href^="mailto:"],
-  a[href^="mailto:"] * {
-    @apply cursor-alias;
-  }
-  button:focus,
-  input:focus,
-  textarea:focus,
-  a:focus {
-    @apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      scroll-behavior: auto !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-}` as const;
-
-export const getAppGlobalsCssPath = (projectDir: string, monorepo: boolean): string =>
-  monorepo
-    ? join(projectDir, "apps", "web", "app", "globals.css")
-    : join(projectDir, "app", "globals.css");
-
-const stripAppGlobalsBaseLayer = (content: string): string => {
-  const markerIndex = content.indexOf(VERNO_APP_GLOBALS_BASE_MARKER);
-  if (markerIndex === -1) {
-    return trimEndWhitespace(content);
-  }
-  const layerStart = content.indexOf("@layer base", markerIndex);
-  if (layerStart === -1) {
-    return trimEndWhitespace(content.slice(0, markerIndex));
-  }
-  const blockOpen = content.indexOf("{", layerStart);
-  if (blockOpen === -1) {
-    return trimEndWhitespace(content.slice(0, markerIndex));
-  }
-  let depth = 0;
-  for (let i = blockOpen; i < content.length; i += 1) {
-    const ch = content[i];
-    if (ch === "{") {
-      depth += 1;
-    } else if (ch === "}") {
-      depth -= 1;
-      if (depth === 0) {
-        const before = content.slice(0, markerIndex);
-        const after = content.slice(i + 1).replace(/^\s*\n/u, "");
-        return trimEndWhitespace(before + after);
-      }
-    }
-  }
-  return trimEndWhitespace(content.slice(0, markerIndex));
-};
-
-export const ensureAppGlobalsBaseLayerContent = (content: string): string => {
-  const stripped = stripAppGlobalsBaseLayer(content);
-  const needsNewlineBeforeBlock = stripped.length > 0 && !stripped.endsWith("\n");
-  const gap = needsNewlineBeforeBlock ? "\n" : "";
-  return `${stripped}${gap}${VERNO_APP_GLOBALS_BASE_LAYER}\n`;
-};
-
-export const ensureAppGlobalsBaseLayerAtEnd = async (
-  projectDir: string,
-  monorepo: boolean,
-): Promise<void> => {
-  const path = getAppGlobalsCssPath(projectDir, monorepo);
-  if (!existsSync(path)) {
-    return;
-  }
-  const raw = await readFile(path, "utf-8");
-  const next = ensureAppGlobalsBaseLayerContent(raw);
-  if (next !== raw) {
-    await writeFile(path, next, "utf-8");
-  }
-};
-
-const readCliPackageVersion = (): string => {
-  try {
-    const pkgPath = join(import.meta.dirname, "..", "..", "package.json");
-    const parsed = JSON.parse(readFileSync(pkgPath, "utf-8")) as { version?: string };
-    return parsed.version ?? "0.0.0";
-  } catch {
-    return "0.0.0";
-  }
-};
+export { ensureAppGlobalsBaseLayerAtEnd } from "../app-globals";
 
 export interface VernoManifest {
   readonly addons: readonly AddonId[];
@@ -162,7 +42,6 @@ export interface VernoManifest {
   readonly shadcnPreset?: string;
   readonly studio: "Verno Studio";
   readonly ui: UiMode;
-  /** Linter passed to `ultracite init --linter` when the ultracite add-on ran (wizard, CLI flag, or `-y` default). */
   readonly ultraciteLinter?: UltraciteLinterId;
 }
 
@@ -188,7 +67,7 @@ export const writeVernoManifest = async (
   projectDir: string,
   manifest: VernoManifest,
 ): Promise<void> => {
-  const dir = join(projectDir, ".verno");
+  const dir = join(projectDir, VERNO_MANIFEST_DIR);
   await mkdir(dir, { recursive: true });
   const out = join(dir, "manifest.json");
   await writeFile(out, `${JSON.stringify(manifest, null, 2)}\n`, "utf-8");
@@ -325,5 +204,3 @@ export const toProjectConfig = (args: {
   shadcnPreset: args.shadcnPreset,
   ui: args.resolved.ui,
 });
-
-export { getShadcnWorkingDirectory } from "./create-plan";

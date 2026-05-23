@@ -204,7 +204,7 @@ const resolveWorkspacePackagesNonInteractive = (
 };
 
 export const parseUltraciteLinterFlag = (
-  options: CreateCommandOptions,
+  options: { readonly linter?: string },
   ultraciteOn: boolean,
 ): UltraciteLinterId | undefined => {
   if (!ultraciteOn) {

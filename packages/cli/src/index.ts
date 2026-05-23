@@ -3,6 +3,8 @@ import { Command } from "commander";
 import packageJson from "../package.json";
 import { runCreate } from "./commands/create";
 import { toCreateCommandOptions } from "./commands/create-args";
+import { runInit } from "./commands/init";
+import { toInitCommandOptions } from "./commands/init-args";
 import { isCLIError, isUserCancelled, ProcessFailedError } from "./errors";
 
 const program = new Command();
@@ -39,6 +41,28 @@ program
     await runCreate({
       name,
       options: toCreateCommandOptions(opts),
+    });
+  });
+
+program
+  .command("init")
+  .description("Add components/addons to an existing Verno Studio project")
+  .option("--addon <list>", "Comma-separated: turborepo, ultracite (e.g. turborepo,ultracite)")
+  .option("--ui <mode>", "shadcn | none")
+  .option("--shadcn-preset <name>", "shadcn preset (e.g. nova)")
+  .option(
+    "--linter <id>",
+    "biome | oxlint | eslint (ultracite add-on; interactive wizard asks unless set)",
+  )
+  .option("-p, --package-manager <pm>", "bun | pnpm | npm")
+  .option("-y, --yes", "Non-interactive mode", false)
+  .option("--dry-run", "Print the plan without writing files", false)
+  .option("--no-install", "Skip dependency install")
+  .option("--skip-shadcn", "Skip shadcn bootstrap")
+  .option("--skip-ultracite", "Skip ultracite add-on")
+  .action(async (opts) => {
+    await runInit({
+      options: toInitCommandOptions(opts),
     });
   });
 
