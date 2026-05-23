@@ -38,17 +38,30 @@ describe("detectPackageJson", () => {
   });
 });
 
+const sampleManifest = {
+  addons: ["turborepo"],
+  createdAt: "2024-01-01T00:00:00.000Z",
+  frontend: "next",
+  generator: "verno",
+  generatorVersion: "0.0.0",
+  packageManager: "bun",
+  packages: [],
+  projectName: "test",
+  studio: "Verno Studio",
+  ui: "shadcn",
+};
+
 describe("detectVernoManifest", () => {
   test("returns parsed manifest when .verno/manifest.json exists with verno generator", () => {
     mkdirSync(join(TMP_DIR, ".verno"), { recursive: true });
     writeFileSync(
       join(TMP_DIR, ".verno", "manifest.json"),
-      JSON.stringify({ addons: ["turborepo"], generator: "verno", projectName: "test" }),
+      JSON.stringify(sampleManifest),
     );
     const result = detectVernoManifest(TMP_DIR);
     expect(result).not.toBeNull();
-    const addons = (result as PackageJsonRecord | null)?.addons;
-    expect(addons).toContain("turborepo");
+    expect(result?.addons).toContain("turborepo");
+    expect(result?.projectName).toBe("test");
   });
 
   test("returns null when manifest does not exist", () => {
