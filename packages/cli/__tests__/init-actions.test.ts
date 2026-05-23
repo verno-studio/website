@@ -82,12 +82,27 @@ describe("detectShadcn", () => {
 });
 
 describe("detectUltracite", () => {
-  test("returns true when .ultracite directory exists", () => {
-    mkdirSync(join(TMP_DIR, ".ultracite"), { recursive: true });
+  test("returns true when oxlint.config.ts imports ultracite presets", () => {
+    writeFileSync(
+      join(TMP_DIR, "oxlint.config.ts"),
+      'import core from "ultracite/oxlint/core";\nexport default {};\n',
+    );
     expect(detectUltracite(TMP_DIR)).toBe(true);
   });
 
-  test("returns false when .ultracite does not exist", () => {
+  test("returns true when package.json runs ultracite in lint script", () => {
+    writeFileSync(
+      join(TMP_DIR, "package.json"),
+      JSON.stringify({
+        devDependencies: { ultracite: "7.7.0" },
+        name: "test",
+        scripts: { lint: "ultracite check" },
+      }),
+    );
+    expect(detectUltracite(TMP_DIR)).toBe(true);
+  });
+
+  test("returns false when ultracite is not configured", () => {
     expect(detectUltracite(TMP_DIR)).toBe(false);
   });
 });

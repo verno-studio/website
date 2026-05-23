@@ -94,9 +94,51 @@ export const detectShadcn = (projectDir: string, monorepo: boolean): boolean => 
   return existsSync(configPath);
 };
 
+const ULTRACITE_CONFIG_FILES = [
+  "oxlint.config.ts",
+  "oxlint.config.js",
+  "oxfmt.config.ts",
+  "biome.json",
+  "biome.jsonc",
+  "eslint.config.mjs",
+  "eslint.config.js",
+] as const;
+
+const configReferencesUltracite = (projectDir: string, fileName: string): boolean => {
+  const path = join(projectDir, fileName);
+  if (!existsSync(path)) {
+    return false;
+  }
+  try {
+    return readFileSync(path, "utf-8").includes("ultracite");
+  } catch {
+    return false;
+  }
+};
+
 export const detectUltracite = (projectDir: string): boolean => {
-  const ultraciteDir = join(projectDir, ".ultracite");
-  return existsSync(ultraciteDir);
+  if (ULTRACITE_CONFIG_FILES.some((file) => configReferencesUltracite(projectDir, file))) {
+    return true;
+  }
+
+  const pkg = detectPackageJson(projectDir);
+  if (pkg === null) {
+    return false;
+  }
+
+  const deps = {
+    ...(pkg.dependencies as Record<string, unknown> | undefined),
+    ...(pkg.devDependencies as Record<string, unknown> | undefined),
+  };
+  if (!("ultracite" in deps)) {
+    return false;
+  }
+
+  const scripts = pkg.scripts as Record<string, unknown> | undefined;
+  return (
+    scripts !== undefined &&
+    Object.values(scripts).some((value) => typeof value === "string" && value.includes("ultracite"))
+  );
 };
 
 export const detectMonorepo = (projectDir: string): boolean => {
