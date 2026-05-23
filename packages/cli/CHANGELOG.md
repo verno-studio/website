@@ -20,5 +20,4 @@
 
 ### Patch Changes
 
-- Updated dependencies [50a97f9]
-  - @vernostudio/template-generator@0.1.0
+- 50a97f9: Update dependencies
