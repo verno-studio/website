@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import {
   resolveCreateInputsNonInteractive,
   toCreateCommandOptions,
-} from "../src/commands/create-args";
+} from "../src/commands/create/args";
 
 describe("toCreateCommandOptions", () => {
   test("normalizes commander-style flags", () => {

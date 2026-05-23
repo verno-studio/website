@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { buildInitPlan, getInitPlanSummary } from "../src/commands/init-plan";
-import type { ResolvedInitInputs } from "../src/commands/init-args";
+import { buildInitPlan, getInitPlanSummary } from "../src/commands/init/plan";
+import type { ResolvedInitInputs } from "../src/commands/init/args";
 
 const makeResolved = (overrides?: Partial<ResolvedInitInputs>): ResolvedInitInputs => ({
   addons: ["ultracite"] as const,

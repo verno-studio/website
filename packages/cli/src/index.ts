@@ -2,9 +2,9 @@ import process from "node:process";
 import { Command } from "commander";
 import packageJson from "../package.json";
 import { runCreate } from "./commands/create";
-import { toCreateCommandOptions } from "./commands/create-args";
+import { toCreateCommandOptions } from "./commands/create/args";
 import { runInit } from "./commands/init";
-import { toInitCommandOptions } from "./commands/init-args";
+import { toInitCommandOptions } from "./commands/init/args";
 import { isCLIError, isUserCancelled, ProcessFailedError } from "./errors";
 
 const program = new Command();

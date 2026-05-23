@@ -9,7 +9,7 @@ import {
   detectPackageManager,
   detectProjectState,
   safeParsePackageJson,
-} from "../src/commands/init-actions";
+} from "../src/commands/init/actions";
 import { writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 

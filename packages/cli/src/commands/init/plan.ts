@@ -4,8 +4,8 @@ import {
   getShadcnAddAllCommand,
   getShadcnBootstrapCommand,
   getUltraciteInitCommand,
-} from "../pm-exec";
-import type { ResolvedInitInputs } from "./init-args";
+} from "../../pm-exec";
+import type { ResolvedInitInputs } from "./args";
 
 export type InitStepId =
   | "install"
