@@ -54,10 +54,7 @@ const sampleManifest = {
 describe("detectVernoManifest", () => {
   test("returns parsed manifest when .verno/manifest.json exists with verno generator", () => {
     mkdirSync(join(TMP_DIR, ".verno"), { recursive: true });
-    writeFileSync(
-      join(TMP_DIR, ".verno", "manifest.json"),
-      JSON.stringify(sampleManifest),
-    );
+    writeFileSync(join(TMP_DIR, ".verno", "manifest.json"), JSON.stringify(sampleManifest));
     const result = detectVernoManifest(TMP_DIR);
     expect(result).not.toBeNull();
     expect(result?.addons).toContain("turborepo");
