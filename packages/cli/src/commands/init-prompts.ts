@@ -199,6 +199,7 @@ export const runInteractiveInitWizard = async (args: {
   p.log.info(`Pkg mgr:  ${detected.packageManager ?? "unknown"}`);
 
   p.log.step("Add-ons — what would you like to add?");
+  p.log.info("Press Enter without selecting options to skip new add-ons.");
   const addons = await readAddonsInteractive(options);
   const ultraciteOn = addons.includes("ultracite");
 
