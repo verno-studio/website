@@ -7,11 +7,12 @@ import typescript from "@shikijs/langs/typescript";
 import yaml from "@shikijs/langs/yaml";
 import darkTheme from "@shikijs/themes/vesper";
 import lightTheme from "@shikijs/themes/github-light-default";
-import { cn } from "@vernostudio/design-system/lib/utils";
 import type { BundledLanguage } from "shiki";
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import shikiWasm from "shiki/wasm";
+
+import { cn } from "@vernostudio/design-system/lib/utils";
 
 interface CodeBlockProps {
   className?: string;
@@ -30,6 +31,7 @@ const getHighlighter = () => {
       themes: [lightTheme, darkTheme],
     });
   }
+
   return highlighterPromise;
 };
 
@@ -46,20 +48,28 @@ export const CodeBlock = async ({ code, lang, className }: CodeBlockProps) => {
 
   return (
     <pre
-      className={cn(className, "overflow-x-auto rounded-lg bg-sidebar p-6 text-sm")}
+      className={cn(className, "shiki overflow-x-auto p-6 text-sm bg-sidebar rounded-lg")}
       data-language={lang}
-      style={{ color: result.fg }}
+      // Geist Mono ships ligatures/contextual alternates that span text-node
+      // boundaries — without this, `<space>--flag` collapses visually even
+      // though the whitespace exists in the DOM. Spans from Shiki put each
+      // token in its own <span>, but Harfbuzz still shapes across them.
+      style={{
+        color: result.fg,
+        fontFeatureSettings: '"liga" 0, "calt" 0',
+        fontVariantLigatures: "none",
+      }}
     >
-      <code>
+      <code className="font-mono">
         {result.tokens.map((row, index) => (
           <span
             className="block min-h-lh"
-            // eslint-disable-next-line react/no-array-index-key -- tokens have no unique ID
+            // oxlint-disable-next-line react/no-array-index-key -- tokens have no unique ID
             key={`line-${String(index)}`}
           >
             {row.map((token, tokenIndex) => (
               <span
-                // eslint-disable-next-line react/no-array-index-key -- tokens have no unique ID
+                // oxlint-disable-next-line react/no-array-index-key -- tokens have no unique ID
                 key={`token-${String(index)}-${String(tokenIndex)}`}
                 style={{
                   backgroundColor: token.bgColor,

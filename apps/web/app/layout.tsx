@@ -4,6 +4,7 @@ import { DesignSystemProvider } from "@vernostudio/design-system/components/prov
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { url } from "@/lib/url";
+import { Header } from "@/components/header";
 
 const title = "Verno Studio";
 const description =
@@ -60,16 +61,32 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  author: { "@type": "Person", name: "Noppakorn Kaewsalabnil" },
+  codeRepository: "https://github.com/verno-studio/website",
+  description,
+  license: "https://opensource.org/licenses/MIT",
+  name: "Verno Studio",
+  programmingLanguage: "TypeScript",
+  url,
+};
+
 interface RootLayoutProps {
   readonly children: ReactNode;
 }
 
 const RootLayout = ({ children }: RootLayoutProps) => (
   <html lang="en" suppressHydrationWarning>
+    <head>
+      <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+    </head>
     <body className={fonts}>
       <DesignSystemProvider>
         <main className="relative z-10 mx-auto grid w-full max-w-2xl gap-16 sm:gap-24 px-4 py-16 sm:py-32">
-          {children}
+          <Header />
+          <div className="flex flex-1 flex-col gap-12">{children}</div>
         </main>
       </DesignSystemProvider>
     </body>

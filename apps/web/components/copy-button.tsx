@@ -42,14 +42,14 @@ export const CopyButton = ({ value, className, variant = "ghost", ...props }: Co
         <span className="sr-only">Copy</span>
         <Check
           className={cn(
-            "absolute size-4 transition-all duration-200 ease-out will-change-transform",
-            hasCopied ? "scale-100 opacity-100 blur-0" : "scale-95 opacity-0 blur-[2px]",
+            "absolute size-4 transition-[opacity,filter] duration-200 ease-out",
+            hasCopied ? "opacity-100 blur-0" : "opacity-0 blur-[2px]",
           )}
         />
         <Copy
           className={cn(
-            "absolute size-4 transition-all duration-200 ease-out will-change-transform",
-            hasCopied ? "scale-95 opacity-0 blur-[2px]" : "scale-100 opacity-100 blur-0",
+            "absolute size-4 transition-[opacity,filter] duration-200 ease-out",
+            hasCopied ? "opacity-0 blur-[2px]" : "opacity-100 blur-0",
           )}
         />
       </Button>

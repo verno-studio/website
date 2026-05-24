@@ -6,3 +6,36 @@
 .light {
   --radius: 0.5rem !important;
 }
+
+@layer base {
+  ul,
+  ol {
+    @apply flex text-base leading-relaxed flex-col gap-2 pl-5 list-disc text-muted-foreground sm:text-sm;
+    overflow-wrap: anywhere;
+  }
+
+  li::marker {
+    color: --alpha(var(--color-muted-foreground) / 40%);
+  }
+
+  :not(pre) > code {
+    @apply px-1 rounded-sm bg-muted font-mono text-foreground;
+    overflow-wrap: anywhere;
+    /* Geist Mono's contextual alternates collapse `--` against adjacent
+       text (and across DOM boundaries with Shiki). See code-block.tsx for
+       the matching reset on syntax-highlighted blocks. */
+    font-feature-settings:
+      "liga" 0,
+      "calt" 0;
+    font-variant-ligatures: none;
+  }
+}
+
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
