@@ -65,7 +65,7 @@ const InlineContent = ({ nodes }: { nodes: InlineNode[] }) => (
         <a
           key={key}
           href={node.href}
-          rel="noreferrer"
+          rel="noopener noreferrer"
           target="_blank"
           className="underline underline-offset-4 decoration-muted-foreground/60 hover:decoration-foreground transition-colors duration-200 ease-out"
         >
@@ -98,8 +98,7 @@ const Block = ({ block }: { block: ChangelogBlock }) => {
               }
               return "";
             })
-            .join("")
-            .slice(0, 40);
+            .join("");
           return (
             <li key={itemKey}>
               <InlineContent nodes={item} />
@@ -143,7 +142,7 @@ export const Release = ({ release }: { release: ChangelogRelease }) => (
                 {release.groups.length === 1 ? <KindBadge kind={group.kind} /> : null}
                 <a
                   href={`https://github.com/${process.env.NEXT_PUBLIC_GITHUB_REPO ?? "verno-studio/website"}/commit/${item.id}`}
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   target="_blank"
                   className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 ease-out"
                 >
