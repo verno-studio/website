@@ -1,5 +1,5 @@
-import { execa } from "execa";
-import type { ExecaError } from "execa";
+import { spawn } from "node:child_process";
+import { once } from "node:events";
 import { ProcessFailedError } from "./errors";
 
 export interface RunProcessOptions {
@@ -11,9 +11,6 @@ export interface RunProcessOptions {
   readonly ciSafe?: boolean;
 }
 
-const isExecaError = (e: unknown): e is ExecaError =>
-  e !== null && typeof e === "object" && "failed" in e && (e as ExecaError).failed === true;
-
 export const runProcess = async (
   file: string,
   args: readonly string[],
@@ -21,27 +18,43 @@ export const runProcess = async (
 ): Promise<void> => {
   const base = { ...process.env, ...options.env };
   const env = options.ciSafe === false ? base : { ...base, CI: process.env.CI ?? "1" };
-  try {
-    await execa(file, args, {
+
+  const child = spawn(file, [...args], {
+    cwd: options.cwd,
+    env,
+    stdio: options.stdio ?? "inherit",
+  });
+
+  const result = await Promise.race([
+    once(child, "error").then(([error]) => ({
+      error: error as Error,
+      type: "error" as const,
+    })),
+    once(child, "close").then(([code, signal]) => ({
+      code: code as number | null,
+      signal: signal as NodeJS.Signals | null,
+      type: "close" as const,
+    })),
+  ]);
+
+  if (result.type === "error") {
+    throw new ProcessFailedError(`Command ${file} ${args.join(" ")} failed to start`, {
+      args,
+      cause: result.error,
       cwd: options.cwd,
-      env,
-      reject: true,
-      stdio: options.stdio ?? "inherit",
+      exitCode: 1,
+      file,
     });
-  } catch (error: unknown) {
-    if (isExecaError(error)) {
-      const code = error.exitCode ?? 1;
-      throw new ProcessFailedError(
-        `Command ${file} ${args.join(" ")} failed with code ${String(code)}`,
-        {
-          args,
-          cause: error,
-          cwd: options.cwd,
-          exitCode: code,
-          file,
-        },
-      );
-    }
-    throw error;
+  }
+
+  if (result.code !== 0) {
+    const exitCode = result.code ?? 1;
+    const suffix = result.signal ? ` signal ${result.signal}` : ` code ${String(exitCode)}`;
+    throw new ProcessFailedError(`Command ${file} ${args.join(" ")} failed with${suffix}`, {
+      args,
+      cwd: options.cwd,
+      exitCode,
+      file,
+    });
   }
 };
