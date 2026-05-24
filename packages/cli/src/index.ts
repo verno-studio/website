@@ -80,6 +80,23 @@ program
     });
   });
 
+program
+  .command("update")
+  .description(
+    "Update a Verno Studio project's configuration and dependencies to the latest version",
+  )
+  .option("-y, --yes", "Automatically apply updates without prompting", false)
+  .option("--dry-run", "Preview changes without applying them", false)
+  .option("--no-install", "Skip dependency install")
+  .option("-p, --package-manager <pm>", "Override package manager for dependency operations")
+  .action(async (opts) => {
+    const { runUpdate } = await import("./commands/update");
+    const { toUpdateCommandOptions } = await import("./commands/update/args");
+    await runUpdate({
+      options: toUpdateCommandOptions(opts),
+    });
+  });
+
 const run = async (): Promise<void> => {
   try {
     const argv = process.argv.slice(2);

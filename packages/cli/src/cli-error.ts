@@ -7,6 +7,7 @@ export type CLIErrorCode =
   | "SHADCN"
   | "ULTRACITE"
   | "GIT"
+  | "UPDATE"
   | "UNKNOWN";
 
 export class CLIError extends Error {
