@@ -40,6 +40,7 @@ describe("Update Args Parser", () => {
     expect(() => {
       resolveUpdateInputs({
         dryRun: false,
+        install: true,
         packageManager: "yarn",
         yes: false,
       });
