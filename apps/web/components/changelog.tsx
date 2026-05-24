@@ -124,7 +124,7 @@ const KindBadge = ({ kind }: { kind: ChangeKind }) => (
 );
 
 export const Release = ({ release }: { release: ChangelogRelease }) => (
-  <section className="flex flex-col gap-4">
+  <section className="flex flex-col gap-12">
     {release.groups.map((group) => (
       <div className="flex flex-col gap-4" key={`${release.slug}-${group.kind}`}>
         {release.groups.length > 1 ? (
