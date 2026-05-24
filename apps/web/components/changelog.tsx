@@ -3,7 +3,7 @@ import type { BundledLanguage } from "shiki";
 import { cn } from "@vernostudio/design-system/lib/utils";
 import type { ChangeKind, ChangelogBlock, ChangelogRelease, InlineNode } from "@/lib/changelog";
 
-import { CodeBlock } from "./code-block/client";
+import { CodeBlock } from "./code-block";
 
 const KIND_LABEL: Record<ChangeKind, string> = {
   major: "Major",
