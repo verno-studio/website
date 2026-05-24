@@ -3,6 +3,7 @@ import pc from "picocolors";
 import { runFullAudit } from "../doctor/audit";
 import { resolveUpdateInputs } from "./args";
 import type { UpdateCommandOptions } from "./args";
+import { trackEvent } from "../../analytics";
 import { runUpdateChecks } from "./detect";
 import type { UpdateCheck } from "./detect";
 import { applyUpdates } from "./apply";
@@ -169,6 +170,12 @@ export const runUpdate = async (args: {
 
   const postDiagnostics = runFullAudit(projectDir);
   const remainingIssues = postDiagnostics.filter((d) => d.severity !== "ok").length;
+
+  void trackEvent("update_run", {
+    dry_run: false,
+    package_manager: resolved.packageManager,
+    updates_applied: results.filter((r) => r.success).length,
+  });
 
   if (remainingIssues === 0) {
     p.outro(

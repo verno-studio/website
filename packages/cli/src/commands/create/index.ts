@@ -23,6 +23,7 @@ import { getNextStepHints } from "./next-steps";
 import { buildCreatePlan, getPlanSummary } from "./plan";
 import { printDoneNextSteps, printStepPlanDryRun } from "../shared/command-ui";
 import { runInstallTask, runPostSetupPipeline } from "../shared/post-setup-pipeline";
+import { trackEvent } from "../../analytics";
 
 const resolveInputs = async (args: {
   name?: string;
@@ -141,6 +142,18 @@ export const runCreate = async (args: {
     }
     throw error;
   }
+
+  void trackEvent("create_project", {
+    addons: resolved.addons,
+    dry_run: false,
+    frontend: resolved.frontend,
+    linter: resolved.ultraciteLinter,
+    package_manager: resolved.packageManager,
+    shadcn_preset: resolved.shadcnPreset,
+    skip_git: !resolved.doGit,
+    skip_install: !resolved.doInstall,
+    ui: resolved.ui,
+  });
 
   printDoneNextSteps(`Project "${resolved.name}" is ready.`, nextSteps);
 };
