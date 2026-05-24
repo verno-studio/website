@@ -21,6 +21,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
     "@typescript/native-preview": "^7.0.0-dev.20260522.1",
+    "mitata": "^1.0.34",
     "oxfmt": "^0.51.0",
     "oxlint": "^1.66.0",
     "turbo": "^2.9.14",
