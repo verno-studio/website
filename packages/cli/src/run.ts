@@ -25,17 +25,26 @@ export const runProcess = async (
     stdio: options.stdio ?? "inherit",
   });
 
+  const ac = new AbortController();
+
   const result = await Promise.race([
-    once(child, "error").then(([error]) => ({
-      error: error as Error,
-      type: "error" as const,
-    })),
-    once(child, "close").then(([code, signal]) => ({
-      code: code as number | null,
-      signal: signal as NodeJS.Signals | null,
-      type: "close" as const,
-    })),
+    once(child, "error", { signal: ac.signal })
+      .then((ev) => ({ error: ev[0] as Error, type: "error" as const }))
+      .catch(() => null),
+    once(child, "close", { signal: ac.signal })
+      .then((ev) => ({
+        code: ev[0] as number | null,
+        signal: ev[1] as NodeJS.Signals | null,
+        type: "close" as const,
+      }))
+      .catch(() => null),
   ]);
+
+  ac.abort();
+
+  if (result === null) {
+    return;
+  }
 
   if (result.type === "error") {
     throw new ProcessFailedError(`Command ${file} ${args.join(" ")} failed to start`, {
@@ -55,6 +64,7 @@ export const runProcess = async (
       cwd: options.cwd,
       exitCode,
       file,
+      signal: result.signal,
     });
   }
 };
