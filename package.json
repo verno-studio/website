@@ -16,11 +16,13 @@
     "typecheck": "turbo run typecheck",
     "changeset": "changeset",
     "changeset:version": "changeset version",
-    "changeset:publish": "turbo build --filter=verno && changeset publish"
+    "changeset:publish": "turbo build --filter=verno && changeset publish",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
     "@typescript/native-preview": "^7.0.0-dev.20260522.1",
+    "husky": "^9.1.7",
     "mitata": "^1.0.34",
     "oxfmt": "^0.51.0",
     "oxlint": "^1.66.0",
