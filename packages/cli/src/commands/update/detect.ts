@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import semver from "semver";
 import { readCliPackageVersion } from "../../cli-version";
 import { detectVernoManifest } from "../shared/manifest";
 import { detectProjectState } from "../init/detect";
@@ -32,6 +33,17 @@ export const checkCliVersion = (manifestVersion: string): UpdateCheck => {
   };
 };
 
+const cleanAndPrune = (version: string): string | null => {
+  const cleaned = semver.clean(version) ?? semver.valid(semver.coerce(version));
+  if (cleaned === null) {
+    return null;
+  }
+  const parsed = semver.parse(cleaned);
+  return parsed === null
+    ? null
+    : `${String(parsed.major)}.${String(parsed.minor)}.${String(parsed.patch)}`;
+};
+
 export const checkLatestPublishedVersion = async (): Promise<UpdateCheck | null> => {
   const currentCliVersion = readCliPackageVersion();
   try {
@@ -45,16 +57,21 @@ export const checkLatestPublishedVersion = async (): Promise<UpdateCheck | null>
     if (res.ok) {
       const data = (await res.json()) as { version?: string };
       const latestVersion = data.version;
-      if (latestVersion !== undefined && latestVersion !== currentCliVersion) {
-        return {
-          category: "version",
-          current: currentCliVersion,
-          description: "Installed Verno CLI version",
-          details: `A newer CLI version (${latestVersion}) is available on npm. Update with: bun add -D @vernostudio/cli@latest`,
-          expected: latestVersion,
-          id: "cli-npm-version",
-          needsUpdate: true,
-        };
+      if (latestVersion !== undefined) {
+        const cleanLatest = cleanAndPrune(latestVersion);
+        const cleanCurrent = cleanAndPrune(currentCliVersion);
+
+        if (cleanLatest !== null && cleanCurrent !== null && semver.gt(cleanLatest, cleanCurrent)) {
+          return {
+            category: "version",
+            current: currentCliVersion,
+            description: "Installed Verno CLI version",
+            details: `A newer CLI version (${latestVersion}) is available on npm. Update with: bun add -D @vernostudio/cli@latest`,
+            expected: latestVersion,
+            id: "cli-npm-version",
+            needsUpdate: true,
+          };
+        }
       }
     }
   } catch {
