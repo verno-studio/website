@@ -1,10 +1,6 @@
 import process from "node:process";
 import { Command } from "commander";
 import packageJson from "../package.json";
-import { runCreate } from "./commands/create";
-import { toCreateCommandOptions } from "./commands/create/args";
-import { runInit } from "./commands/init";
-import { toInitCommandOptions } from "./commands/init/args";
 import { isCLIError, isUserCancelled, ProcessFailedError } from "./errors";
 
 const program = new Command();
@@ -38,6 +34,8 @@ program
   .option("--skip-shadcn", "Skip shadcn bootstrap")
   .option("--skip-ultracite", "Skip ultracite add-on and ultracite init")
   .action(async (name: string | undefined, opts) => {
+    const { runCreate } = await import("./commands/create");
+    const { toCreateCommandOptions } = await import("./commands/create/args");
     await runCreate({
       name,
       options: toCreateCommandOptions(opts),
@@ -61,6 +59,8 @@ program
   .option("--skip-shadcn", "Skip shadcn bootstrap")
   .option("--skip-ultracite", "Skip ultracite add-on")
   .action(async (opts) => {
+    const { runInit } = await import("./commands/init");
+    const { toInitCommandOptions } = await import("./commands/init/args");
     await runInit({
       options: toInitCommandOptions(opts),
     });
