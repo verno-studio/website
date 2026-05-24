@@ -37,7 +37,16 @@ const ReleasePage = async ({ params }: ReleasePageProps) => {
     notFound();
   }
 
-  return <Release release={release} />;
+  return (
+    <>
+      <section className="grid gap-4">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+          v{release.version}
+        </h1>
+      </section>
+      <Release release={release} />
+    </>
+  );
 };
 
 export default ReleasePage;

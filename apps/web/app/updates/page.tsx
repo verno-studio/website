@@ -14,7 +14,19 @@ export const metadata: Metadata = {
 const UpdatesPage = () => {
   const releases = getChangelog().map(getReleaseSummary);
 
-  return <UpdatesIndex releases={releases} />;
+  return (
+    <>
+      <section className="grid gap-4">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
+          Updates
+        </h1>
+        <p className="text-muted-foreground text-balance leading-relaxed">
+          What shipped in each version of Verno Studio. Pulled straight from the changelog.
+        </p>
+      </section>
+      <UpdatesIndex releases={releases} />
+    </>
+  );
 };
 
 export default UpdatesPage;
