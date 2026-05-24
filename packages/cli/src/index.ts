@@ -102,7 +102,9 @@ program
 const run = async (): Promise<void> => {
   if (isTelemetryEnabled()) {
     process.stderr.write(
-      pc.dim("Verno Studio collects anonymous usage data. Set DO_NOT_TRACK=1 to opt out.\n"),
+      pc.dim(
+        "Verno Studio collects usage data (including git identity when available). Set DO_NOT_TRACK=1 to opt out.\n",
+      ),
     );
   }
   try {
