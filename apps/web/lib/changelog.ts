@@ -11,9 +11,9 @@ export type InlineNode =
   | { type: "em"; nodes: InlineNode[] };
 
 export type ChangelogBlock =
-  | { type: "paragraph"; nodes: InlineNode[] }
-  | { type: "code"; lang: string; code: string }
-  | { type: "list"; items: InlineNode[][] };
+  | { id: string; type: "paragraph"; nodes: InlineNode[] }
+  | { id: string; type: "code"; lang: string; code: string }
+  | { id: string; type: "list"; items: InlineNode[][] };
 
 export interface ChangelogItem {
   id: string;
@@ -127,7 +127,7 @@ const flushParagraph = (buffer: string[], blocks: ChangelogBlock[]) => {
   if (!text) {
     return;
   }
-  blocks.push({ nodes: parseInline(text), type: "paragraph" });
+  blocks.push({ id: crypto.randomUUID(), nodes: parseInline(text), type: "paragraph" });
 };
 
 const flushList = (items: InlineNode[][], buffer: string[], blocks: ChangelogBlock[]) => {
@@ -136,7 +136,7 @@ const flushList = (items: InlineNode[][], buffer: string[], blocks: ChangelogBlo
     buffer.length = 0;
   }
   if (items.length) {
-    blocks.push({ items: [...items], type: "list" });
+    blocks.push({ id: crypto.randomUUID(), items: [...items], type: "list" });
     items.length = 0;
   }
 };
@@ -164,6 +164,7 @@ const parseItemBody = (lines: string[]): ChangelogBlock[] => {
       if (line.trimStart().startsWith("```")) {
         blocks.push({
           code: codeLines.join("\n"),
+          id: crypto.randomUUID(),
           lang: codeLang,
           type: "code",
         });
@@ -224,6 +225,7 @@ const parseItemBody = (lines: string[]): ChangelogBlock[] => {
   if (mode === "code") {
     blocks.push({
       code: codeLines.join("\n"),
+      id: crypto.randomUUID(),
       lang: codeLang,
       type: "code",
     });

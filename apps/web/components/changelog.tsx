@@ -149,8 +149,8 @@ export const Release = ({ release }: { release: ChangelogRelease }) => (
                   {item.id.slice(0, 7)}
                 </a>
               </div>
-              {item.blocks.map((block, index) => (
-                <Block key={`${item.id}-${index}`} block={block} />
+              {item.blocks.map((block) => (
+                <Block key={block.id} block={block} />
               ))}
             </li>
           ))}
