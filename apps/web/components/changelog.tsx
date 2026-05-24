@@ -90,8 +90,12 @@ const Block = ({ block }: { block: ChangelogBlock }) => {
         {block.items.map((item) => {
           const itemKey = item
             .map((n) => {
-              if (n.type === "text" || n.type === "code") return n.value;
-              if (n.type === "link") return n.label;
+              if (n.type === "text" || n.type === "code") {
+                return n.value;
+              }
+              if (n.type === "link") {
+                return n.label;
+              }
               return "";
             })
             .join("")
