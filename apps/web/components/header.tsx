@@ -20,7 +20,7 @@ export const Header = () => {
     <header className="flex items-center justify-between gap-3">
       <Link
         href="/"
-        className="text-medium inline-block font-medium no-underline font-serif text-2xl"
+        className="inline-block font-medium no-underline font-serif text-2xl"
       >
         Verno Studio
       </Link>

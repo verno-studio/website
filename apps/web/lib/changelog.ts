@@ -93,15 +93,24 @@ const parseInline = (text: string): InlineNode[] => {
       }
     }
 
-    if (ch === "_" && text[i - 1] !== "\\") {
-      const end = text.indexOf("_", i + 1);
-      if (end !== -1 && end > i + 1) {
-        nodes.push({
-          nodes: parseInline(text.slice(i + 1, end)),
-          type: "em",
-        });
-        i = end + 1;
-        continue;
+    if (ch === "_") {
+      let backslashCount = 0;
+      let j = i - 1;
+      while (j >= 0 && text[j] === "\\") {
+        backslashCount += 1;
+        j -= 1;
+      }
+      const isEscaped = backslashCount % 2 === 1;
+      if (!isEscaped) {
+        const end = text.indexOf("_", i + 1);
+        if (end !== -1 && end > i + 1) {
+          nodes.push({
+            nodes: parseInline(text.slice(i + 1, end)),
+            type: "em",
+          });
+          i = end + 1;
+          continue;
+        }
       }
     }
 
