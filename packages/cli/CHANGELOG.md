@@ -1,5 +1,12 @@
 # @vernostudio/cli
 
+## 0.1.3
+
+### Patch Changes
+
+- d7467b8: Add `verno init` to configure existing projects with optional Turborepo, shadcn, and Ultracite (interactive and `-y` mode)
+- 97d1113: Refactor create and init commands to share manifest, post-scaffold, and post-setup pipeline modules (no user-facing behavior change).
+
 ## 0.1.2
 
 ### Patch Changes

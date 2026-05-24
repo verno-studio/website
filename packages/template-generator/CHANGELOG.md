@@ -1,5 +1,11 @@
 # @vernostudio/template-generator
 
+## 0.1.2
+
+### Patch Changes
+
+- ce5d91c: Generated Next.js projects no longer include `noEmit` in `tsconfig.json`. Typecheck still uses `tsgo --noEmit` via the package script.
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@vernostudio/cli",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Verno Studio CLI: scaffold Next.js and Turborepo projects with shadcn and Ultracite.",
   "keywords": [
     "cli",
