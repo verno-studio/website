@@ -150,7 +150,7 @@ export const runInit = async (args: { options: InitCommandOptions }): Promise<vo
     throw error;
   }
 
-  void trackEvent("init_project", {
+  await trackEvent("init_project", {
     addons: resolved.addons,
     dry_run: false,
     linter: resolved.ultraciteLinter,

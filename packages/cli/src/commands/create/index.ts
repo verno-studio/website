@@ -143,7 +143,7 @@ export const runCreate = async (args: {
     throw error;
   }
 
-  void trackEvent("create_project", {
+  await trackEvent("create_project", {
     addons: resolved.addons,
     dry_run: false,
     frontend: resolved.frontend,

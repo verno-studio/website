@@ -60,7 +60,7 @@ export const runDoctor = async (args: {
   const totalIssues = errors.length + warnings.length;
 
   if (totalIssues === 0) {
-    void trackEvent("doctor_run", {
+    await trackEvent("doctor_run", {
       fix: resolved.fix,
       issues_found: 0,
       package_manager: resolved.packageManager,
@@ -137,7 +137,7 @@ export const runDoctor = async (args: {
   }
 
   // If we got here, issues remain and were not fixed
-  void trackEvent("doctor_run", {
+  await trackEvent("doctor_run", {
     fix: resolved.fix,
     issues_found: totalIssues,
     package_manager: resolved.packageManager,

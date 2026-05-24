@@ -171,7 +171,7 @@ export const runUpdate = async (args: {
   const postDiagnostics = runFullAudit(projectDir);
   const remainingIssues = postDiagnostics.filter((d) => d.severity !== "ok").length;
 
-  void trackEvent("update_run", {
+  await trackEvent("update_run", {
     dry_run: false,
     package_manager: resolved.packageManager,
     updates_applied: results.filter((r) => r.success).length,
