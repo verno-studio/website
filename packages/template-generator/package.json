@@ -1,6 +1,6 @@
 {
   "name": "@vernostudio/template-generator",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Verno Studio Template Generator: generate templates for Verno Studio projects.",
   "keywords": [
