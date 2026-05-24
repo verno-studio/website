@@ -19,7 +19,7 @@ export const Story = () => (
         One command from zero to a Next.js app with Turborepo, workspace packages, shadcn/ui, and
         Ultracite
       </p>
-      <Installer command="bun x @vernostudio/cli create" />
+      <Installer command="bunx @vernostudio/cli create" />
     </div>
 
     <p>
