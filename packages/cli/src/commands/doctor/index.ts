@@ -4,6 +4,7 @@ import { runFullAudit } from "./audit";
 import { applyFixes } from "./fix";
 import { resolveDoctorInputs } from "./args";
 import type { DoctorCommandOptions } from "./args";
+import { trackEvent } from "../../analytics";
 
 const getSymbol = (severity: "ok" | "warning" | "error"): string => {
   if (severity === "error") {
@@ -59,6 +60,11 @@ export const runDoctor = async (args: {
   const totalIssues = errors.length + warnings.length;
 
   if (totalIssues === 0) {
+    await trackEvent("doctor_run", {
+      fix: resolved.fix,
+      issues_found: 0,
+      package_manager: resolved.packageManager,
+    });
     p.outro(pc.green("All checks passed! Your Verno project is healthy."));
     process.exitCode = 0;
     return;
@@ -131,6 +137,11 @@ export const runDoctor = async (args: {
   }
 
   // If we got here, issues remain and were not fixed
+  await trackEvent("doctor_run", {
+    fix: resolved.fix,
+    issues_found: totalIssues,
+    package_manager: resolved.packageManager,
+  });
   p.outro(
     pc.red(
       `Audit complete. Found ${String(errors.length)} error(s) and ${String(warnings.length)} warning(s).`,

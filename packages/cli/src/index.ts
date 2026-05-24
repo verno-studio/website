@@ -1,7 +1,9 @@
 import process from "node:process";
 import { Command } from "commander";
+import pc from "picocolors";
 import packageJson from "../package.json";
 import { isCLIError, isUserCancelled, ProcessFailedError } from "./errors";
+import { isTelemetryEnabled } from "./analytics";
 
 const program = new Command();
 
@@ -98,6 +100,13 @@ program
   });
 
 const run = async (): Promise<void> => {
+  if (isTelemetryEnabled()) {
+    process.stderr.write(
+      pc.dim(
+        "Verno Studio collects usage data (including git identity when available). Set DO_NOT_TRACK=1 to opt out.\n",
+      ),
+    );
+  }
   try {
     const argv = process.argv.slice(2);
     if (argv.length === 0) {

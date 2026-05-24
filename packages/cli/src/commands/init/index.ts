@@ -15,6 +15,7 @@ import type { DetectedState } from "./actions";
 import { getNextStepHints } from "./next-steps";
 import { printDoneNextSteps, printStepPlanDryRun } from "../shared/command-ui";
 import { runInstallTask, runPostSetupPipeline } from "../shared/post-setup-pipeline";
+import { trackEvent } from "../../analytics";
 
 const resolveInputs = async (args: {
   options: InitCommandOptions;
@@ -148,6 +149,15 @@ export const runInit = async (args: { options: InitCommandOptions }): Promise<vo
     }
     throw error;
   }
+
+  await trackEvent("init_project", {
+    addons: resolved.addons,
+    dry_run: false,
+    linter: resolved.ultraciteLinter,
+    package_manager: resolved.packageManager,
+    shadcn_preset: resolved.shadcnPreset,
+    ui: resolved.ui,
+  });
 
   printDoneNextSteps(`Project "${detected.projectName}" is initialized.`, nextSteps);
 };
