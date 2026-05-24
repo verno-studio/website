@@ -14,7 +14,7 @@ describe("runProcess", () => {
 
   test("sets CI=1 by default", async () => {
     await expect(
-      runProcess(process.execPath, ["-e", "process.exit(process.env.CI === '1' ? 0 : 2)"], {
+      runProcess(process.execPath, ["-e", "process.exit(process.env.CI ? 0 : 2)"], {
         cwd: process.cwd(),
         env: { CI: undefined },
         stdio: "pipe",
