@@ -12,10 +12,7 @@ import {
 } from "../src/commands/init/detect";
 
 const makeTmpDir = (files: Record<string, string> = {}): string => {
-  const dir = join(
-    tmpdir(),
-    `verno-bench-${Date.now()}-${Math.random().toString(36).slice(2)}`
-  );
+  const dir = join(tmpdir(), `verno-bench-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(dir, { recursive: true });
   for (const [name, content] of Object.entries(files)) {
     const filePath = join(dir, name);
@@ -35,13 +32,17 @@ const tmpDir = (files: Record<string, string> = {}): string => {
 const cleanup = () => {
   for (const dir of dirs) {
     try {
-      rmSync(dir, { recursive: true, force: true });
-    } catch {}
+      rmSync(dir, { force: true, recursive: true });
+    } catch {
+      // ignore
+    }
   }
 };
 
 const emptyDir = tmpDir();
-const pkgJsonDir = tmpDir({ "package.json": JSON.stringify({ name: "test-app", packageManager: "bun@1.0.0" }) });
+const pkgJsonDir = tmpDir({
+  "package.json": JSON.stringify({ name: "test-app", packageManager: "bun@1.0.0" }),
+});
 const shadcnDir = tmpDir({ "components.json": "{}" });
 const ultraciteDir = tmpDir({ "oxlint.config.ts": "import ultracite from 'ultracite';" });
 const monorepoDir = tmpDir({ "turbo.json": "{}" });
@@ -97,9 +98,9 @@ group("detectProjectState", () => {
   });
   bench("with package.json and turbo.json", () => {
     const fullDir = tmpDir({
+      "components.json": "{}",
       "package.json": JSON.stringify({ name: "full-app", packageManager: "bun@1.0.0" }),
       "turbo.json": "{}",
-      "components.json": "{}",
     });
     detectProjectState(fullDir);
   });

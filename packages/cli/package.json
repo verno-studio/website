@@ -48,6 +48,7 @@
     "test": "bun test",
     "test:coverage": "bun test --coverage",
     "typecheck": "tsgo --noEmit",
+    "bench": "bun run benchmarks/cli.bench.ts",
     "prepublishOnly": "bun run build"
   },
   "dependencies": {
