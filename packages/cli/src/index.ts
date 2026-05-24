@@ -66,6 +66,20 @@ program
     });
   });
 
+program
+  .command("doctor")
+  .description("Audit and verify a Verno Studio project's health and configuration")
+  .option("-y, --yes", "Automatically apply fixes without prompting", false)
+  .option("--fix", "Attempt to fix any autofixable issues automatically", false)
+  .option("-p, --package-manager <pm>", "Override package manager for dependency operations")
+  .action(async (opts) => {
+    const { runDoctor } = await import("./commands/doctor");
+    const { toDoctorCommandOptions } = await import("./commands/doctor/args");
+    await runDoctor({
+      options: toDoctorCommandOptions(opts),
+    });
+  });
+
 const run = async (): Promise<void> => {
   try {
     const argv = process.argv.slice(2);
