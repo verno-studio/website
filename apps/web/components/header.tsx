@@ -18,10 +18,7 @@ export const Header = () => {
 
   return (
     <header className="flex items-center justify-between gap-3">
-      <Link
-        href="/"
-        className="inline-block font-medium no-underline font-serif text-2xl"
-      >
+      <Link href="/" className="inline-block font-medium no-underline font-serif text-2xl">
         Verno Studio
       </Link>
       <nav aria-label="Primary" className="flex items-center gap-4 text-sm">
