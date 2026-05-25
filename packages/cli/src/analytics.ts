@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { PostHog } from "posthog-node";
 import packageJson from "../package.json";
 
-const POSTHOG_API_KEY = "phc_uKMUhqYc5TLZ7NPNPnY3Bdnd29HKZ9du7BQepwsm8Wn";
+const POSTHOG_API_KEY = process.env["POSTHOG_API_KEY"] ?? "";
 const GIT_EXEC_OPTIONS = { encoding: "utf-8" as const, stdio: "pipe" as const };
 const ANON_ID_PATH = join(homedir(), ".config", "verno", "anonymous-id");
 
