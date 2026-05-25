@@ -5,7 +5,7 @@ import { env } from "@/env";
 
 const bodySchema = z.object({
   distinctId: z.string(),
-  email: z.string().email().optional(),
+  email: z.email().optional(),
   event: z.string(),
   name: z.string().optional(),
   properties: z.record(z.string(), z.unknown()).optional().default({}),
