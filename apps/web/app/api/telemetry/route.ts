@@ -8,7 +8,7 @@ const bodySchema = z.object({
   email: z.string().email().optional(),
   event: z.string(),
   name: z.string().optional(),
-  properties: z.record(z.unknown()).optional().default({}),
+  properties: z.record(z.string(), z.unknown()).optional().default({}),
 });
 
 export async function POST(request: Request) {
