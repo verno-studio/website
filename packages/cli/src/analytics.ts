@@ -54,22 +54,29 @@ export const trackEvent = async (
   }
   try {
     const { distinctId, name, email } = getGitIdentity();
-    await fetch(TELEMETRY_URL, {
-      body: JSON.stringify({
-        distinctId,
-        email,
-        event,
-        name,
-        properties: {
-          ...properties,
-          cli_version: packageJson.version,
-          node_version: process.version,
-          platform: process.platform,
-        },
-      }),
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2_000);
+    try {
+      await fetch(TELEMETRY_URL, {
+        body: JSON.stringify({
+          distinctId,
+          email,
+          event,
+          name,
+          properties: {
+            ...properties,
+            cli_version: packageJson.version,
+            node_version: process.version,
+            platform: process.platform,
+          },
+        }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
   } catch {
     // silent — analytics must never break the CLI
   }

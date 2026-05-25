@@ -16,12 +16,12 @@ export async function POST(request: Request) {
     return new Response(null, { status: 204 });
   }
 
-  let body: z.infer<typeof bodySchema>;
-  try {
-    body = bodySchema.parse(await request.json());
-  } catch {
+  const result = bodySchema.safeParse(await request.json());
+  if (!result.success) {
     return new Response(null, { status: 400 });
   }
+
+  const { data: body } = result;
 
   try {
     const client = new PostHog(env.POSTHOG_API_KEY, {
