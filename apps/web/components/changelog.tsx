@@ -2,7 +2,6 @@ import type { BundledLanguage } from "shiki";
 
 import { cn } from "@vernostudio/design-system/lib/utils";
 import type { ChangeKind, ChangelogBlock, ChangelogRelease, InlineNode } from "@/lib/changelog";
-import { env } from "@/env";
 
 import { CodeBlock } from "./code-block";
 
@@ -142,7 +141,7 @@ export const Release = ({ release }: { release: ChangelogRelease }) => (
               <div className="flex items-center gap-2">
                 {release.groups.length === 1 ? <KindBadge kind={group.kind} /> : null}
                 <a
-                  href={`https://github.com/${env.NEXT_PUBLIC_GITHUB_REPO ?? "verno-studio/website"}/commit/${item.id}`}
+                  href={`https://github.com/${process.env.NEXT_PUBLIC_GITHUB_REPO ?? "verno-studio/website"}/commit/${item.id}`}
                   rel="noopener noreferrer"
                   target="_blank"
                   className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 ease-out"
