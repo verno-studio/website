@@ -5,7 +5,7 @@ import { z } from "zod";
 export const env = createEnv({
   extends: [vercel()],
   server: {
-    POSTHOG_API_KEY: z.string().min(1).optional(),
+    POSTHOG_API_KEY: z.string().startsWith("phc_").optional(),
   },
   client: {
     NEXT_PUBLIC_GITHUB_REPO: z.string().optional(),
