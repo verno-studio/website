@@ -2,9 +2,6 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   clean: true,
-  define: {
-    'process.env["POSTHOG_API_KEY"]': JSON.stringify(process.env["POSTHOG_API_KEY"] ?? ""),
-  },
   deps: {
     alwaysBundle: ["@vernostudio/template-generator"],
     onlyBundle: ["better-result", "handlebars", "source-map"],

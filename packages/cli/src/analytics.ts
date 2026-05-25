@@ -2,10 +2,9 @@ import { execSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import { PostHog } from "posthog-node";
 import packageJson from "../package.json";
 
-const POSTHOG_API_KEY = process.env["POSTHOG_API_KEY"] ?? "";
+const TELEMETRY_URL = "https://verno.studio/api/telemetry";
 const GIT_EXEC_OPTIONS = { encoding: "utf-8" as const, stdio: "pipe" as const };
 const ANON_ID_PATH = join(homedir(), ".config", "verno", "anonymous-id");
 
@@ -55,28 +54,22 @@ export const trackEvent = async (
   }
   try {
     const { distinctId, name, email } = getGitIdentity();
-    const client = new PostHog(POSTHOG_API_KEY, {
-      flushAt: 1,
-      flushInterval: 0,
-      host: "https://us.i.posthog.com",
-    });
-    if (email) {
-      client.identify({
+    await fetch(TELEMETRY_URL, {
+      body: JSON.stringify({
         distinctId,
-        properties: { email, name },
-      });
-    }
-    client.capture({
-      distinctId,
-      event,
-      properties: {
-        ...properties,
-        cli_version: packageJson.version,
-        node_version: process.version,
-        platform: process.platform,
-      },
+        email,
+        event,
+        name,
+        properties: {
+          ...properties,
+          cli_version: packageJson.version,
+          node_version: process.version,
+          platform: process.platform,
+        },
+      }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     });
-    await client.shutdown();
   } catch {
     // silent — analytics must never break the CLI
   }
