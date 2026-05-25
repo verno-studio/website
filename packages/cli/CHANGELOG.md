@@ -1,5 +1,15 @@
 # @vernostudio/cli
 
+## 0.1.4
+
+### Patch Changes
+
+- d3649fa: Add the `doctor` command to audit, verify, and autofix a Verno Studio project's health and configuration.
+- c557e5d: Add the `update` command to detect outdated configuration, dependencies, and styles, then apply updates with a diff-like preview.
+- 61e2cda: Optimize CLI startup performance by dynamically importing command handlers and options parsers on demand.
+- 1b10598: Replace the CLI process runner's direct `execa` dependency with Node.js native `child_process` APIs.
+- 32a913e: Add usage tracking with PostHog for core CLI commands and show an opt-out notice on startup. Telemetry collects git identity (email and name) when available, falling back to a persistent anonymous UUID. Opt out by setting `DO_NOT_TRACK=1` or `VERNO_TELEMETRY_DISABLED=1`.
+
 ## 0.1.3
 
 ### Patch Changes
