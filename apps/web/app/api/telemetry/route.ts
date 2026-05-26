@@ -13,10 +13,6 @@ const bodySchema = z.object({
 });
 
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
-  if (!env.NEXT_PUBLIC_POSTHOG_TOKEN) {
-    return new NextResponse(null, { status: 204 });
-  }
-
   const result = bodySchema.safeParse(await request.json());
   if (!result.success) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });

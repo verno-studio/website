@@ -5,7 +5,7 @@ import { z } from "zod";
 export const env = createEnv({
   client: {
     NEXT_PUBLIC_POSTHOG_HOST: z.url().default("https://us.i.posthog.com"),
-    NEXT_PUBLIC_POSTHOG_TOKEN: z.string().startsWith("phc_").optional(),
+    NEXT_PUBLIC_POSTHOG_TOKEN: z.string().startsWith("phc_"),
   },
   extends: [vercel()],
   runtimeEnv: {
