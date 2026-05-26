@@ -15,7 +15,7 @@ const bodySchema = z.object({
 
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
   if (!env.POSTHOG_API_KEY) {
-    return NextResponse.json({ error: "POSTHOG_API_KEY is not set" }, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   }
 
   const result = bodySchema.safeParse(await request.json());
@@ -50,5 +50,5 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     // silent — analytics must never surface errors
   }
 
-  return NextResponse.json(null, { status: 204 });
+  return new NextResponse(null, { status: 204 });
 };
