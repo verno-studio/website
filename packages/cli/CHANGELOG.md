@@ -1,5 +1,11 @@
 # @vernostudio/cli
 
+## 0.1.5
+
+### Patch Changes
+
+- 95c3d2f: Refactor telemetry tracking to proxy events through the web server, securing the PostHog API key.
+
 ## 0.1.4
 
 ### Patch Changes
