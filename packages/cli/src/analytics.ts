@@ -1,4 +1,5 @@
 import { execSync } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -21,7 +22,7 @@ const getAnonymousId = (): string => {
   try {
     return readFileSync(ANON_ID_PATH, "utf-8").trim();
   } catch {
-    const id = crypto.randomUUID();
+    const id = randomUUID();
     try {
       mkdirSync(join(homedir(), ".config", "verno"), { recursive: true });
       writeFileSync(ANON_ID_PATH, id, "utf-8");
