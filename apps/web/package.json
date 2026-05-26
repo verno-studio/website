@@ -15,6 +15,7 @@
     "@vernostudio/design-system": "workspace:*",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
+    "posthog-js": "^1.376.1",
     "posthog-node": "^4.8.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
