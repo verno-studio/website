@@ -1,9 +1,10 @@
 import { Story } from "@/components/story";
 
 export const metadata = {
-  alternates: { canonical: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}` },
-  description: "Verno Studio",
-  openGraph: { url: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}` },
+  alternates: { canonical: "/" },
+  description:
+    "A Next.js monorepo template for DX, UI systems, and design engineering. Ship with taste.",
+  openGraph: { url: "/" },
   title: "Verno Studio",
 };
 
