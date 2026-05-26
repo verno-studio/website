@@ -23,12 +23,9 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const { PostHog } = await import("posthog-node");
     const client = new PostHog(env.NEXT_PUBLIC_POSTHOG_TOKEN, {
-      disableRemoteConfig: true,
-      disableSurveys: true,
       flushAt: 1,
       flushInterval: 0,
       host: env.NEXT_PUBLIC_POSTHOG_HOST,
-      preloadFeatureFlags: false,
     });
 
     if (body.email) {
