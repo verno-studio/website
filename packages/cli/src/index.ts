@@ -124,16 +124,16 @@ const run = async (): Promise<void> => {
       process.exit(error.exitCode);
     }
     if (error instanceof ProcessFailedError) {
-      await trackException(error);
       process.stderr.write(`Error: ${error.message}\n`);
       if (error.cause !== undefined) {
         process.stderr.write(`${String(error.cause)}\n`);
       }
+      await trackException(error);
       process.exit(1);
     }
-    await trackException(error);
     const message = error instanceof Error ? error.message : String(error);
     process.stderr.write(`Error: ${message}\n`);
+    await trackException(error);
     process.exit(1);
   }
 };
