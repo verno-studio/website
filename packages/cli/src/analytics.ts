@@ -6,6 +6,7 @@ import { join } from "node:path";
 import packageJson from "../package.json";
 
 const TELEMETRY_URL = "https://verno-studio.vercel.app/api/telemetry";
+const TELEMETRY_TIMEOUT = 2000;
 const GIT_EXEC_OPTIONS = { encoding: "utf-8" as const, stdio: "pipe" as const };
 const ANON_ID_PATH = join(homedir(), ".config", "verno", "anonymous-id");
 
@@ -56,7 +57,7 @@ export const trackEvent = async (
   try {
     const { distinctId, name, email } = getGitIdentity();
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), TELEMETRY_TIMEOUT);
     try {
       await fetch(TELEMETRY_URL, {
         body: JSON.stringify({
