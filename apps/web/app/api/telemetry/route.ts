@@ -14,7 +14,7 @@ const bodySchema = z.object({
 });
 
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
-  if (!env.POSTHOG_API_KEY) {
+  if (!env.NEXT_PUBLIC_POSTHOG_TOKEN) {
     return new NextResponse(null, { status: 204 });
   }
 
@@ -26,10 +26,10 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
   const { data: body } = result;
 
   try {
-    const client = new PostHog(env.POSTHOG_API_KEY, {
+    const client = new PostHog(env.NEXT_PUBLIC_POSTHOG_TOKEN, {
       flushAt: 1,
       flushInterval: 0,
-      host: "https://us.i.posthog.com",
+      host: env.NEXT_PUBLIC_POSTHOG_HOST,
     });
 
     if (body.email) {

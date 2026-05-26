@@ -3,11 +3,13 @@ import { vercel } from "@t3-oss/env-nextjs/presets";
 import { z } from "zod";
 
 export const env = createEnv({
+  client: {
+    NEXT_PUBLIC_POSTHOG_HOST: z.url().default("https://us.i.posthog.com"),
+    NEXT_PUBLIC_POSTHOG_TOKEN: z.string().startsWith("phc_").optional(),
+  },
   extends: [vercel()],
   runtimeEnv: {
-    POSTHOG_API_KEY: process.env.POSTHOG_API_KEY,
-  },
-  server: {
-    POSTHOG_API_KEY: z.string().startsWith("phc_").optional(),
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_POSTHOG_TOKEN: process.env.NEXT_PUBLIC_POSTHOG_TOKEN,
   },
 });
