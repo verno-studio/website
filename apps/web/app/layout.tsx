@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { url } from "@/lib/url";
 import { Header } from "@/components/header";
+import { PHProvider } from "@/components/providers/posthog";
 
 const title = "Verno Studio";
 const description =
@@ -83,12 +84,14 @@ const RootLayout = ({ children }: RootLayoutProps) => (
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
     </head>
     <body className={fonts}>
-      <DesignSystemProvider>
-        <main className="relative z-10 mx-auto grid w-full max-w-2xl gap-16 sm:gap-24 px-4 py-16 sm:py-32">
-          <Header />
-          <div className="flex flex-1 flex-col gap-12">{children}</div>
-        </main>
-      </DesignSystemProvider>
+      <PHProvider>
+        <DesignSystemProvider>
+          <main className="relative z-10 mx-auto grid w-full max-w-2xl gap-16 sm:gap-24 px-4 py-16 sm:py-32">
+            <Header />
+            <div className="flex flex-1 flex-col gap-12">{children}</div>
+          </main>
+        </DesignSystemProvider>
+      </PHProvider>
     </body>
   </html>
 );
