@@ -55,7 +55,7 @@ export const trackEvent = async (
   try {
     const { distinctId, name, email } = getGitIdentity();
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2_000);
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
     try {
       await fetch(TELEMETRY_URL, {
         body: JSON.stringify({

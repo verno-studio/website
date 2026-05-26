@@ -4,10 +4,10 @@ import { z } from "zod";
 
 export const env = createEnv({
   extends: [vercel()],
-  server: {
-    POSTHOG_API_KEY: z.string().startsWith("phc_").optional(),
-  },
   runtimeEnv: {
     POSTHOG_API_KEY: process.env.POSTHOG_API_KEY,
+  },
+  server: {
+    POSTHOG_API_KEY: z.string().startsWith("phc_").optional(),
   },
 });
