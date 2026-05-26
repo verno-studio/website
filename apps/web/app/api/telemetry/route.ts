@@ -2,6 +2,8 @@ import { PostHog } from "posthog-node";
 import { z } from "zod";
 
 import { env } from "@/env";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const bodySchema = z.object({
   distinctId: z.string(),
@@ -11,14 +13,14 @@ const bodySchema = z.object({
   properties: z.record(z.string(), z.unknown()).optional().default({}),
 });
 
-export async function POST(request: Request) {
+export const POST = async (request: NextRequest): Promise<NextResponse> => {
   if (!env.POSTHOG_API_KEY) {
-    return new Response(null, { status: 204 });
+    return NextResponse.json({ error: "POSTHOG_API_KEY is not set" }, { status: 204 });
   }
 
   const result = bodySchema.safeParse(await request.json());
   if (!result.success) {
-    return new Response(null, { status: 400 });
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
   const { data: body } = result;
@@ -48,5 +50,5 @@ export async function POST(request: Request) {
     // silent — analytics must never surface errors
   }
 
-  return new Response(null, { status: 204 });
-}
+  return NextResponse.json(null, { status: 204 });
+};
