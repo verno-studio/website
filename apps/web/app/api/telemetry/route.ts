@@ -1,4 +1,3 @@
-import { PostHog } from "posthog-node";
 import { z } from "zod";
 
 import { env } from "@/env";
@@ -26,6 +25,7 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
   const { data: body } = result;
 
   try {
+    const { PostHog } = await import("posthog-node");
     const client = new PostHog(env.NEXT_PUBLIC_POSTHOG_TOKEN, {
       disableRemoteConfig: true,
       disableSurveys: true,
