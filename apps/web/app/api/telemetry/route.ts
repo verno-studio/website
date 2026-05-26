@@ -27,19 +27,22 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
 
   try {
     const client = new PostHog(env.NEXT_PUBLIC_POSTHOG_TOKEN, {
+      disableRemoteConfig: true,
+      disableSurveys: true,
       flushAt: 1,
       flushInterval: 0,
       host: env.NEXT_PUBLIC_POSTHOG_HOST,
+      preloadFeatureFlags: false,
     });
 
     if (body.email) {
-      client.identify({
+      await client.identifyImmediate({
         distinctId: body.distinctId,
         properties: { email: body.email, name: body.name },
       });
     }
 
-    client.capture({
+    await client.captureImmediate({
       distinctId: body.distinctId,
       event: body.event,
       properties: body.properties,
