@@ -12,4 +12,5 @@ export const env = createEnv({
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     NEXT_PUBLIC_POSTHOG_TOKEN: process.env.NEXT_PUBLIC_POSTHOG_TOKEN,
   },
+  skipValidation: !!process.env.CI,
 });
