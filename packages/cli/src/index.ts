@@ -3,7 +3,7 @@ import { Command } from "commander";
 import pc from "picocolors";
 import packageJson from "../package.json";
 import { isCLIError, isUserCancelled, ProcessFailedError } from "./errors";
-import { isTelemetryEnabled } from "./analytics";
+import { isTelemetryEnabled, trackException } from "./analytics";
 
 const program = new Command();
 
@@ -128,10 +128,12 @@ const run = async (): Promise<void> => {
       if (error.cause !== undefined) {
         process.stderr.write(`${String(error.cause)}\n`);
       }
+      await trackException(error);
       process.exit(1);
     }
     const message = error instanceof Error ? error.message : String(error);
     process.stderr.write(`Error: ${message}\n`);
+    await trackException(error);
     process.exit(1);
   }
 };

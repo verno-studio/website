@@ -83,3 +83,14 @@ export const trackEvent = async (
     // silent — analytics must never break the CLI
   }
 };
+
+export const trackException = async (error: unknown): Promise<void> => {
+  const message = error instanceof Error ? error.message : String(error);
+  const type = error instanceof Error ? error.name : "UnknownError";
+  const stack = error instanceof Error ? error.stack : undefined;
+  await trackEvent("$exception", {
+    $exception_message: message,
+    $exception_stack_trace_raw: stack,
+    $exception_type: type,
+  });
+};
