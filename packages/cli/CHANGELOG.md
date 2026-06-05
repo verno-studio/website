@@ -1,5 +1,13 @@
 # @vernostudio/cli
 
+## 0.1.6
+
+### Patch Changes
+
+- 33f2a3d: Report unexpected errors to PostHog via existing telemetry infra
+- 6c21a96: Refresh generated project README with a minimal ASCII structure tree, scoped links, and a package-manager-aware dev command
+- fe40a21: Add `--frameworks` support for Ultracite init: interactive multiselect in create/init wizards, `react next` defaults in `-y` mode, and manifest persistence for selected preset extends
+
 ## 0.1.5
 
 ### Patch Changes
