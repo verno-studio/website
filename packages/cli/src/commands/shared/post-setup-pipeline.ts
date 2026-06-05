@@ -2,8 +2,9 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import type { PackageManager } from "@vernostudio/template-generator";
 import { ensureAppGlobalsBaseLayerAtEnd } from "../../app-globals";
+import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
-import { requireUltraciteLinter } from "./command-ui";
+import { requireUltraciteFrameworks, requireUltraciteLinter } from "./command-ui";
 import { runInstallIfEnabled, runShadcnIfEnabled, runUltraciteIfEnabled } from "./post-scaffold";
 
 const SHADCN_BANNER_BASE = "bootstrap (init/apply) + add --all";
@@ -22,6 +23,7 @@ export interface PostSetupPipelineContext {
     readonly enabled: boolean;
     readonly nonInteractive: boolean;
     readonly linter?: UltraciteLinterId;
+    readonly frameworks?: readonly UltraciteFrameworkId[];
   };
   readonly commandName: "create" | "init";
   readonly writeManifest: () => Promise<void>;
@@ -64,6 +66,7 @@ export const runPostSetupPipeline = async (ctx: PostSetupPipelineContext): Promi
 
   if (ctx.ultracite.enabled) {
     const linter = requireUltraciteLinter(ctx.ultracite.linter, ctx.commandName);
+    const frameworks = requireUltraciteFrameworks(ctx.ultracite.frameworks, ctx.commandName);
 
     await p.tasks([
       {
@@ -71,6 +74,7 @@ export const runPostSetupPipeline = async (ctx: PostSetupPipelineContext): Promi
         task: async (message) => {
           message?.("ultracite init (quiet)…");
           await runUltraciteIfEnabled(true, ctx.packageManager, ctx.projectDir, "quiet", {
+            frameworks,
             linter,
           });
           return "ultracite init complete";
@@ -81,10 +85,11 @@ export const runPostSetupPipeline = async (ctx: PostSetupPipelineContext): Promi
 
     if (!ctx.ultracite.nonInteractive) {
       process.stdout.write(
-        `\n${pc.cyan("ultracite")} — Linter: ${linter}. Continue in Ultracite for frameworks, editors, and hooks.\n\n`,
+        `\n${pc.cyan("ultracite")} — Linter: ${linter}. Frameworks: ${frameworks.join(", ")}. Continue in Ultracite for editors and hooks.\n\n`,
       );
       await runUltraciteIfEnabled(true, ctx.packageManager, ctx.projectDir, "interactive", {
         ciSafe: false,
+        frameworks,
         linter,
       });
     }

@@ -8,6 +8,7 @@ import {
   getUltraciteInitCommand,
 } from "../../pm-exec";
 import type { UltraciteInitMode } from "../../pm-exec";
+import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import { runProcess } from "../../run";
 
@@ -78,12 +79,19 @@ export const runUltraciteIfEnabled = async (
   packageManager: PackageManager,
   projectDir: string,
   mode: UltraciteInitMode,
-  runOptions?: { readonly ciSafe?: boolean; readonly linter?: UltraciteLinterId },
+  runOptions?: {
+    readonly ciSafe?: boolean;
+    readonly linter?: UltraciteLinterId;
+    readonly frameworks?: readonly UltraciteFrameworkId[];
+  },
 ): Promise<void> => {
   if (!enabled) {
     return;
   }
-  const u = getUltraciteInitCommand(packageManager, mode, { linter: runOptions?.linter });
+  const u = getUltraciteInitCommand(packageManager, mode, {
+    frameworks: runOptions?.frameworks,
+    linter: runOptions?.linter,
+  });
   const ciSafe = runOptions?.ciSafe ?? mode === "quiet";
   await runProcess(u.file, u.args, { ciSafe, cwd: projectDir, stepId: "ultracite" });
 };

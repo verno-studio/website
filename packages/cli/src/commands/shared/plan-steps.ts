@@ -5,6 +5,7 @@ import {
   getShadcnBootstrapCommand,
   getUltraciteInitCommand,
 } from "../../pm-exec";
+import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 
 export interface CommandStepSpec {
@@ -129,6 +130,7 @@ export type UltracitePlanMode =
       readonly kind: "run";
       readonly nonInteractive: boolean;
       readonly linter?: UltraciteLinterId;
+      readonly frameworks?: readonly UltraciteFrameworkId[];
     }
   | { readonly kind: "already-configured" }
   | { readonly kind: "skip"; readonly reason: string };
@@ -163,7 +165,7 @@ export const appendUltraciteStep = <TId extends string>(
     const u = getUltraciteInitCommand(
       args.packageManager,
       args.mode.nonInteractive ? "quiet" : "interactive",
-      { linter: args.mode.linter },
+      { frameworks: args.mode.frameworks, linter: args.mode.linter },
     );
     steps.push({
       command: { args: u.args, cwd: args.projectDir, file: u.file },
