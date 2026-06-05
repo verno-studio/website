@@ -70,7 +70,35 @@ describe("resolveInitInputsNonInteractive", () => {
     expect(r.addons).toContain("ultracite");
     expect(r.runUltracite).toBe(true);
     expect(r.ultraciteLinter).toBe("oxlint");
+    expect(r.ultraciteFrameworks).toEqual(["react", "next"]);
     expect(r.nonInteractive).toBe(true);
+  });
+
+  test("accepts --frameworks react next with ultracite", () => {
+    const r = resolveInitInputsNonInteractive({
+      addons: "ultracite",
+      dryRun: false,
+      frameworks: "react next",
+      noInstall: false,
+      skipShadcn: false,
+      skipUltracite: false,
+      yes: true,
+    });
+    expect(r.ultraciteFrameworks).toEqual(["react", "next"]);
+  });
+
+  test("rejects --frameworks without ultracite add-on", () => {
+    expect(() =>
+      resolveInitInputsNonInteractive({
+        addons: "turborepo",
+        dryRun: false,
+        frameworks: "react",
+        noInstall: false,
+        skipShadcn: false,
+        skipUltracite: false,
+        yes: true,
+      }),
+    ).toThrow("--frameworks requires ultracite");
   });
 
   test("accepts --linter oxlint with ultracite", () => {

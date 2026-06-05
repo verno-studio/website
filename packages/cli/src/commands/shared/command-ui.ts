@@ -2,6 +2,7 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { CLIError } from "../../errors";
 import { renderVernoTitle } from "../../ui";
+import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import type { CommandStepPlan } from "./plan-steps";
 
@@ -16,6 +17,19 @@ export const requireUltraciteLinter = (
     );
   }
   return linter;
+};
+
+export const requireUltraciteFrameworks = (
+  frameworks: readonly UltraciteFrameworkId[] | undefined,
+  command: string,
+): readonly UltraciteFrameworkId[] => {
+  if (frameworks === undefined || frameworks.length === 0) {
+    throw new CLIError(
+      `Ultracite init requires at least one framework. Pass --frameworks with the ultracite add-on or use interactive ${command}.`,
+      { code: "ULTRACITE" },
+    );
+  }
+  return frameworks;
 };
 
 export const printStepPlanDryRun = (args: {

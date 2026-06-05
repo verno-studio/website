@@ -31,6 +31,7 @@ const resolveInitUltraciteMode = (
 ): UltracitePlanMode => {
   if (resolved.runUltracite && !detected.hasUltracite) {
     return {
+      frameworks: resolved.ultraciteFrameworks,
       kind: "run",
       linter: resolved.ultraciteLinter,
       nonInteractive: resolved.nonInteractive,

@@ -60,10 +60,52 @@ describe("getUltraciteInitCommand", () => {
     expect(cmd.args).toEqual(["dlx", spec, "init", "--pm", "pnpm", "--linter", "biome", "--quiet"]);
   });
 
-  test("interactive mode: no --quiet; optional --linter", () => {
+  test("quiet mode with frameworks passes --frameworks before --quiet", () => {
+    const spec = getUltraciteExecSpec();
+    const cmd = getUltraciteInitCommand("pnpm", "quiet", {
+      frameworks: ["react", "next"],
+      linter: "oxlint",
+    });
+    expect(cmd.args).toEqual([
+      "dlx",
+      spec,
+      "init",
+      "--pm",
+      "pnpm",
+      "--linter",
+      "oxlint",
+      "--frameworks",
+      "react",
+      "next",
+      "--quiet",
+    ]);
+  });
+
+  test("interactive mode: no --quiet; optional --linter and --frameworks", () => {
     const spec = getUltraciteExecSpec();
     const cmd = getUltraciteInitCommand("bun", "interactive", { linter: "oxlint" });
     expect(cmd.args).toEqual(["x", spec, "init", "--pm", "bun", "--linter", "oxlint"]);
+    expect(cmd.args).not.toContain("--quiet");
+  });
+
+  test("interactive mode with frameworks passes --frameworks", () => {
+    const spec = getUltraciteExecSpec();
+    const cmd = getUltraciteInitCommand("bun", "interactive", {
+      frameworks: ["react", "next"],
+      linter: "oxlint",
+    });
+    expect(cmd.args).toEqual([
+      "x",
+      spec,
+      "init",
+      "--pm",
+      "bun",
+      "--linter",
+      "oxlint",
+      "--frameworks",
+      "react",
+      "next",
+    ]);
     expect(cmd.args).not.toContain("--quiet");
   });
 

@@ -123,6 +123,7 @@ export const runCreate = async (args: {
       },
       ultracite: {
         enabled: resolved.runUltracite,
+        frameworks: resolved.ultraciteFrameworks,
         linter: resolved.ultraciteLinter,
         nonInteractive: resolved.nonInteractive,
       },
@@ -153,6 +154,7 @@ export const runCreate = async (args: {
     skip_git: !resolved.doGit,
     skip_install: !resolved.doInstall,
     ui: resolved.ui,
+    ultracite_frameworks: resolved.ultraciteFrameworks?.join(","),
   });
 
   printDoneNextSteps(`Project "${resolved.name}" is ready.`, nextSteps);
