@@ -18,3 +18,6 @@ export const packageManagerField = (pm: ProjectConfig["packageManager"]): string
   const v = TOOLING.packageManagerVersions[pm];
   return `${pm}@${v}`;
 };
+
+export const devScriptCommand = (pm: PackageManager): string =>
+  pm === "npm" ? "npm run dev" : `${pm} dev`;

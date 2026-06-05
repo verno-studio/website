@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { devScriptCommand } from "./catalog/tooling";
 import { componentsStyleFromShadcnPreset, DEFAULT_COMPONENTS_STYLE } from "./build-template-vars";
 
 describe("componentsStyleFromShadcnPreset", () => {
@@ -15,5 +16,13 @@ describe("componentsStyleFromShadcnPreset", () => {
 
   test("passes through radix- prefix", () => {
     expect(componentsStyleFromShadcnPreset("radix-custom")).toBe("radix-custom");
+  });
+});
+
+describe("devScriptCommand", () => {
+  test("formats dev script per package manager", () => {
+    expect(devScriptCommand("npm")).toBe("npm run dev");
+    expect(devScriptCommand("pnpm")).toBe("pnpm dev");
+    expect(devScriptCommand("bun")).toBe("bun dev");
   });
 });

@@ -1,6 +1,6 @@
 import type { ProjectConfig } from "./config";
 import { hasAddon, hasDesignSystem, hasTypescriptConfigPackage, isMonorepo } from "./config";
-import { packageManagerField } from "./catalog/tooling";
+import { devScriptCommand, packageManagerField } from "./catalog/tooling";
 import { scoped } from "./paths";
 
 /** Default shadcn `components.json` style when preset is unknown or a preset code. */
@@ -31,6 +31,7 @@ export const componentsStyleFromShadcnPreset = (preset: string | undefined): str
 };
 
 export interface HandlebarsTemplateContext {
+  readonly devCommand: string;
   readonly projectName: string;
   readonly npmScope: string;
   readonly packageManagerField: string;
@@ -53,6 +54,7 @@ export const buildHandlebarsContext = (config: ProjectConfig): HandlebarsTemplat
   const tsConfigName = scoped(config.npmScope, "typescript-config");
   return {
     componentsStyle: componentsStyleFromShadcnPreset(config.shadcnPreset),
+    devCommand: devScriptCommand(config.packageManager),
     dsName,
     frontend: config.frontend,
     hasDesignSystem: hasDesignSystem(config),
