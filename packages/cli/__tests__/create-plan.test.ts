@@ -24,6 +24,9 @@ describe("buildCreatePlan", () => {
     const ultra = steps.find((s) => s.id === "ultracite")?.command;
     expect(ultra?.args).toContain("--linter");
     expect(ultra?.args).toContain("oxlint");
+    expect(ultra?.args).toContain("--frameworks");
+    expect(ultra?.args).toContain("react");
+    expect(ultra?.args).toContain("next");
   });
 
   test("interactive create passes --linter from resolved inputs (wizard or future flags)", () => {
@@ -39,6 +42,7 @@ describe("buildCreatePlan", () => {
       runUltracite: true,
       shadcnPreset: "nova",
       ui: "shadcn",
+      ultraciteFrameworks: ["react", "next"],
       ultraciteLinter: "oxlint",
       useShadcn: true,
     };
