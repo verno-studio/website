@@ -11,11 +11,11 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "date-fns": "^4.3.0",
+    "date-fns": "^4.4.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
-    "lucide-react": "^1.16.0",
-    "next": "^16.2.6",
+    "lucide-react": "^1.17.0",
+    "next": "^16.2.7",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.4.3",
     "react-day-picker": "^9.14.0",
@@ -28,14 +28,14 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
-    "@types/react": "^19.2.15",
+    "@types/react": "^19.2.16",
     "@types/react-dom": "^19",
     "@vernostudio/typescript-config": "workspace:*",
-    "shadcn": "^4.8.0",
+    "shadcn": "^4.10.0",
     "typescript": "^6"
   },
   "peerDependencies": {
-    "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   }
 }
