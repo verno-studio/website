@@ -24,13 +24,13 @@ bun x @vernostudio/cli create
 
 Spin up a new project from the stack this repo ships. Pick add-ons, answer prompts, or pass **`--yes`**.
 
-| Mode                   | What you get                                                                                                                   |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **Next.js app**        | Single-app layout: Next.js + TypeScript, scoped as `@<scope>/…`                                                                |
-| **Turborepo**          | Monorepo root with `apps/web` and optional `packages/*`                                                                        |
-| **Workspace packages** | `typescript-config` and/or `design-system` (when Turborepo is on; interactive default is both)                                 |
-| **shadcn**             | `shadcn init` (preset `nova` by default) + `shadcn add --all` — app root, or `packages/design-system` when that package exists |
-| **Ultracite**          | `ultracite init` with linter **`oxlint`**, **`biome`**, or **`eslint`** (`ultracite init --linter`)                            |
+| Mode                   | What you get                                                                                                                                        |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Next.js app**        | Single-app layout: Next.js + TypeScript, scoped as `@<scope>/…`                                                                                     |
+| **Turborepo**          | Monorepo root with `apps/web` and optional `packages/*`                                                                                             |
+| **Workspace packages** | `typescript-config` and/or `design-system` (when Turborepo is on; interactive default is both)                                                      |
+| **shadcn**             | `shadcn init` (preset `nova` by default) + `shadcn add --all` — app root, or `packages/design-system` when that package exists                      |
+| **Ultracite**          | `ultracite init` with linter **`oxlint`**, **`biome`**, or **`eslint`** and frameworks such as **`react`**, **`next`** (`--linter`, `--frameworks`) |
 
 ### Non-interactive and dry runs
 
@@ -73,6 +73,7 @@ UI & shadcn:
 
 Ultracite:
   --linter <id>              biome | oxlint | eslint (needs ultracite in --addons; -y defaults to oxlint)
+  --frameworks <list>        react, next, solid, vue, ... (needs ultracite; -y defaults react,next)
   --skip-ultracite           Skip ultracite add-on and ultracite init
 
 Install & git:
