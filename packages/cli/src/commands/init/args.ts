@@ -1,6 +1,6 @@
 import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
 import type { UltraciteLinterId } from "../../ultracite-linter";
-import { defaultUltraciteFrameworksFromFrontend } from "../../ultracite-framework";
+import { DEFAULT_ULTRACITE_FRAMEWORKS } from "../../ultracite-framework";
 import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { AddonId, PackageManager } from "@vernostudio/template-generator";
 import { parseAddonsArg } from "../shared/addons";
@@ -113,7 +113,7 @@ export const resolveInitInputsNonInteractive = (
   const ultraciteLinter = ultraciteOn ? (flaggedLinter ?? DEFAULT_ULTRACITE_LINTER) : undefined;
   const flaggedFrameworks = parseUltraciteFrameworksFlag(options, ultraciteOn);
   const ultraciteFrameworks = ultraciteOn
-    ? (flaggedFrameworks ?? defaultUltraciteFrameworksFromFrontend("next"))
+    ? (flaggedFrameworks ?? DEFAULT_ULTRACITE_FRAMEWORKS)
     : undefined;
 
   const useShadcn = ui === "shadcn" && !options.skipShadcn;

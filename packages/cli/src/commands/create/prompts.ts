@@ -267,7 +267,7 @@ const readUltraciteFrameworks = async (
       })),
       required: true,
     }),
-  ) as UltraciteFrameworkId[];
+  );
 };
 
 export const runInteractiveCreateWizard = async (args: {

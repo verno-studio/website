@@ -1,5 +1,3 @@
-import type { FrontendId } from "@vernostudio/template-generator";
-
 /** Values for `ultracite init --frameworks` (Ultracite preset extends). */
 export type UltraciteFrameworkId =
   | "angular"
@@ -33,15 +31,6 @@ export const DEFAULT_ULTRACITE_FRAMEWORKS: readonly UltraciteFrameworkId[] = ["r
 
 export const isUltraciteFrameworkId = (value: string | undefined): value is UltraciteFrameworkId =>
   value !== undefined && (ULTRACITE_FRAMEWORK_IDS as readonly string[]).includes(value);
-
-export const defaultUltraciteFrameworksFromFrontend = (
-  frontend: FrontendId,
-): readonly UltraciteFrameworkId[] => {
-  if (frontend === "next") {
-    return DEFAULT_ULTRACITE_FRAMEWORKS;
-  }
-  return DEFAULT_ULTRACITE_FRAMEWORKS;
-};
 
 /** Parses comma- or space-separated framework ids; dedupes while preserving order. */
 export const parseUltraciteFrameworksArg = (raw: string | undefined): UltraciteFrameworkId[] => {

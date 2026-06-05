@@ -181,7 +181,7 @@ const readUltraciteFrameworks = async (
       })),
       required: true,
     }),
-  ) as UltraciteFrameworkId[];
+  );
 };
 
 const addonsSummary = (addons: readonly AddonId[]): string =>
@@ -227,10 +227,8 @@ export const runInteractiveInitWizard = async (args: {
   p.log.step("Post-init");
   const doInstall = await readDoInstall(hasNoInstall);
 
-  const ultraciteLinter = ultraciteOn ? await readUltraciteLinter(options, ultraciteOn) : undefined;
-  const ultraciteFrameworks = ultraciteOn
-    ? await readUltraciteFrameworks(options, ultraciteOn)
-    : undefined;
+  const ultraciteLinter = await readUltraciteLinter(options, ultraciteOn);
+  const ultraciteFrameworks = await readUltraciteFrameworks(options, ultraciteOn);
 
   const useShadcn = ui === "shadcn" && !hasSkipShadcn;
 

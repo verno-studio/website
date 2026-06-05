@@ -1,9 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-  DEFAULT_ULTRACITE_FRAMEWORKS,
-  defaultUltraciteFrameworksFromFrontend,
-  parseUltraciteFrameworksArg,
-} from "../src/ultracite-framework";
+import { parseUltraciteFrameworksArg } from "../src/ultracite-framework";
 import { parseUltraciteFrameworksFlag } from "../src/commands/shared/ultracite";
 
 describe("parseUltraciteFrameworksArg", () => {
@@ -19,12 +15,6 @@ describe("parseUltraciteFrameworksArg", () => {
     expect(() => parseUltraciteFrameworksArg("react,unknown")).toThrow(
       'Invalid framework "unknown"',
     );
-  });
-});
-
-describe("defaultUltraciteFrameworksFromFrontend", () => {
-  test("defaults to react and next for next frontend", () => {
-    expect(defaultUltraciteFrameworksFromFrontend("next")).toEqual(DEFAULT_ULTRACITE_FRAMEWORKS);
   });
 });
 

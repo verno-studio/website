@@ -7,7 +7,7 @@ import type {
 import { FRONTENDS, PACKAGE_IDS } from "@vernostudio/template-generator";
 import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
 import type { UltraciteLinterId } from "../../ultracite-linter";
-import { defaultUltraciteFrameworksFromFrontend } from "../../ultracite-framework";
+import { DEFAULT_ULTRACITE_FRAMEWORKS } from "../../ultracite-framework";
 import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import { parseAddonsArg } from "../shared/addons";
 import { splitCommaList } from "../shared/comma-list";
@@ -208,7 +208,7 @@ export const resolveCreateInputsNonInteractive = (
   const ultraciteLinter = ultraciteOn ? (flaggedLinter ?? DEFAULT_ULTRACITE_LINTER) : undefined;
   const flaggedFrameworks = parseUltraciteFrameworksFlag(options, ultraciteOn);
   const ultraciteFrameworks = ultraciteOn
-    ? (flaggedFrameworks ?? defaultUltraciteFrameworksFromFrontend(frontend))
+    ? (flaggedFrameworks ?? DEFAULT_ULTRACITE_FRAMEWORKS)
     : undefined;
 
   return {
