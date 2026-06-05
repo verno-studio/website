@@ -65,35 +65,64 @@ dist
 
 # Next.js
 .next`],
-    ["README.md", `#
-{{projectName}}
+    ["README.md", `# {{projectName}}
+
+─ Verno{{#if turborepo}} · Turborepo{{/if}} · Next.js · @{{npmScope}}
+
+## Structure
 
 {{#if turborepo}}
-
-  Turborepo + Next.js scaffolded with Verno.
-
-  {{#if hasTypescriptConfigPackage}}
-    Shared TypeScript config: \`{{tsConfigName}}\`.
-  {{/if}}
-  {{#if hasDesignSystem}}
-    Design system package: \`{{dsName}}\` (shadcn + Tailwind v4).
-  {{/if}}
-
-  Post-create (if you skipped hooks): install deps, run \`shadcn\` in \`packages/design-system\` when
-  needed, and \`ultracite\` at the repo root{{#if ultracite}}
-    (\`verno create\` passes \`ultracite init --linter\`; or run \`ultracite init\` and use \`--linter\` / interactive Ultracite for the rest){{/if}}. To switch the shadcn preset later,
-  from the repo root: \`cd packages/design-system && npx shadcn@latest apply --preset
-  YOUR_PRESET_CODE\` (or \`pnpm dlx\` / \`bun x\` as you prefer)
-
+\`\`\`
+{{projectName}}
+{{#if hasTypescriptConfigPackage}}
+{{#if hasDesignSystem}}
+├── apps/web
+├── packages/{{tsConfigName}}
+└── packages/{{dsName}}
 {{else}}
-
-  Next.js app (Verno). npm scope: \`@{{npmScope}}\`. Post-create: run \`shadcn\` and \`ultracite\` in this
-  directory if you skipped them during \`verno create\`.
-
+├── apps/web
+└── packages/{{tsConfigName}}
+{{/if}}
+{{else if hasDesignSystem}}
+├── apps/web
+└── packages/{{dsName}}
+{{else}}
+└── apps/web
+{{/if}}
+\`\`\`
+{{else}}
+\`\`\`
+{{projectName}}
+{{#if useShadcn}}
+├── app/
+├── package.json
+└── components.json
+{{else}}
+├── app/
+└── package.json
+{{/if}}
+\`\`\`
 {{/if}}
 
-To apply a different shadcn preset on an existing project: run \`shadcn@latest apply --preset
-YOUR_PRESET_CODE\` (see [shadcn CLI](https://ui.shadcn.com/docs/cli)).`]
+## Links
+
+- [Verno Studio](https://github.com/verno-studio/website)
+{{#if useShadcn}}
+- [shadcn/ui](https://ui.shadcn.com/docs)
+{{/if}}
+{{#if turborepo}}
+- [Turborepo](https://turborepo.dev/docs)
+{{/if}}
+
+## Develop
+
+{{#if turborepo}}From the repo root:
+
+{{/if}}
+\`\`\`bash
+{{devCommand}}
+\`\`\`
+`]
   ]),
   "frontends/next": new Map<string, string>([
     ["app/globals.css", `@import "tailwindcss";

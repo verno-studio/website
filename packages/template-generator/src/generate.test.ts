@@ -4,6 +4,7 @@ import { access, constants, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { ProjectConfig } from "./config";
+import { buildInterpolatedFileTree } from "./generator";
 import { defaultNpmScopeFromProjectName, generate, writeTree } from "./index";
 
 let dir: string;
@@ -48,6 +49,38 @@ const expectSingleAppGlobalsBaseLayer = (globalsCss: string): void => {
 describe("defaultNpmScopeFromProjectName", () => {
   test("slugifies and strips invalid characters", () => {
     expect(defaultNpmScopeFromProjectName("My App!")).toBe("my-app");
+  });
+});
+
+describe("README.md", () => {
+  test("monorepo renders ASCII tree, links, and dev command", () => {
+    const config = monorepoWithDs({ packageManager: "pnpm", ui: "shadcn" });
+    const files = buildInterpolatedFileTree(config);
+    const readme = files["README.md"];
+    expect(readme).toContain("# mono");
+    expect(readme).toContain("─ Verno · Turborepo · Next.js · @mono");
+    expect(readme).toContain("├── apps/web");
+    expect(readme).toContain("packages/@mono/typescript-config");
+    expect(readme).toContain("packages/@mono/design-system");
+    expect(readme).toContain("[shadcn/ui](https://ui.shadcn.com/docs)");
+    expect(readme).toContain("[Turborepo](https://turborepo.dev/docs)");
+    expect(readme).toContain("pnpm dev");
+    expect(readme).not.toContain("ultracite");
+    expect(readme).not.toContain("YOUR_PRESET_CODE");
+  });
+
+  test("single app renders shallow tree without shadcn when ui is none", () => {
+    const config = singleApp({ packageManager: "bun" });
+    const files = buildInterpolatedFileTree(config);
+    const readme = files["README.md"];
+    expect(readme).toContain("# test-app");
+    expect(readme).toContain("─ Verno · Next.js · @testapp");
+    expect(readme).toContain("├── app/");
+    expect(readme).toContain("└── package.json");
+    expect(readme).not.toContain("components.json");
+    expect(readme).not.toContain("[shadcn/ui]");
+    expect(readme).not.toContain("Turborepo");
+    expect(readme).toContain("bun dev");
   });
 });
 
