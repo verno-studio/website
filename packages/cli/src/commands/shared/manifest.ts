@@ -7,6 +7,7 @@ import type {
   PackageId,
   PackageManager,
 } from "@vernostudio/template-generator";
+import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import { readCliPackageVersion } from "../../cli-version";
 import { VERNO_MANIFEST_DIR } from "../../constants";
@@ -26,6 +27,7 @@ export interface VernoManifest {
   readonly studio: "Verno Studio";
   readonly ui: UiMode;
   readonly ultraciteLinter?: UltraciteLinterId;
+  readonly ultraciteFrameworks?: readonly UltraciteFrameworkId[];
 }
 
 export const mergeManifestAddons = (
@@ -51,6 +53,7 @@ export const buildVernoManifestForCreate = (args: {
   shadcnPreset: args.resolved.useShadcn ? args.resolved.shadcnPreset : undefined,
   studio: "Verno Studio",
   ui: args.resolved.ui,
+  ultraciteFrameworks: args.resolved.runUltracite ? args.resolved.ultraciteFrameworks : undefined,
   ultraciteLinter: args.resolved.runUltracite ? args.resolved.ultraciteLinter : undefined,
 });
 
@@ -70,6 +73,7 @@ export const buildVernoManifestForInit = (args: {
   shadcnPreset: args.resolved.useShadcn ? args.resolved.shadcnPreset : undefined,
   studio: "Verno Studio",
   ui: args.resolved.ui,
+  ultraciteFrameworks: args.resolved.runUltracite ? args.resolved.ultraciteFrameworks : undefined,
   ultraciteLinter: args.resolved.runUltracite ? args.resolved.ultraciteLinter : undefined,
 });
 

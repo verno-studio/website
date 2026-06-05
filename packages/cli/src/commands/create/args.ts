@@ -7,6 +7,8 @@ import type {
 import { FRONTENDS, PACKAGE_IDS } from "@vernostudio/template-generator";
 import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
 import type { UltraciteLinterId } from "../../ultracite-linter";
+import { defaultUltraciteFrameworksFromFrontend } from "../../ultracite-framework";
+import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import { parseAddonsArg } from "../shared/addons";
 import { splitCommaList } from "../shared/comma-list";
 import {
@@ -16,7 +18,7 @@ import {
   PACKAGE_MANAGERS,
 } from "../shared/input-primitives";
 import type { UiMode } from "../shared/input-primitives";
-import { parseUltraciteLinterFlag } from "../shared/ultracite";
+import { parseUltraciteFrameworksFlag, parseUltraciteLinterFlag } from "../shared/ultracite";
 
 export { DEFAULT_SHADCN_PRESET, isPackageManager, isUiMode, PACKAGE_MANAGERS, type UiMode };
 
@@ -69,6 +71,8 @@ export interface CreateCommandOptions {
   readonly shadcnPreset?: string;
   /** `ultracite init --linter` when the ultracite add-on is enabled. */
   readonly linter?: string;
+  /** `ultracite init --frameworks` when the ultracite add-on is enabled. */
+  readonly frameworks?: string;
 }
 
 export const toCreateCommandOptions = (raw: {
@@ -85,9 +89,11 @@ export const toCreateCommandOptions = (raw: {
   readonly ui?: string;
   readonly shadcnPreset?: string;
   readonly linter?: string;
+  readonly frameworks?: string;
 }): CreateCommandOptions => ({
   addons: raw.addons,
   dryRun: raw.dryRun ?? false,
+  frameworks: raw.frameworks,
   frontend: raw.frontend,
   linter: raw.linter,
   noGit: raw.noGit ?? false,
@@ -115,6 +121,8 @@ export interface ResolvedCreateInputs {
   readonly packages: readonly PackageId[];
   /** Always set when ultracite add-on runs: CLI `--linter`, or interactive wizard, or `-y` default. */
   readonly ultraciteLinter?: UltraciteLinterId;
+  /** Always set when ultracite add-on runs: CLI `--frameworks`, interactive wizard, or `-y` default. */
+  readonly ultraciteFrameworks?: readonly UltraciteFrameworkId[];
   readonly ui: UiMode;
   readonly useShadcn: boolean;
 }
@@ -196,8 +204,12 @@ export const resolveCreateInputsNonInteractive = (
   const packageManager = resolvePackageManagerNonInteractive(options);
   const ui = resolveUiNonInteractive(options);
   const ultraciteOn = addons.includes("ultracite");
-  const flagged = parseUltraciteLinterFlag(options, ultraciteOn);
-  const ultraciteLinter = ultraciteOn ? (flagged ?? DEFAULT_ULTRACITE_LINTER) : undefined;
+  const flaggedLinter = parseUltraciteLinterFlag(options, ultraciteOn);
+  const ultraciteLinter = ultraciteOn ? (flaggedLinter ?? DEFAULT_ULTRACITE_LINTER) : undefined;
+  const flaggedFrameworks = parseUltraciteFrameworksFlag(options, ultraciteOn);
+  const ultraciteFrameworks = ultraciteOn
+    ? (flaggedFrameworks ?? defaultUltraciteFrameworksFromFrontend(frontend))
+    : undefined;
 
   return {
     addons,
@@ -211,6 +223,7 @@ export const resolveCreateInputsNonInteractive = (
     runUltracite: ultraciteOn,
     shadcnPreset: options.shadcnPreset ?? DEFAULT_SHADCN_PRESET,
     ui,
+    ultraciteFrameworks,
     ultraciteLinter,
     useShadcn: ui === "shadcn" && !options.skipShadcn,
   };

@@ -68,7 +68,12 @@ export const buildCreatePlan = (
   appendUltraciteStep(steps, {
     id: "ultracite",
     mode: resolved.runUltracite
-      ? { kind: "run", linter: resolved.ultraciteLinter, nonInteractive: resolved.nonInteractive }
+      ? {
+          frameworks: resolved.ultraciteFrameworks,
+          kind: "run",
+          linter: resolved.ultraciteLinter,
+          nonInteractive: resolved.nonInteractive,
+        }
       : { kind: "skip", reason: "Skipped (ultracite add-on off, --skip-ultracite, or declined)" },
     packageManager: resolved.packageManager,
     projectDir,

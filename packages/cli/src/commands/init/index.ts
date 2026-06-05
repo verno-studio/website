@@ -126,6 +126,7 @@ export const runInit = async (args: { options: InitCommandOptions }): Promise<vo
       },
       ultracite: {
         enabled: resolved.runUltracite && !detected.hasUltracite,
+        frameworks: resolved.ultraciteFrameworks,
         linter: resolved.ultraciteLinter,
         nonInteractive: resolved.nonInteractive,
       },

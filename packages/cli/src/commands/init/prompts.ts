@@ -3,7 +3,9 @@ import pc from "picocolors";
 import { UserCancelledError } from "../../errors";
 import { renderVernoTitle } from "../../ui";
 import { parseAddonsArg } from "../shared/addons";
-import { parseUltraciteLinterFlag } from "../shared/ultracite";
+import { parseUltraciteFrameworksFlag, parseUltraciteLinterFlag } from "../shared/ultracite";
+import { DEFAULT_ULTRACITE_FRAMEWORKS, ULTRACITE_FRAMEWORK_IDS } from "../../ultracite-framework";
+import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { AddonId, PackageManager } from "@vernostudio/template-generator";
 import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
 import type { UltraciteLinterId } from "../../ultracite-linter";
@@ -158,6 +160,30 @@ const readUltraciteLinter = async (
   );
 };
 
+const readUltraciteFrameworks = async (
+  options: InitCommandOptions,
+  ultraciteOn: boolean,
+): Promise<UltraciteFrameworkId[] | undefined> => {
+  const fromFlag = parseUltraciteFrameworksFlag(options, ultraciteOn);
+  if (!ultraciteOn) {
+    return undefined;
+  }
+  if (fromFlag !== undefined) {
+    return fromFlag;
+  }
+  return assertValue(
+    await p.multiselect<UltraciteFrameworkId>({
+      initialValues: [...DEFAULT_ULTRACITE_FRAMEWORKS],
+      message: "Ultracite frameworks (passed as --frameworks)",
+      options: ULTRACITE_FRAMEWORK_IDS.map((id) => ({
+        label: id,
+        value: id,
+      })),
+      required: true,
+    }),
+  ) as UltraciteFrameworkId[];
+};
+
 const addonsSummary = (addons: readonly AddonId[]): string =>
   addons.length > 0 ? addons.join(", ") : "none";
 
@@ -202,6 +228,9 @@ export const runInteractiveInitWizard = async (args: {
   const doInstall = await readDoInstall(hasNoInstall);
 
   const ultraciteLinter = ultraciteOn ? await readUltraciteLinter(options, ultraciteOn) : undefined;
+  const ultraciteFrameworks = ultraciteOn
+    ? await readUltraciteFrameworks(options, ultraciteOn)
+    : undefined;
 
   const useShadcn = ui === "shadcn" && !hasSkipShadcn;
 
@@ -214,6 +243,9 @@ export const runInteractiveInitWizard = async (args: {
 
   if (ultraciteOn) {
     summaryLines.push(`Ultracite linter: ${ultraciteLinter ?? DEFAULT_ULTRACITE_LINTER}`);
+    summaryLines.push(
+      `Ultracite frameworks: ${(ultraciteFrameworks ?? DEFAULT_ULTRACITE_FRAMEWORKS).join(", ")}`,
+    );
   }
 
   p.log.step("Review — confirm to continue");
@@ -236,6 +268,7 @@ export const runInteractiveInitWizard = async (args: {
     runUltracite: ultraciteOn,
     shadcnPreset,
     ui,
+    ultraciteFrameworks,
     ultraciteLinter,
     useShadcn,
   };

@@ -31,6 +31,10 @@ program
     "--linter <id>",
     "biome | oxlint | eslint (ultracite add-on; -y default oxlint; interactive wizard asks unless set)",
   )
+  .option(
+    "--frameworks <list>",
+    "Ultracite preset extends: react, next, solid, vue, ... (ultracite add-on; -y defaults react,next; interactive wizard asks)",
+  )
   .option("--no-install", "Skip dependency install")
   .option("--no-git", "Skip git init")
   .option("--skip-shadcn", "Skip shadcn bootstrap")
@@ -53,6 +57,10 @@ program
   .option(
     "--linter <id>",
     "biome | oxlint | eslint (ultracite add-on; interactive wizard asks unless set)",
+  )
+  .option(
+    "--frameworks <list>",
+    "Ultracite preset extends: react, next, solid, vue, ... (ultracite add-on; -y defaults react,next; interactive wizard asks)",
   )
   .option("-p, --package-manager <pm>", "bun | pnpm | npm")
   .option("-y, --yes", "Non-interactive mode", false)

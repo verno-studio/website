@@ -4,7 +4,11 @@ import type { AddonId, PackageId, PackageManager } from "@vernostudio/template-g
 import { UserCancelledError } from "../../errors";
 import { renderVernoTitle } from "../../ui";
 import { parseAddonsArg } from "../shared/addons";
-import { parseUltraciteLinterFlag } from "../shared/ultracite";
+import { parseUltraciteFrameworksFlag, parseUltraciteLinterFlag } from "../shared/ultracite";
+import { DEFAULT_ULTRACITE_FRAMEWORKS, ULTRACITE_FRAMEWORK_IDS } from "../../ultracite-framework";
+import type { UltraciteFrameworkId } from "../../ultracite-framework";
+import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
+import type { UltraciteLinterId } from "../../ultracite-linter";
 import {
   DEFAULT_SHADCN_PRESET,
   DEFAULT_WORKSPACE_PACKAGES,
@@ -15,8 +19,6 @@ import {
   parsePackagesArg,
 } from "./args";
 import type { CreateCommandOptions, ResolvedCreateInputs, UiMode } from "./args";
-import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
-import type { UltraciteLinterId } from "../../ultracite-linter";
 
 const exitOnCancel = (value: unknown): void => {
   if (p.isCancel(value)) {
@@ -244,6 +246,30 @@ const readUltraciteLinter = async (
   );
 };
 
+const readUltraciteFrameworks = async (
+  options: CreateCommandOptions,
+  ultraciteOn: boolean,
+): Promise<UltraciteFrameworkId[] | undefined> => {
+  const fromFlag = parseUltraciteFrameworksFlag(options, ultraciteOn);
+  if (!ultraciteOn) {
+    return undefined;
+  }
+  if (fromFlag !== undefined) {
+    return fromFlag;
+  }
+  return assertValue(
+    await p.multiselect<UltraciteFrameworkId>({
+      initialValues: [...DEFAULT_ULTRACITE_FRAMEWORKS],
+      message: "Ultracite frameworks (passed as --frameworks)",
+      options: ULTRACITE_FRAMEWORK_IDS.map((id) => ({
+        label: id,
+        value: id,
+      })),
+      required: true,
+    }),
+  ) as UltraciteFrameworkId[];
+};
+
 export const runInteractiveCreateWizard = async (args: {
   readonly name?: string;
   readonly options: CreateCommandOptions;
@@ -267,6 +293,7 @@ export const runInteractiveCreateWizard = async (args: {
   const packages = await readPackagesInteractive(options, turborepoOn);
   const ultraciteOn = addons.includes("ultracite");
   const ultraciteLinter = await readUltraciteLinter(options, ultraciteOn);
+  const ultraciteFrameworks = await readUltraciteFrameworks(options, ultraciteOn);
 
   p.log.step("Tooling — package manager and UI");
   const packageManager = await readPackageManager(options);
@@ -280,7 +307,7 @@ export const runInteractiveCreateWizard = async (args: {
   const useShadcn = ui === "shadcn" && !hasSkipShadcn;
   const runUltracite = ultraciteOn;
   const ultraciteSummary = runUltracite
-    ? `yes — ultracite init --linter ${ultraciteLinter ?? DEFAULT_ULTRACITE_LINTER} (after install)`
+    ? `yes — ultracite init --linter ${ultraciteLinter ?? DEFAULT_ULTRACITE_LINTER} --frameworks ${(ultraciteFrameworks ?? DEFAULT_ULTRACITE_FRAMEWORKS).join(" ")} (after install)`
     : "no";
 
   const summaryLines: string[] = [
@@ -322,6 +349,7 @@ export const runInteractiveCreateWizard = async (args: {
     runUltracite,
     shadcnPreset,
     ui,
+    ultraciteFrameworks,
     ultraciteLinter,
     useShadcn,
   };
