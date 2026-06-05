@@ -1,5 +1,11 @@
 # @vernostudio/template-generator
 
+## 0.1.3
+
+### Patch Changes
+
+- 6c21a96: Refresh generated project README with a minimal ASCII structure tree, scoped links, and a package-manager-aware dev command
+
 ## 0.1.2
 
 ### Patch Changes
