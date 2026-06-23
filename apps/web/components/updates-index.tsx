@@ -76,7 +76,7 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
                 </div>
                 <span
                   aria-hidden="true"
-                  className="-translate-x-1 opacity-0 transition-[transform,opacity] duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100"
+                  className="flex shrink-0 -translate-x-0.5 scale-75 items-center justify-center text-gray-1000 opacity-0 transition-[opacity,translate,scale] duration-300 ease-out will-change-[translate,scale,opacity] group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100"
                 >
                   <ArrowRightIcon className="size-4" />
                 </span>
