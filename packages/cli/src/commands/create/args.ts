@@ -15,12 +15,20 @@ import {
   DEFAULT_SHADCN_PRESET,
   isPackageManager,
   isUiMode,
+  isValidProjectName,
   PACKAGE_MANAGERS,
 } from "../shared/input-primitives";
 import type { UiMode } from "../shared/input-primitives";
 import { parseUltraciteFrameworksFlag, parseUltraciteLinterFlag } from "../shared/ultracite";
 
-export { DEFAULT_SHADCN_PRESET, isPackageManager, isUiMode, PACKAGE_MANAGERS, type UiMode };
+export {
+  DEFAULT_SHADCN_PRESET,
+  isPackageManager,
+  isUiMode,
+  isValidProjectName,
+  PACKAGE_MANAGERS,
+  type UiMode,
+};
 
 export const isFrontendId = (value: string | undefined): value is FrontendId =>
   value !== undefined && (FRONTENDS as readonly string[]).includes(value);
@@ -192,6 +200,11 @@ export const resolveCreateInputsNonInteractive = (
 ): ResolvedCreateInputs => {
   if (!name) {
     throw new Error("Project name is required. Example: verno create my-app -y");
+  }
+  if (!isValidProjectName(name)) {
+    throw new Error(
+      `Invalid project name "${name}". Use letters, numbers, and hyphens only (e.g. my-app).`,
+    );
   }
 
   const frontend = readFrontendNonInteractive(options);

@@ -71,12 +71,10 @@ export const getNextSteps = (args: {
   }
 
   if (runUltracite) {
-    steps.push(
-      "Ultracite is active — see https://vernostudio.dev/docs/ultracite for configuration.",
-    );
+    steps.push("Ultracite is active — see https://www.ultracite.ai for configuration.");
   }
 
-  steps.push("See https://vernostudio.dev/docs/init for more configuration options.");
+  steps.push("See https://verno-studio.vercel.app for more about Verno Studio.");
   return steps;
 };
 
