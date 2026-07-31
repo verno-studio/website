@@ -54,8 +54,8 @@ Run these commands from the repository root:
 For package-specific work, use Bun's workspace filters. For example:
 
 ```sh
-bun --filter verno run dev
-bun --filter verno run test
+bun --filter @vernostudio/cli run dev
+bun --filter @vernostudio/cli run test
 bun --filter @vernostudio/template-generator run test
 ```
 
