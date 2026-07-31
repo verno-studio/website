@@ -78,15 +78,16 @@ const CONFIG_FILES: Record<string, string> = {
   "oxlint-config": "oxlint.config.ts",
 };
 
-const defaultRunUltraciteInit =
-  (options: ApplyUpdatesOptions) =>
-  async (projectDir: string): Promise<void> => {
-    const cmd = getUltraciteInitCommand(options.packageManager, "quiet", {
-      frameworks: options.ultraciteFrameworks,
-      linter: "oxlint",
-    });
-    await runProcess(cmd.file, cmd.args, { cwd: projectDir, stepId: "ultracite" });
-  };
+const runUltraciteInitProcess = async (
+  projectDir: string,
+  options: ApplyUpdatesOptions,
+): Promise<void> => {
+  const cmd = getUltraciteInitCommand(options.packageManager, "quiet", {
+    frameworks: options.ultraciteFrameworks,
+    linter: "oxlint",
+  });
+  await runProcess(cmd.file, cmd.args, { cwd: projectDir, stepId: "ultracite" });
+};
 
 /**
  * Regenerates missing or legacy-import Ultracite config files by delegating to
@@ -107,8 +108,9 @@ export const regenerateUltraciteConfigs = async (
         rmSync(path);
       }
     }
-    const run = options.runUltraciteInit ?? defaultRunUltraciteInit(options);
-    await run(projectDir);
+    await (options.runUltraciteInit
+      ? options.runUltraciteInit(projectDir)
+      : runUltraciteInitProcess(projectDir, options));
     return pendingIds.map((id) => {
       const exists = existsSync(join(projectDir, CONFIG_FILES[id]));
       return {

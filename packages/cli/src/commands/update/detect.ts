@@ -115,32 +115,35 @@ export const checkUltraciteDep = (projectDir: string): UpdateCheck => {
   };
 };
 
-const LEGACY_OXLINT_IMPORT = "ultracite/presets/oxlint";
-const LEGACY_OXFMT_IMPORT = "ultracite/presets/oxfmt";
+type UltraciteTool = "oxlint" | "oxfmt";
 
 /** Ultracite 7.8+ exposes presets as `ultracite/oxlint/<preset>` and `ultracite/oxfmt`; the `ultracite/presets/*` subpaths no longer resolve. */
-const isCanonicalOxlintConfig = (content: string): boolean =>
-  !content.includes(LEGACY_OXLINT_IMPORT) && content.includes("ultracite/oxlint");
+const classifyUltraciteConfig = (
+  content: string,
+  tool: UltraciteTool,
+): "canonical" | "legacy" | "customized" => {
+  if (content.includes(`ultracite/presets/${tool}`)) {
+    return "legacy";
+  }
+  if (content.includes(`ultracite/${tool}`)) {
+    return "canonical";
+  }
+  return "customized";
+};
 
-const isLegacyOxlintConfig = (content: string): boolean => content.includes(LEGACY_OXLINT_IMPORT);
-
-const isCanonicalOxfmtConfig = (content: string): boolean =>
-  !content.includes(LEGACY_OXFMT_IMPORT) && content.includes("ultracite/oxfmt");
-
-const isLegacyOxfmtConfig = (content: string): boolean => content.includes(LEGACY_OXFMT_IMPORT);
-
-export const checkOxlintConfig = (projectDir: string): UpdateCheck => {
-  const path = join(projectDir, "oxlint.config.ts");
+const checkUltraciteToolConfig = (projectDir: string, tool: UltraciteTool): UpdateCheck => {
+  const fileName = `${tool}.config.ts`;
+  const path = join(projectDir, fileName);
   let current = "missing";
   let needsUpdate = false;
   let skipReason: string | undefined;
 
   if (existsSync(path)) {
     try {
-      const content = readFileSync(path, "utf-8");
-      if (isCanonicalOxlintConfig(content)) {
+      const state = classifyUltraciteConfig(readFileSync(path, "utf-8"), tool);
+      if (state === "canonical") {
         current = "canonical";
-      } else if (isLegacyOxlintConfig(content)) {
+      } else if (state === "legacy") {
         current = "legacy preset import";
         needsUpdate = true;
       } else {
@@ -157,49 +160,19 @@ export const checkOxlintConfig = (projectDir: string): UpdateCheck => {
   return {
     category: "config",
     current,
-    description: "oxlint.config.ts configuration file",
+    description: `${fileName} configuration file`,
     expected: "canonical",
-    id: "oxlint-config",
+    id: `${tool}-config`,
     needsUpdate,
     skipReason,
   };
 };
 
-export const checkOxfmtConfig = (projectDir: string): UpdateCheck => {
-  const path = join(projectDir, "oxfmt.config.ts");
-  let current = "missing";
-  let needsUpdate = false;
-  let skipReason: string | undefined;
+export const checkOxlintConfig = (projectDir: string): UpdateCheck =>
+  checkUltraciteToolConfig(projectDir, "oxlint");
 
-  if (existsSync(path)) {
-    try {
-      const content = readFileSync(path, "utf-8");
-      if (isCanonicalOxfmtConfig(content)) {
-        current = "canonical";
-      } else if (isLegacyOxfmtConfig(content)) {
-        current = "legacy preset import";
-        needsUpdate = true;
-      } else {
-        current = "customized";
-        skipReason = "Config file has been customized; skipping to preserve user changes.";
-      }
-    } catch {
-      current = "error reading";
-    }
-  } else {
-    needsUpdate = true;
-  }
-
-  return {
-    category: "config",
-    current,
-    description: "oxfmt.config.ts configuration file",
-    expected: "canonical",
-    id: "oxfmt-config",
-    needsUpdate,
-    skipReason,
-  };
-};
+export const checkOxfmtConfig = (projectDir: string): UpdateCheck =>
+  checkUltraciteToolConfig(projectDir, "oxfmt");
 
 export const checkGlobalsCssBaseLayer = (projectDir: string, isMonorepo: boolean): UpdateCheck => {
   const globalsCssPath = isMonorepo
