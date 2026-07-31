@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { getDependencyVersion } from "@vernostudio/template-generator";
 import semver from "semver";
 import { readCliPackageVersion } from "../../cli-version";
 import { detectVernoManifest } from "../shared/manifest";
@@ -17,7 +18,8 @@ export interface UpdateCheck {
   readonly skipReason?: string;
 }
 
-export const EXPECTED_ULTRACITE_VERSION = "^7.7.0";
+/** Single source of truth: the same catalog range that generated projects are pinned to. */
+export const EXPECTED_ULTRACITE_VERSION = getDependencyVersion("ultracite");
 
 export const checkCliVersion = (manifestVersion: string): UpdateCheck => {
   const currentCliVersion = readCliPackageVersion();
@@ -113,23 +115,37 @@ export const checkUltraciteDep = (projectDir: string): UpdateCheck => {
   };
 };
 
-const isCanonicalOxlintConfig = (content: string): boolean =>
-  content.includes("ultracite/presets/oxlint");
+type UltraciteTool = "oxlint" | "oxfmt";
 
-const isCanonicalOxfmtConfig = (content: string): boolean =>
-  content.includes("ultracite/presets/oxfmt");
+/** Ultracite 7.8+ exposes presets as `ultracite/oxlint/<preset>` and `ultracite/oxfmt`; the `ultracite/presets/*` subpaths no longer resolve. */
+const classifyUltraciteConfig = (
+  content: string,
+  tool: UltraciteTool,
+): "canonical" | "legacy" | "customized" => {
+  if (content.includes(`ultracite/presets/${tool}`)) {
+    return "legacy";
+  }
+  if (content.includes(`ultracite/${tool}`)) {
+    return "canonical";
+  }
+  return "customized";
+};
 
-export const checkOxlintConfig = (projectDir: string): UpdateCheck => {
-  const path = join(projectDir, "oxlint.config.ts");
+const checkUltraciteToolConfig = (projectDir: string, tool: UltraciteTool): UpdateCheck => {
+  const fileName = `${tool}.config.ts`;
+  const path = join(projectDir, fileName);
   let current = "missing";
   let needsUpdate = false;
   let skipReason: string | undefined;
 
   if (existsSync(path)) {
     try {
-      const content = readFileSync(path, "utf-8");
-      if (isCanonicalOxlintConfig(content)) {
+      const state = classifyUltraciteConfig(readFileSync(path, "utf-8"), tool);
+      if (state === "canonical") {
         current = "canonical";
+      } else if (state === "legacy") {
+        current = "legacy preset import";
+        needsUpdate = true;
       } else {
         current = "customized";
         skipReason = "Config file has been customized; skipping to preserve user changes.";
@@ -144,46 +160,19 @@ export const checkOxlintConfig = (projectDir: string): UpdateCheck => {
   return {
     category: "config",
     current,
-    description: "oxlint.config.ts configuration file",
+    description: `${fileName} configuration file`,
     expected: "canonical",
-    id: "oxlint-config",
+    id: `${tool}-config`,
     needsUpdate,
     skipReason,
   };
 };
 
-export const checkOxfmtConfig = (projectDir: string): UpdateCheck => {
-  const path = join(projectDir, "oxfmt.config.ts");
-  let current = "missing";
-  let needsUpdate = false;
-  let skipReason: string | undefined;
+export const checkOxlintConfig = (projectDir: string): UpdateCheck =>
+  checkUltraciteToolConfig(projectDir, "oxlint");
 
-  if (existsSync(path)) {
-    try {
-      const content = readFileSync(path, "utf-8");
-      if (isCanonicalOxfmtConfig(content)) {
-        current = "canonical";
-      } else {
-        current = "customized";
-        skipReason = "Config file has been customized; skipping to preserve user changes.";
-      }
-    } catch {
-      current = "error reading";
-    }
-  } else {
-    needsUpdate = true;
-  }
-
-  return {
-    category: "config",
-    current,
-    description: "oxfmt.config.ts configuration file",
-    expected: "canonical",
-    id: "oxfmt-config",
-    needsUpdate,
-    skipReason,
-  };
-};
+export const checkOxfmtConfig = (projectDir: string): UpdateCheck =>
+  checkUltraciteToolConfig(projectDir, "oxfmt");
 
 export const checkGlobalsCssBaseLayer = (projectDir: string, isMonorepo: boolean): UpdateCheck => {
   const globalsCssPath = isMonorepo

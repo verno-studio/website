@@ -1,6 +1,5 @@
 import type { PackageManager } from "@vernostudio/template-generator";
 import { getShadcnExecSpec, getUltraciteExecSpec } from "@vernostudio/template-generator";
-import type { UltraciteFrameworkId } from "./ultracite-framework";
 import type { UltraciteLinterId } from "./ultracite-linter";
 
 export const getPmInstallCommand = (
@@ -61,7 +60,7 @@ export const getUltraciteInitCommand = (
   mode: UltraciteInitMode,
   options?: {
     readonly linter?: UltraciteLinterId;
-    readonly frameworks?: readonly UltraciteFrameworkId[];
+    readonly frameworks?: readonly string[];
   },
 ): {
   readonly file: string;

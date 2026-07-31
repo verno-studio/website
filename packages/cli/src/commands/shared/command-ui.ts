@@ -2,7 +2,6 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { CLIError } from "../../errors";
 import { renderVernoTitle } from "../../ui";
-import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import type { CommandStepPlan } from "./plan-steps";
 
@@ -20,9 +19,9 @@ export const requireUltraciteLinter = (
 };
 
 export const requireUltraciteFrameworks = (
-  frameworks: readonly UltraciteFrameworkId[] | undefined,
+  frameworks: readonly string[] | undefined,
   command: string,
-): readonly UltraciteFrameworkId[] => {
+): readonly string[] => {
   if (frameworks === undefined || frameworks.length === 0) {
     throw new CLIError(
       `Ultracite init requires at least one framework. Pass --frameworks with the ultracite add-on or use interactive ${command}.`,

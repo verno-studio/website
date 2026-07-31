@@ -1,9 +1,12 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import type { PackageManager } from "@vernostudio/template-generator";
 import { readCliPackageVersion } from "../../cli-version";
 import { detectVernoManifest, writeVernoManifest } from "../shared/manifest";
 import { detectProjectState } from "../init/detect";
 import { ensureAppGlobalsBaseLayerAtEnd } from "../../app-globals";
+import { getUltraciteInitCommand } from "../../pm-exec";
+import { runProcess } from "../../run";
 import { EXPECTED_ULTRACITE_VERSION } from "./detect";
 import type { UpdateCheck } from "./detect";
 
@@ -62,47 +65,67 @@ export const updateUltraciteDep = (projectDir: string): UpdateResult => {
   }
 };
 
-export const regenerateOxlintConfig = (projectDir: string): UpdateResult => {
-  const path = join(projectDir, "oxlint.config.ts");
-  try {
-    writeFileSync(
-      path,
-      `import ultracite from "ultracite/presets/oxlint";\n\nexport default ultracite();\n`,
-      "utf-8",
-    );
-    return {
-      id: "oxlint-config",
-      message: "Successfully generated oxlint.config.ts.",
-      success: true,
-    };
-  } catch (error) {
-    return {
-      id: "oxlint-config",
-      message: `Failed to generate oxlint.config.ts: ${String(error)}`,
-      success: false,
-    };
-  }
+export interface ApplyUpdatesOptions {
+  readonly packageManager: PackageManager;
+  readonly ultraciteFrameworks?: readonly string[];
+  /** Injectable for tests; defaults to spawning `ultracite init` via the package manager. */
+  readonly runUltraciteInit?: (projectDir: string) => Promise<void>;
+}
+
+const CONFIG_FILES: Record<string, string> = {
+  "oxfmt-config": "oxfmt.config.ts",
+  "oxlint-config": "oxlint.config.ts",
 };
 
-export const regenerateOxfmtConfig = (projectDir: string): UpdateResult => {
-  const path = join(projectDir, "oxfmt.config.ts");
+const runUltraciteInitProcess = async (
+  projectDir: string,
+  options: ApplyUpdatesOptions,
+): Promise<void> => {
+  const cmd = getUltraciteInitCommand(options.packageManager, "quiet", {
+    frameworks: options.ultraciteFrameworks,
+    linter: "oxlint",
+  });
+  await runProcess(cmd.file, cmd.args, { cwd: projectDir, stepId: "ultracite" });
+};
+
+/**
+ * Regenerates missing or legacy-import Ultracite config files by delegating to
+ * `ultracite init`, so the emitted shape always matches the Ultracite version
+ * being installed instead of a copy embedded in this CLI.
+ */
+export const regenerateUltraciteConfigs = async (
+  projectDir: string,
+  pendingIds: readonly string[],
+  options: ApplyUpdatesOptions,
+): Promise<UpdateResult[]> => {
   try {
-    writeFileSync(
-      path,
-      `import ultracite from "ultracite/presets/oxfmt";\n\nexport default ultracite();\n`,
-      "utf-8",
-    );
-    return {
-      id: "oxfmt-config",
-      message: "Successfully generated oxfmt.config.ts.",
-      success: true,
-    };
+    for (const id of pendingIds) {
+      const path = join(projectDir, CONFIG_FILES[id]);
+      // Only missing or broken legacy-import files reach here (customized ones
+      // are skipped upstream); clear them so ultracite init writes fresh ones.
+      if (existsSync(path)) {
+        rmSync(path);
+      }
+    }
+    await (options.runUltraciteInit
+      ? options.runUltraciteInit(projectDir)
+      : runUltraciteInitProcess(projectDir, options));
+    return pendingIds.map((id) => {
+      const exists = existsSync(join(projectDir, CONFIG_FILES[id]));
+      return {
+        id,
+        message: exists
+          ? `Successfully regenerated ${CONFIG_FILES[id]} via ultracite init.`
+          : `ultracite init did not produce ${CONFIG_FILES[id]}.`,
+        success: exists,
+      };
+    });
   } catch (error) {
-    return {
-      id: "oxfmt-config",
-      message: `Failed to generate oxfmt.config.ts: ${String(error)}`,
+    return pendingIds.map((id) => ({
+      id,
+      message: `Failed to regenerate ${CONFIG_FILES[id]} via ultracite init: ${String(error)}`,
       success: false,
-    };
+    }));
   }
 };
 
@@ -158,11 +181,16 @@ export const updateManifestVersion = async (projectDir: string): Promise<UpdateR
 export const applyUpdates = async (
   projectDir: string,
   checks: readonly UpdateCheck[],
+  options: ApplyUpdatesOptions,
 ): Promise<UpdateResult[]> => {
   const results: UpdateResult[] = [];
   const state = detectProjectState(projectDir);
 
   const pendingUpdates = checks.filter((c) => c.needsUpdate);
+  const pendingConfigIds = pendingUpdates
+    .filter((c) => c.skipReason === undefined && c.id in CONFIG_FILES)
+    .map((c) => c.id);
+  let configsRegenerated = false;
 
   for (const check of pendingUpdates) {
     if (check.skipReason !== undefined) {
@@ -171,10 +199,12 @@ export const applyUpdates = async (
 
     if (check.id === "ultracite-dep") {
       results.push(updateUltraciteDep(projectDir));
-    } else if (check.id === "oxlint-config") {
-      results.push(regenerateOxlintConfig(projectDir));
-    } else if (check.id === "oxfmt-config") {
-      results.push(regenerateOxfmtConfig(projectDir));
+    } else if (check.id in CONFIG_FILES) {
+      // Both config files come from one `ultracite init` run; handle them together.
+      if (!configsRegenerated) {
+        configsRegenerated = true;
+        results.push(...(await regenerateUltraciteConfigs(projectDir, pendingConfigIds, options)));
+      }
     } else if (check.id === "globals-css-layer") {
       results.push(await updateGlobalsCssBaseLayer(projectDir, state.isMonorepo));
     } else if (check.id === "manifest-version") {

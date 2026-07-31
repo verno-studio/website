@@ -1,7 +1,6 @@
 import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import { DEFAULT_ULTRACITE_FRAMEWORKS } from "../../ultracite-framework";
-import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { AddonId, PackageManager } from "@vernostudio/template-generator";
 import { parseAddonsArg } from "../shared/addons";
 import {
@@ -65,7 +64,7 @@ export interface ResolvedInitInputs {
   readonly runUltracite: boolean;
   readonly shadcnPreset: string;
   readonly ultraciteLinter?: UltraciteLinterId;
-  readonly ultraciteFrameworks?: readonly UltraciteFrameworkId[];
+  readonly ultraciteFrameworks?: readonly string[];
   readonly ui: UiMode;
   readonly useShadcn: boolean;
   readonly addons: AddonId[];

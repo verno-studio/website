@@ -2,7 +2,6 @@ import * as p from "@clack/prompts";
 import pc from "picocolors";
 import type { PackageManager } from "@vernostudio/template-generator";
 import { ensureAppGlobalsBaseLayerAtEnd } from "../../app-globals";
-import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import { requireUltraciteFrameworks, requireUltraciteLinter } from "./command-ui";
 import { runInstallIfEnabled, runShadcnIfEnabled, runUltraciteIfEnabled } from "./post-scaffold";
@@ -23,7 +22,7 @@ export interface PostSetupPipelineContext {
     readonly enabled: boolean;
     readonly nonInteractive: boolean;
     readonly linter?: UltraciteLinterId;
-    readonly frameworks?: readonly UltraciteFrameworkId[];
+    readonly frameworks?: readonly string[];
   };
   readonly commandName: "create" | "init";
   readonly writeManifest: () => Promise<void>;

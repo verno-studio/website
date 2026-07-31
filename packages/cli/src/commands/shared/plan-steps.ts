@@ -5,7 +5,6 @@ import {
   getShadcnBootstrapCommand,
   getUltraciteInitCommand,
 } from "../../pm-exec";
-import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 
 export interface CommandStepSpec {
@@ -130,7 +129,7 @@ export type UltracitePlanMode =
       readonly kind: "run";
       readonly nonInteractive: boolean;
       readonly linter?: UltraciteLinterId;
-      readonly frameworks?: readonly UltraciteFrameworkId[];
+      readonly frameworks?: readonly string[];
     }
   | { readonly kind: "already-configured" }
   | { readonly kind: "skip"; readonly reason: string };

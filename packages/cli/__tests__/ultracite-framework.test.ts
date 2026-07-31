@@ -11,10 +11,39 @@ describe("parseUltraciteFrameworksArg", () => {
     expect(parseUltraciteFrameworksArg("react next")).toEqual(["react", "next"]);
   });
 
-  test("rejects unknown framework ids", () => {
-    expect(() => parseUltraciteFrameworksArg("react,unknown")).toThrow(
-      'Invalid framework "unknown"',
-    );
+  test("passes unknown framework ids through with a warning", () => {
+    const stderrChunks: string[] = [];
+    const originalWrite = process.stderr.write.bind(process.stderr);
+    process.stderr.write = ((chunk: unknown) => {
+      stderrChunks.push(String(chunk));
+      return true;
+    }) as typeof process.stderr.write;
+
+    try {
+      expect(parseUltraciteFrameworksArg("react,nuxt")).toEqual(["react", "nuxt"]);
+    } finally {
+      process.stderr.write = originalWrite;
+    }
+
+    expect(stderrChunks.join("")).toContain('"nuxt"');
+    expect(stderrChunks.join("")).toContain("passing through");
+  });
+
+  test("does not warn for known framework ids", () => {
+    const stderrChunks: string[] = [];
+    const originalWrite = process.stderr.write.bind(process.stderr);
+    process.stderr.write = ((chunk: unknown) => {
+      stderrChunks.push(String(chunk));
+      return true;
+    }) as typeof process.stderr.write;
+
+    try {
+      expect(parseUltraciteFrameworksArg("react,next")).toEqual(["react", "next"]);
+    } finally {
+      process.stderr.write = originalWrite;
+    }
+
+    expect(stderrChunks).toEqual([]);
   });
 });
 

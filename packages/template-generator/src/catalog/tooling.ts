@@ -1,4 +1,5 @@
 import type { PackageManager, ProjectConfig } from "../config";
+import { getDependencyVersion } from "../utils/add-deps";
 
 export const TOOLING = {
   packageManagerVersions: {
@@ -7,7 +8,9 @@ export const TOOLING = {
     pnpm: "9.15.0",
   } as const satisfies Record<PackageManager, string>,
   shadcnExecPackage: "shadcn@latest" as const,
-  ultraciteExecPackage: "ultracite@latest" as const,
+  // Pinned to the dependency catalog so the executed CLI matches the version
+  // written into generated projects; bump both via the catalog in one place.
+  ultraciteExecPackage: `ultracite@${getDependencyVersion("ultracite")}`,
 } as const;
 
 export const getShadcnExecSpec = (): string => TOOLING.shadcnExecPackage;

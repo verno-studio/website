@@ -1,13 +1,26 @@
 import * as p from "@clack/prompts";
 import pc from "picocolors";
 import { runFullAudit } from "../doctor/audit";
+import { detectVernoManifest } from "../shared/manifest";
 import { resolveUpdateInputs } from "./args";
 import type { UpdateCommandOptions } from "./args";
 import { trackEvent } from "../../analytics";
 import { runUpdateChecks } from "./detect";
 import type { UpdateCheck } from "./detect";
 import { applyUpdates } from "./apply";
-import type { UpdateResult } from "./apply";
+import type { ApplyUpdatesOptions, UpdateResult } from "./apply";
+import type { PackageManager } from "@vernostudio/template-generator";
+
+const buildApplyOptions = (
+  projectDir: string,
+  resolvedPackageManager: PackageManager | undefined,
+): ApplyUpdatesOptions => {
+  const manifest = detectVernoManifest(projectDir);
+  return {
+    packageManager: resolvedPackageManager ?? manifest?.packageManager ?? "bun",
+    ultraciteFrameworks: manifest?.ultraciteFrameworks,
+  };
+};
 
 const printUpdatePreview = (
   coreUpdates: readonly UpdateCheck[],
@@ -138,7 +151,11 @@ export const runUpdate = async (args: {
 
   const spinner = p.spinner();
   spinner.start("Applying updates...");
-  const results = await applyUpdates(projectDir, checks);
+  const results = await applyUpdates(
+    projectDir,
+    checks,
+    buildApplyOptions(projectDir, resolved.packageManager),
+  );
   spinner.stop("Updates applied");
 
   const anyFailed = printUpdateResults(results);
