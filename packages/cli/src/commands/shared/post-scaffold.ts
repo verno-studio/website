@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PackageManager } from "@vernostudio/template-generator";
@@ -30,6 +31,15 @@ export const runInstallIfEnabled = async (
   await runProcess(file, installArgs, { cwd: projectDir, stepId: "install" });
 };
 
+/**
+ * Whether the shadcn bootstrap should write a decoy `vite.config.ts` to force
+ * framework detection. When a real `vite.config.ts` already exists in
+ * `workingDir`, it must be left untouched (and never deleted afterward) —
+ * its presence already satisfies shadcn's detection.
+ */
+export const shouldWriteDecoyConfig = (workingDir: string): boolean =>
+  !existsSync(join(workingDir, "vite.config.ts"));
+
 export const runShadcnIfEnabled = async (options: {
   readonly enabled: boolean;
   readonly packageManager: PackageManager;
@@ -49,7 +59,10 @@ export const runShadcnIfEnabled = async (options: {
   // shadcn apply/add requires a detected framework (Next.js, Vite, etc.).
   // We write a temporary dummy config to ensure detection passes in all environments.
   const dummyConfigPath = join(workingDir, "vite.config.ts");
-  await writeFile(dummyConfigPath, "export default {};\n", "utf-8");
+  const hasRealViteConfig = !shouldWriteDecoyConfig(workingDir);
+  if (!hasRealViteConfig) {
+    await writeFile(dummyConfigPath, "export default {};\n", "utf-8");
+  }
 
   try {
     const bootstrap = getShadcnBootstrapCommand(options.packageManager, {
@@ -68,9 +81,11 @@ export const runShadcnIfEnabled = async (options: {
       });
     }
   } finally {
-    await rm(dummyConfigPath, { force: true }).catch(() => {
-      /* ignore cleanup errors */
-    });
+    if (!hasRealViteConfig) {
+      await rm(dummyConfigPath, { force: true }).catch(() => {
+        /* ignore cleanup errors */
+      });
+    }
   }
 };
 
