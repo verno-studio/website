@@ -8,7 +8,6 @@ import { FRONTENDS, PACKAGE_IDS } from "@vernostudio/template-generator";
 import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import { DEFAULT_ULTRACITE_FRAMEWORKS } from "../../ultracite-framework";
-import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import { parseAddonsArg } from "../shared/addons";
 import { splitCommaList } from "../shared/comma-list";
 import {
@@ -132,7 +131,7 @@ export interface ResolvedCreateInputs {
   /** Always set when ultracite add-on runs: CLI `--linter`, or interactive wizard, or `-y` default. */
   readonly ultraciteLinter?: UltraciteLinterId;
   /** Always set when ultracite add-on runs: CLI `--frameworks`, interactive wizard, or `-y` default. */
-  readonly ultraciteFrameworks?: readonly UltraciteFrameworkId[];
+  readonly ultraciteFrameworks?: readonly string[];
   readonly ui: UiMode;
   readonly useShadcn: boolean;
 }

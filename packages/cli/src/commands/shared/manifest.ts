@@ -7,7 +7,6 @@ import type {
   PackageId,
   PackageManager,
 } from "@vernostudio/template-generator";
-import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import { readCliPackageVersion } from "../../cli-version";
 import { VERNO_MANIFEST_DIR } from "../../constants";
@@ -27,7 +26,7 @@ export interface VernoManifest {
   readonly studio: "Verno Studio";
   readonly ui: UiMode;
   readonly ultraciteLinter?: UltraciteLinterId;
-  readonly ultraciteFrameworks?: readonly UltraciteFrameworkId[];
+  readonly ultraciteFrameworks?: readonly string[];
 }
 
 export const mergeManifestAddons = (

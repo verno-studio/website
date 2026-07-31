@@ -9,7 +9,6 @@ import {
   getUltraciteInitCommand,
 } from "../../pm-exec";
 import type { UltraciteInitMode } from "../../pm-exec";
-import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { UltraciteLinterId } from "../../ultracite-linter";
 import { runProcess } from "../../run";
 
@@ -97,7 +96,7 @@ export const runUltraciteIfEnabled = async (
   runOptions?: {
     readonly ciSafe?: boolean;
     readonly linter?: UltraciteLinterId;
-    readonly frameworks?: readonly UltraciteFrameworkId[];
+    readonly frameworks?: readonly string[];
   },
 ): Promise<void> => {
   if (!enabled) {

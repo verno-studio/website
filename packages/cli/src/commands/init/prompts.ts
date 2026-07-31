@@ -5,7 +5,6 @@ import { renderVernoTitle } from "../../ui";
 import { parseAddonsArg } from "../shared/addons";
 import { parseUltraciteFrameworksFlag, parseUltraciteLinterFlag } from "../shared/ultracite";
 import { DEFAULT_ULTRACITE_FRAMEWORKS, ULTRACITE_FRAMEWORK_IDS } from "../../ultracite-framework";
-import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import type { AddonId, PackageManager } from "@vernostudio/template-generator";
 import { DEFAULT_ULTRACITE_LINTER } from "../../ultracite-linter";
 import type { UltraciteLinterId } from "../../ultracite-linter";
@@ -163,7 +162,7 @@ const readUltraciteLinter = async (
 const readUltraciteFrameworks = async (
   options: InitCommandOptions,
   ultraciteOn: boolean,
-): Promise<UltraciteFrameworkId[] | undefined> => {
+): Promise<string[] | undefined> => {
   const fromFlag = parseUltraciteFrameworksFlag(options, ultraciteOn);
   if (!ultraciteOn) {
     return undefined;
@@ -172,7 +171,7 @@ const readUltraciteFrameworks = async (
     return fromFlag;
   }
   return assertValue(
-    await p.multiselect<UltraciteFrameworkId>({
+    await p.multiselect<string>({
       initialValues: [...DEFAULT_ULTRACITE_FRAMEWORKS],
       message: "Ultracite frameworks (passed as --frameworks)",
       options: ULTRACITE_FRAMEWORK_IDS.map((id) => ({

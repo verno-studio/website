@@ -7,7 +7,6 @@ import { detectProjectState } from "../init/detect";
 import { ensureAppGlobalsBaseLayerAtEnd } from "../../app-globals";
 import { getUltraciteInitCommand } from "../../pm-exec";
 import { runProcess } from "../../run";
-import type { UltraciteFrameworkId } from "../../ultracite-framework";
 import { EXPECTED_ULTRACITE_VERSION } from "./detect";
 import type { UpdateCheck } from "./detect";
 
@@ -68,7 +67,7 @@ export const updateUltraciteDep = (projectDir: string): UpdateResult => {
 
 export interface ApplyUpdatesOptions {
   readonly packageManager: PackageManager;
-  readonly ultraciteFrameworks?: readonly UltraciteFrameworkId[];
+  readonly ultraciteFrameworks?: readonly string[];
   /** Injectable for tests; defaults to spawning `ultracite init` via the package manager. */
   readonly runUltraciteInit?: (projectDir: string) => Promise<void>;
 }
