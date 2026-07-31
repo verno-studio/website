@@ -64,6 +64,7 @@
     "@vernostudio/template-generator": "workspace:*",
     "@vernostudio/typescript-config": "workspace:*",
     "tsdown": "^0.22.2",
-    "typescript": "^6"
+    "typescript": "^6",
+    "ultracite": "^7.8.0"
   }
 }
