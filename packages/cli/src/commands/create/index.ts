@@ -144,6 +144,8 @@ export const runCreate = async (args: {
     throw error;
   }
 
+  printDoneNextSteps(`Project "${resolved.name}" is ready.`, nextSteps);
+
   await trackEvent("create_project", {
     addons: resolved.addons,
     dry_run: false,
@@ -156,6 +158,4 @@ export const runCreate = async (args: {
     ui: resolved.ui,
     ultracite_frameworks: resolved.ultraciteFrameworks?.join(","),
   });
-
-  printDoneNextSteps(`Project "${resolved.name}" is ready.`, nextSteps);
 };

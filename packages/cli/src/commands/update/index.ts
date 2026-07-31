@@ -171,12 +171,6 @@ export const runUpdate = async (args: {
   const postDiagnostics = runFullAudit(projectDir);
   const remainingIssues = postDiagnostics.filter((d) => d.severity !== "ok").length;
 
-  await trackEvent("update_run", {
-    dry_run: false,
-    package_manager: resolved.packageManager,
-    updates_applied: results.filter((r) => r.success).length,
-  });
-
   if (remainingIssues === 0) {
     p.outro(
       pc.green("All updates successfully applied! Your project is fully up to date and healthy."),
@@ -190,4 +184,10 @@ export const runUpdate = async (args: {
     );
     process.exitCode = 0;
   }
+
+  await trackEvent("update_run", {
+    dry_run: false,
+    package_manager: resolved.packageManager,
+    updates_applied: results.filter((r) => r.success).length,
+  });
 };
