@@ -61,7 +61,6 @@
     "@types/bun": "^1.3.14",
     "@types/node": "^25.9.1",
     "@types/semver": "^7.7.1",
-    "@typescript/native-preview": "^7.0.0-dev.20260605.1",
     "@vernostudio/template-generator": "workspace:*",
     "@vernostudio/typescript-config": "workspace:*",
     "tsdown": "^0.22.2",
