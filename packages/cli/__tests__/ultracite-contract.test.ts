@@ -27,7 +27,11 @@ describe("ultracite contract (installed package)", () => {
   });
 
   test("no unmapped oxlint presets — a failure means ultracite added a framework; add it to ULTRACITE_FRAMEWORK_IDS (or NON_FRAMEWORK_PRESETS)", () => {
-    const available = readdirSync(join(ultraciteRoot, "config", "oxlint"));
+    const available = readdirSync(join(ultraciteRoot, "config", "oxlint"), {
+      withFileTypes: true,
+    })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name);
     const known = new Set<string>([...ULTRACITE_FRAMEWORK_IDS, ...NON_FRAMEWORK_PRESETS]);
     const unmapped = available.filter((entry) => !known.has(entry));
     expect(unmapped).toEqual([]);
