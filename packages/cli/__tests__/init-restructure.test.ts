@@ -56,6 +56,22 @@ const walk = (dir: string, base = dir): string[] => {
   return results.toSorted();
 };
 
+/** Runs `fn` while collecting everything written to stderr. */
+const captureStderr = async (fn: () => Promise<void>): Promise<string[]> => {
+  const chunks: string[] = [];
+  const originalWrite = process.stderr.write.bind(process.stderr);
+  process.stderr.write = ((chunk: unknown) => {
+    chunks.push(String(chunk));
+    return true;
+  }) as typeof process.stderr.write;
+  try {
+    await fn();
+  } finally {
+    process.stderr.write = originalWrite;
+  }
+  return chunks;
+};
+
 describe("restructureForTurborepo", () => {
   test("moves a clean Next.js app into apps/web and sets up turbo scripts", async () => {
     writeCleanNextFixture();
@@ -89,19 +105,7 @@ describe("restructureForTurborepo", () => {
     const existingTurboJson = `${JSON.stringify({ tasks: { custom: {} } }, null, 2)}\n`;
     writeFileSync(join(TEST_DIR, "turbo.json"), existingTurboJson);
 
-    const stderrChunks: string[] = [];
-    const originalWrite = process.stderr.write.bind(process.stderr);
-    // biome-ignore lint: intentional stderr capture for test assertion
-    process.stderr.write = ((chunk: unknown) => {
-      stderrChunks.push(String(chunk));
-      return true;
-    }) as typeof process.stderr.write;
-
-    try {
-      await restructureForTurborepo(TEST_DIR, "bun");
-    } finally {
-      process.stderr.write = originalWrite;
-    }
+    const stderrChunks = await captureStderr(() => restructureForTurborepo(TEST_DIR, "bun"));
 
     const afterContent = readFileSync(join(TEST_DIR, "turbo.json"), "utf-8");
     expect(afterContent).toBe(existingTurboJson);
@@ -114,19 +118,7 @@ describe("restructureForTurborepo", () => {
     const existingWebPkg = `${JSON.stringify({ name: "custom-web", version: "9.9.9" }, null, 2)}\n`;
     writeFileSync(join(TEST_DIR, "apps", "web", "package.json"), existingWebPkg);
 
-    const stderrChunks: string[] = [];
-    const originalWrite = process.stderr.write.bind(process.stderr);
-    // biome-ignore lint: intentional stderr capture for test assertion
-    process.stderr.write = ((chunk: unknown) => {
-      stderrChunks.push(String(chunk));
-      return true;
-    }) as typeof process.stderr.write;
-
-    try {
-      await restructureForTurborepo(TEST_DIR, "bun");
-    } finally {
-      process.stderr.write = originalWrite;
-    }
+    const stderrChunks = await captureStderr(() => restructureForTurborepo(TEST_DIR, "bun"));
 
     const afterContent = readFileSync(join(TEST_DIR, "apps", "web", "package.json"), "utf-8");
     expect(afterContent).toBe(existingWebPkg);
