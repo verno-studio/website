@@ -20,7 +20,7 @@ jobs:
           - name: Lint
             command: bun run lint
           - name: Format
-            command: bun run format
+            command: bun run format && git diff --exit-code
           - name: Typecheck
             command: bun run typecheck
           - name: Test
