@@ -11,3 +11,8 @@ export const isUiMode = (value: string | undefined): value is UiMode =>
 
 export const isPackageManager = (value: string | undefined): value is PackageManager =>
   value === "bun" || value === "pnpm" || value === "npm";
+
+const PROJECT_NAME_PATTERN = /^[a-z0-9-]+$/iu;
+
+/** Letters, digits, and hyphens only — keeps the name valid as an npm package name and a directory under cwd. */
+export const isValidProjectName = (value: string): boolean => PROJECT_NAME_PATTERN.test(value);

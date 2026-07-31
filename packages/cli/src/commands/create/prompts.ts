@@ -15,6 +15,7 @@ import {
   ensureTypescriptWithDesignSystem,
   isPackageManager,
   isUiMode,
+  isValidProjectName,
   PACKAGE_MANAGERS,
   parsePackagesArg,
 } from "./args";
@@ -41,6 +42,11 @@ const PM_SELECT_OPTIONS = PACKAGE_MANAGERS.map((pm) => ({
 
 const readProjectName = async (positionalName: string | undefined): Promise<string> => {
   if (positionalName) {
+    if (!isValidProjectName(positionalName)) {
+      throw new Error(
+        `Invalid project name "${positionalName}". Use letters, numbers, and hyphens only (e.g. my-app).`,
+      );
+    }
     return positionalName;
   }
   const n = await p.text({
@@ -50,7 +56,7 @@ const readProjectName = async (positionalName: string | undefined): Promise<stri
       if (!v) {
         return "Project name is required";
       }
-      if (!/^[a-z0-9-]+$/iu.test(v)) {
+      if (!isValidProjectName(v)) {
         return "Use letters, numbers, and hyphens only";
       }
     },

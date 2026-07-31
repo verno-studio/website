@@ -34,6 +34,21 @@ describe("toCreateCommandOptions", () => {
 });
 
 describe("resolveCreateInputsNonInteractive", () => {
+  test("rejects project names with spaces or special characters", () => {
+    for (const name of ["bad name", "app!", 'quo"te', "../escape", "a/b", ".hidden"]) {
+      expect(() =>
+        resolveCreateInputsNonInteractive(name, toCreateCommandOptions({ yes: true })),
+      ).toThrow(/Invalid project name/u);
+    }
+  });
+
+  test("accepts letters, numbers, and hyphens", () => {
+    for (const name of ["my-app", "App2", "a"]) {
+      const r = resolveCreateInputsNonInteractive(name, toCreateCommandOptions({ yes: true }));
+      expect(r.name).toBe(name);
+    }
+  });
+
   test("applies --skip-shadcn and filters ultracite via --skip-ultracite", () => {
     const r = resolveCreateInputsNonInteractive("x", {
       addons: "ultracite",
