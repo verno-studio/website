@@ -151,6 +151,8 @@ export const runInit = async (args: { options: InitCommandOptions }): Promise<vo
     throw error;
   }
 
+  printDoneNextSteps(`Project "${detected.projectName}" is initialized.`, nextSteps);
+
   await trackEvent("init_project", {
     addons: resolved.addons,
     dry_run: false,
@@ -159,6 +161,4 @@ export const runInit = async (args: { options: InitCommandOptions }): Promise<vo
     shadcn_preset: resolved.shadcnPreset,
     ui: resolved.ui,
   });
-
-  printDoneNextSteps(`Project "${detected.projectName}" is initialized.`, nextSteps);
 };
