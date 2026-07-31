@@ -80,6 +80,8 @@ export const toCreateCommandOptions = (raw: {
   readonly yes?: boolean;
   readonly noGit?: boolean;
   readonly noInstall?: boolean;
+  readonly git?: boolean;
+  readonly install?: boolean;
   readonly skipShadcn?: boolean;
   readonly skipUltracite?: boolean;
   readonly frontend?: string;
@@ -96,8 +98,8 @@ export const toCreateCommandOptions = (raw: {
   frameworks: raw.frameworks,
   frontend: raw.frontend,
   linter: raw.linter,
-  noGit: raw.noGit ?? false,
-  noInstall: raw.noInstall ?? false,
+  noGit: raw.noGit ?? raw.git === false,
+  noInstall: raw.noInstall ?? raw.install === false,
   packageManager: raw.packageManager,
   packages: raw.packages,
   shadcnPreset: raw.shadcnPreset,
