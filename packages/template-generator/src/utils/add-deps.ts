@@ -23,7 +23,7 @@ export const dependencyVersionMap = {
   turbo: "^2.9.0",
   "tw-animate-css": "^1.4.0",
   typescript: "^6",
-  ultracite: "^7.6.0",
+  ultracite: "^7.8.0",
 } as const;
 
 export type AvailableDependencies = keyof typeof dependencyVersionMap;
