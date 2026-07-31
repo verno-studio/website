@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import { getDependencyVersion } from "@vernostudio/template-generator";
 import semver from "semver";
 import { readCliPackageVersion } from "../../cli-version";
@@ -83,7 +83,7 @@ export const checkLatestPublishedVersion = async (): Promise<UpdateCheck | null>
 };
 
 export const checkUltraciteDep = (projectDir: string): UpdateCheck => {
-  const pkgPath = join(projectDir, "package.json");
+  const pkgPath = path.join(projectDir, "package.json");
   let currentVersion = "missing";
   let hasUltracite = false;
 
@@ -133,14 +133,14 @@ const classifyUltraciteConfig = (
 
 const checkUltraciteToolConfig = (projectDir: string, tool: UltraciteTool): UpdateCheck => {
   const fileName = `${tool}.config.ts`;
-  const path = join(projectDir, fileName);
+  const filePath = path.join(projectDir, fileName);
   let current = "missing";
   let needsUpdate = false;
   let skipReason: string | undefined;
 
-  if (existsSync(path)) {
+  if (existsSync(filePath)) {
     try {
-      const state = classifyUltraciteConfig(readFileSync(path, "utf-8"), tool);
+      const state = classifyUltraciteConfig(readFileSync(filePath, "utf-8"), tool);
       if (state === "canonical") {
         current = "canonical";
       } else if (state === "legacy") {
@@ -176,8 +176,8 @@ export const checkOxfmtConfig = (projectDir: string): UpdateCheck =>
 
 export const checkGlobalsCssBaseLayer = (projectDir: string, isMonorepo: boolean): UpdateCheck => {
   const globalsCssPath = isMonorepo
-    ? join(projectDir, "apps", "web", "app", "globals.css")
-    : join(projectDir, "app", "globals.css");
+    ? path.join(projectDir, "apps", "web", "app", "globals.css")
+    : path.join(projectDir, "app", "globals.css");
 
   let current = "missing";
   let needsUpdate = false;
@@ -241,8 +241,7 @@ export const runUpdateChecks = async (projectDir: string): Promise<UpdateCheck[]
     // Only check configs for oxlint linter
     const linter = manifest?.ultraciteLinter ?? "oxlint";
     if (linter === "oxlint") {
-      checks.push(checkOxlintConfig(projectDir));
-      checks.push(checkOxfmtConfig(projectDir));
+      checks.push(checkOxlintConfig(projectDir), checkOxfmtConfig(projectDir));
     }
   }
 

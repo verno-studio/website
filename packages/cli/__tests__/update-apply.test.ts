@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach, afterEach } from "bun:test";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import { tmpdir } from "node:os";
 import {
   updateUltraciteDep,
@@ -12,7 +12,10 @@ import {
 import { EXPECTED_ULTRACITE_VERSION } from "../src/commands/update/detect";
 import { readCliPackageVersion } from "../src/cli-version";
 
-const TEST_DIR = join(tmpdir(), `verno-update-apply-test-${Math.random().toString(36).slice(2)}`);
+const TEST_DIR = path.join(
+  tmpdir(),
+  `verno-update-apply-test-${Math.random().toString(36).slice(2)}`,
+);
 
 beforeEach(() => {
   mkdirSync(TEST_DIR, { recursive: true });
@@ -24,7 +27,7 @@ afterEach(() => {
 
 describe("Update Apply Actions", () => {
   test("updateUltraciteDep bumps version in package.json devDependencies", () => {
-    const pkgPath = join(TEST_DIR, "package.json");
+    const pkgPath = path.join(TEST_DIR, "package.json");
     writeFileSync(
       pkgPath,
       JSON.stringify({
@@ -44,7 +47,7 @@ describe("Update Apply Actions", () => {
   });
 
   test("updateUltraciteDep bumps version in package.json dependencies", () => {
-    const pkgPath = join(TEST_DIR, "package.json");
+    const pkgPath = path.join(TEST_DIR, "package.json");
     writeFileSync(
       pkgPath,
       JSON.stringify({
@@ -66,7 +69,7 @@ describe("Update Apply Actions", () => {
   test("regenerateUltraciteConfigs clears legacy configs, delegates to ultracite init once, and reports produced files", async () => {
     // A broken legacy config that must be replaced, alongside a missing oxfmt config.
     writeFileSync(
-      join(TEST_DIR, "oxlint.config.ts"),
+      path.join(TEST_DIR, "oxlint.config.ts"),
       'import ultracite from "ultracite/presets/oxlint";\nexport default ultracite();',
     );
 
@@ -76,13 +79,13 @@ describe("Update Apply Actions", () => {
       runUltraciteInit: (projectDir) => {
         calls.push(projectDir);
         // The legacy file must already be cleared when init runs.
-        expect(existsSync(join(projectDir, "oxlint.config.ts"))).toBe(false);
+        expect(existsSync(path.join(projectDir, "oxlint.config.ts"))).toBe(false);
         writeFileSync(
-          join(projectDir, "oxlint.config.ts"),
+          path.join(projectDir, "oxlint.config.ts"),
           'import core from "ultracite/oxlint/core";\n',
         );
         writeFileSync(
-          join(projectDir, "oxfmt.config.ts"),
+          path.join(projectDir, "oxfmt.config.ts"),
           'import ultracite from "ultracite/oxfmt";\n',
         );
         return Promise.resolve();
@@ -92,7 +95,7 @@ describe("Update Apply Actions", () => {
     expect(calls).toEqual([TEST_DIR]);
     expect(results.map((r) => r.id).toSorted()).toEqual(["oxfmt-config", "oxlint-config"]);
     expect(results.every((r) => r.success)).toBe(true);
-    expect(readFileSync(join(TEST_DIR, "oxlint.config.ts"), "utf-8")).not.toContain("presets");
+    expect(readFileSync(path.join(TEST_DIR, "oxlint.config.ts"), "utf-8")).not.toContain("presets");
   });
 
   test("regenerateUltraciteConfigs reports failure when init does not produce a config", async () => {
@@ -105,9 +108,9 @@ describe("Update Apply Actions", () => {
   });
 
   test("updateGlobalsCssBaseLayer injects verno base layer", async () => {
-    const cssDir = join(TEST_DIR, "app");
+    const cssDir = path.join(TEST_DIR, "app");
     mkdirSync(cssDir, { recursive: true });
-    const cssPath = join(cssDir, "globals.css");
+    const cssPath = path.join(cssDir, "globals.css");
     writeFileSync(cssPath, "body { color: blue; }\n");
 
     const res = await updateGlobalsCssBaseLayer(TEST_DIR, false);
@@ -119,9 +122,9 @@ describe("Update Apply Actions", () => {
   });
 
   test("updateManifestVersion updates manifest version to match current CLI version", async () => {
-    const manifestDir = join(TEST_DIR, ".verno");
+    const manifestDir = path.join(TEST_DIR, ".verno");
     mkdirSync(manifestDir, { recursive: true });
-    const manifestPath = join(manifestDir, "manifest.json");
+    const manifestPath = path.join(manifestDir, "manifest.json");
     writeFileSync(
       manifestPath,
       JSON.stringify({
@@ -173,10 +176,13 @@ describe("Update Apply Actions", () => {
       runUltraciteInit: (projectDir) => {
         runs += 1;
         writeFileSync(
-          join(projectDir, "oxlint.config.ts"),
+          path.join(projectDir, "oxlint.config.ts"),
           'import c from "ultracite/oxlint/core";\n',
         );
-        writeFileSync(join(projectDir, "oxfmt.config.ts"), 'import u from "ultracite/oxfmt";\n');
+        writeFileSync(
+          path.join(projectDir, "oxfmt.config.ts"),
+          'import u from "ultracite/oxfmt";\n',
+        );
         return Promise.resolve();
       },
     });
@@ -187,7 +193,7 @@ describe("Update Apply Actions", () => {
   });
 
   test("applyUpdates executes correct update functions based on needsUpdate", async () => {
-    const pkgPath = join(TEST_DIR, "package.json");
+    const pkgPath = path.join(TEST_DIR, "package.json");
     writeFileSync(
       pkgPath,
       JSON.stringify({
@@ -197,10 +203,10 @@ describe("Update Apply Actions", () => {
       }),
     );
 
-    const manifestDir = join(TEST_DIR, ".verno");
+    const manifestDir = path.join(TEST_DIR, ".verno");
     mkdirSync(manifestDir, { recursive: true });
     writeFileSync(
-      join(manifestDir, "manifest.json"),
+      path.join(manifestDir, "manifest.json"),
       JSON.stringify({
         addons: [],
         createdAt: "2026-05-24T12:00:00Z",
@@ -263,11 +269,11 @@ describe("Update Apply Actions", () => {
     };
     expect(pkg.devDependencies?.ultracite).toBe(EXPECTED_ULTRACITE_VERSION);
 
-    const manifest = JSON.parse(readFileSync(join(manifestDir, "manifest.json"), "utf-8")) as {
+    const manifest = JSON.parse(readFileSync(path.join(manifestDir, "manifest.json"), "utf-8")) as {
       generatorVersion: string;
     };
     expect(manifest.generatorVersion).toBe(readCliPackageVersion());
 
-    expect(existsSync(join(TEST_DIR, "oxlint.config.ts"))).toBe(false);
+    expect(existsSync(path.join(TEST_DIR, "oxlint.config.ts"))).toBe(false);
   });
 });

@@ -1,12 +1,12 @@
 import { describe, expect, test, beforeEach, afterEach } from "bun:test";
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import { tmpdir } from "node:os";
 import { toDoctorCommandOptions, resolveDoctorInputs } from "../src/commands/doctor/args";
 import { runFullAudit } from "../src/commands/doctor/audit";
 import { applyFixes } from "../src/commands/doctor/fix";
 
-const TEST_DIR = join(tmpdir(), `verno-doctor-test-${Math.random().toString(36).slice(2)}`);
+const TEST_DIR = path.join(tmpdir(), `verno-doctor-test-${Math.random().toString(36).slice(2)}`);
 
 beforeEach(() => {
   mkdirSync(TEST_DIR, { recursive: true });
@@ -55,11 +55,11 @@ describe("Doctor Audit & Fix Actions", () => {
 
   test("detects conflicting lockfiles", () => {
     writeFileSync(
-      join(TEST_DIR, "package.json"),
+      path.join(TEST_DIR, "package.json"),
       JSON.stringify({ name: "my-app", packageManager: "bun@1.0.0" }),
     );
-    writeFileSync(join(TEST_DIR, "bun.lockb"), "");
-    writeFileSync(join(TEST_DIR, "package-lock.json"), "");
+    writeFileSync(path.join(TEST_DIR, "bun.lockb"), "");
+    writeFileSync(path.join(TEST_DIR, "package-lock.json"), "");
 
     const diagnostics = runFullAudit(TEST_DIR);
     const lockfileDiag = diagnostics.find((d) => d.id === "lockfile-conflicts");
@@ -71,27 +71,27 @@ describe("Doctor Audit & Fix Actions", () => {
 
   test("applies fixes to remove conflicting lockfiles", async () => {
     writeFileSync(
-      join(TEST_DIR, "package.json"),
+      path.join(TEST_DIR, "package.json"),
       JSON.stringify({ name: "my-app", packageManager: "bun@1.0.0" }),
     );
-    writeFileSync(join(TEST_DIR, "bun.lockb"), "");
-    writeFileSync(join(TEST_DIR, "package-lock.json"), "");
+    writeFileSync(path.join(TEST_DIR, "bun.lockb"), "");
+    writeFileSync(path.join(TEST_DIR, "package-lock.json"), "");
 
     const diagnostics = runFullAudit(TEST_DIR);
     const results = await applyFixes(TEST_DIR, diagnostics, { packageManager: "bun" });
 
     expect(results.some((r) => r.success)).toBe(true);
-    expect(existsSync(join(TEST_DIR, "package-lock.json"))).toBe(false);
-    expect(existsSync(join(TEST_DIR, "bun.lockb"))).toBe(true);
+    expect(existsSync(path.join(TEST_DIR, "package-lock.json"))).toBe(false);
+    expect(existsSync(path.join(TEST_DIR, "bun.lockb"))).toBe(true);
   });
 
   test("reconstructs missing manifest file", async () => {
-    writeFileSync(join(TEST_DIR, "package.json"), JSON.stringify({ name: "my-app" }));
+    writeFileSync(path.join(TEST_DIR, "package.json"), JSON.stringify({ name: "my-app" }));
 
     const diagnostics = runFullAudit(TEST_DIR);
     const results = await applyFixes(TEST_DIR, diagnostics, {});
 
     expect(results.some((r) => r.id === "manifest-missing" && r.success)).toBe(true);
-    expect(existsSync(join(TEST_DIR, ".verno", "manifest.json"))).toBe(true);
+    expect(existsSync(path.join(TEST_DIR, ".verno", "manifest.json"))).toBe(true);
   });
 });

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
 import { access, constants, mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import path from "node:path";
 import type { ProjectConfig } from "./config";
 import { buildInterpolatedFileTree } from "./generator";
 import { defaultNpmScopeFromProjectName, generate, writeTree } from "./index";
@@ -10,7 +10,7 @@ import { defaultNpmScopeFromProjectName, generate, writeTree } from "./index";
 let dir: string;
 
 beforeEach(async () => {
-  dir = await mkdtemp(join(tmpdir(), "verno-tg-"));
+  dir = await mkdtemp(path.join(tmpdir(), "verno-tg-"));
 });
 
 afterEach(async () => {
@@ -86,7 +86,7 @@ describe("README.md", () => {
 
 describe("generate + writeTree", () => {
   test("single Next app writes key files", async () => {
-    const out = join(dir, "next-app");
+    const out = path.join(dir, "next-app");
     const config = singleApp({
       addons: ["ultracite"],
       npmScope: "testapp",
@@ -98,34 +98,34 @@ describe("generate + writeTree", () => {
     const writeResult = await writeTree(tree, out);
     const filesWritten = writeResult.unwrap();
     expect(filesWritten.length).toBeGreaterThan(0);
-    await access(join(out, "package.json"), constants.R_OK);
-    await access(join(out, "app", "page.tsx"), constants.R_OK);
-    await access(join(out, "next.config.ts"), constants.R_OK);
-    const pkgRaw = await readFile(join(out, "package.json"), "utf-8");
+    await access(path.join(out, "package.json"), constants.R_OK);
+    await access(path.join(out, "app", "page.tsx"), constants.R_OK);
+    await access(path.join(out, "next.config.ts"), constants.R_OK);
+    const pkgRaw = await readFile(path.join(out, "package.json"), "utf-8");
     const pkg = JSON.parse(pkgRaw) as { devDependencies?: Record<string, string> };
     expect(pkg.devDependencies?.ultracite).toBeDefined();
-    const globalsCss = await readFile(join(out, "app", "globals.css"), "utf-8");
+    const globalsCss = await readFile(path.join(out, "app", "globals.css"), "utf-8");
     expectSingleAppGlobalsBaseLayer(globalsCss);
   });
 
   test("Turborepo writes monorepo layout", async () => {
-    const out = join(dir, "mono");
+    const out = path.join(dir, "mono");
     const config = monorepoWithDs({ npmScope: "mono", projectName: "mono" });
     const gen = generate({ config });
     const tree = gen.unwrap();
     const writeResult = await writeTree(tree, out);
     writeResult.unwrap();
-    await access(join(out, "turbo.json"), constants.R_OK);
-    await access(join(out, "apps", "web", "package.json"), constants.R_OK);
-    await access(join(out, "packages", "typescript-config", "base.json"), constants.R_OK);
-    await access(join(out, "packages", "design-system", "package.json"), constants.R_OK);
-    const rootPkgRaw = await readFile(join(out, "package.json"), "utf-8");
+    await access(path.join(out, "turbo.json"), constants.R_OK);
+    await access(path.join(out, "apps", "web", "package.json"), constants.R_OK);
+    await access(path.join(out, "packages", "typescript-config", "base.json"), constants.R_OK);
+    await access(path.join(out, "packages", "design-system", "package.json"), constants.R_OK);
+    const rootPkgRaw = await readFile(path.join(out, "package.json"), "utf-8");
     const rootPkg = JSON.parse(rootPkgRaw) as { devDependencies?: Record<string, string> };
     expect(rootPkg.devDependencies?.ultracite).toBeDefined();
   });
 
   test("monorepo writes design-system shadcn config and app imports design-system CSS", async () => {
-    const out = join(dir, "mono-ds");
+    const out = path.join(dir, "mono-ds");
     const ds = "@acme/design-system";
     const config = monorepoWithDs({
       npmScope: "acme",
@@ -137,32 +137,32 @@ describe("generate + writeTree", () => {
     const writeResult = await writeTree(tree, out);
     writeResult.unwrap();
     const componentsJson = await readFile(
-      join(out, "packages", "design-system", "components.json"),
+      path.join(out, "packages", "design-system", "components.json"),
       "utf-8",
     );
     expect(componentsJson).toContain(`"style": "radix-lyra"`);
     expect(componentsJson).toContain(`"components": "${ds}/components"`);
 
-    const appCss = await readFile(join(out, "apps", "web", "app", "globals.css"), "utf-8");
+    const appCss = await readFile(path.join(out, "apps", "web", "app", "globals.css"), "utf-8");
     expect(appCss).toContain(`@import "${ds}/styles/globals.css";`);
     expectSingleAppGlobalsBaseLayer(appCss);
 
     const dsGlobals = await readFile(
-      join(out, "packages", "design-system", "styles", "globals.css"),
+      path.join(out, "packages", "design-system", "styles", "globals.css"),
       "utf-8",
     );
     expect(dsGlobals).toContain(`@import "shadcn/tailwind.css";`);
     expect(dsGlobals).not.toContain(vernoAppGlobalsBaseMarker);
 
     const utils = await readFile(
-      join(out, "packages", "design-system", "lib", "utils.ts"),
+      path.join(out, "packages", "design-system", "lib", "utils.ts"),
       "utf-8",
     );
     expect(utils).toContain("export const cn");
   });
 
   test("single-app ui shadcn writes typography + provider at app root", async () => {
-    const out = join(dir, "root-ui-shadcn");
+    const out = path.join(dir, "root-ui-shadcn");
     const config = singleApp({
       addons: ["ultracite"],
       projectName: "test-app",
@@ -173,23 +173,23 @@ describe("generate + writeTree", () => {
     const writeResult = await writeTree(tree, out);
     writeResult.unwrap();
 
-    await access(join(out, "lib", "fonts.ts"), constants.R_OK);
-    await access(join(out, "lib", "utils.ts"), constants.R_OK);
-    await access(join(out, "components", "providers", "client.tsx"), constants.R_OK);
+    await access(path.join(out, "lib", "fonts.ts"), constants.R_OK);
+    await access(path.join(out, "lib", "utils.ts"), constants.R_OK);
+    await access(path.join(out, "components", "providers", "client.tsx"), constants.R_OK);
 
-    expect(existsSync(join(out, "packages", "design-system", "lib", "fonts.ts"))).toBe(false);
+    expect(existsSync(path.join(out, "packages", "design-system", "lib", "fonts.ts"))).toBe(false);
 
-    const layout = await readFile(join(out, "app", "layout.tsx"), "utf-8");
+    const layout = await readFile(path.join(out, "app", "layout.tsx"), "utf-8");
     expect(layout).toContain("DesignSystemProvider");
     expect(layout).toContain("@/lib/fonts");
     expect(layout).toContain("className={fonts}");
 
-    const fontsSrc = await readFile(join(out, "lib", "fonts.ts"), "utf-8");
+    const fontsSrc = await readFile(path.join(out, "lib", "fonts.ts"), "utf-8");
     expect(fontsSrc).toContain("export const fonts");
   });
 
   test("monorepo ui shadcn keeps fonts and provider helpers in design-system only", async () => {
-    const out = join(dir, "mono-ui-shadcn");
+    const out = path.join(dir, "mono-ui-shadcn");
     const ds = "@mono/design-system";
     const config = monorepoWithDs({
       npmScope: "mono",
@@ -201,22 +201,24 @@ describe("generate + writeTree", () => {
     const writeResult = await writeTree(tree, out);
     writeResult.unwrap();
 
-    expect(existsSync(join(out, "packages", "design-system", "lib", "fonts.ts"))).toBe(true);
+    expect(existsSync(path.join(out, "packages", "design-system", "lib", "fonts.ts"))).toBe(true);
     expect(
-      existsSync(join(out, "packages", "design-system", "components", "providers", "client.tsx")),
+      existsSync(
+        path.join(out, "packages", "design-system", "components", "providers", "client.tsx"),
+      ),
     ).toBe(true);
 
-    expect(existsSync(join(out, "apps", "web", "lib", "fonts.ts"))).toBe(false);
-    expect(existsSync(join(out, "apps", "web", "lib", "utils.ts"))).toBe(false);
-    expect(existsSync(join(out, "apps", "web", "components", "providers", "client.tsx"))).toBe(
+    expect(existsSync(path.join(out, "apps", "web", "lib", "fonts.ts"))).toBe(false);
+    expect(existsSync(path.join(out, "apps", "web", "lib", "utils.ts"))).toBe(false);
+    expect(existsSync(path.join(out, "apps", "web", "components", "providers", "client.tsx"))).toBe(
       false,
     );
 
-    const layout = await readFile(join(out, "apps", "web", "app", "layout.tsx"), "utf-8");
+    const layout = await readFile(path.join(out, "apps", "web", "app", "layout.tsx"), "utf-8");
     expect(layout).toContain("DesignSystemProvider");
     expect(layout).toContain(`${ds}/lib/fonts`);
     expect(layout).toContain("className={fonts}");
 
-    await access(join(out, "packages", "design-system", "lib", "utils.ts"), constants.R_OK);
+    await access(path.join(out, "packages", "design-system", "lib", "utils.ts"), constants.R_OK);
   });
 });

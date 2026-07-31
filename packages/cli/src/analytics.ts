@@ -1,12 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import path from "node:path";
 import packageJson from "../package.json";
 
 const TELEMETRY_URL = "https://verno-studio.vercel.app/api/telemetry";
 const TELEMETRY_TIMEOUT = 2000;
-const ANON_ID_PATH = join(homedir(), ".config", "verno", "anonymous-id");
+const ANON_ID_PATH = path.join(homedir(), ".config", "verno", "anonymous-id");
 
 export const isTelemetryEnabled = (): boolean =>
   process.env["DO_NOT_TRACK"] !== "1" && process.env["VERNO_TELEMETRY_DISABLED"] !== "1";
@@ -17,7 +17,7 @@ const getAnonymousId = (): string => {
   } catch {
     const id = randomUUID();
     try {
-      mkdirSync(join(homedir(), ".config", "verno"), { recursive: true });
+      mkdirSync(path.join(homedir(), ".config", "verno"), { recursive: true });
       writeFileSync(ANON_ID_PATH, id, "utf-8");
     } catch {
       // read-only fs — use the id for this run only

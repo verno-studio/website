@@ -1,4 +1,4 @@
-const PLACEHOLDER = /\{\{(\w+)\}\}/gu;
+const PLACEHOLDER = /\{\{(?<key>\w+)\}\}/gu;
 
 export const interpolate = (raw: string, vars: Readonly<Record<string, string>>): string =>
   raw.replace(PLACEHOLDER, (full, key: string) =>

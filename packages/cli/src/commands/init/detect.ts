@@ -1,14 +1,14 @@
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import { parsePackageJson } from "@vernostudio/template-generator";
 import type { PackageJsonRecord, PackageManager } from "@vernostudio/template-generator";
 import { detectVernoManifest } from "../shared/manifest";
 import type { VernoManifest } from "../shared/manifest";
 
 export const detectPackageJson = (projectDir: string): PackageJsonRecord | null => {
-  const path = join(projectDir, "package.json");
+  const filePath = path.join(projectDir, "package.json");
   try {
-    const raw = readFileSync(path, "utf-8");
+    const raw = readFileSync(filePath, "utf-8");
     return parsePackageJson(raw);
   } catch {
     return null;
@@ -16,8 +16,8 @@ export const detectPackageJson = (projectDir: string): PackageJsonRecord | null 
 };
 
 export const detectShadcn = (projectDir: string, monorepo: boolean): boolean => {
-  const workingDir = monorepo ? join(projectDir, "packages", "design-system") : projectDir;
-  const configPath = join(workingDir, "components.json");
+  const workingDir = monorepo ? path.join(projectDir, "packages", "design-system") : projectDir;
+  const configPath = path.join(workingDir, "components.json");
   return existsSync(configPath);
 };
 
@@ -32,12 +32,12 @@ const ULTRACITE_CONFIG_FILES = [
 ] as const;
 
 const configReferencesUltracite = (projectDir: string, fileName: string): boolean => {
-  const path = join(projectDir, fileName);
-  if (!existsSync(path)) {
+  const filePath = path.join(projectDir, fileName);
+  if (!existsSync(filePath)) {
     return false;
   }
   try {
-    return readFileSync(path, "utf-8").includes("ultracite");
+    return readFileSync(filePath, "utf-8").includes("ultracite");
   } catch {
     return false;
   }
@@ -69,8 +69,8 @@ export const detectUltracite = (projectDir: string): boolean => {
 };
 
 export const detectMonorepo = (projectDir: string): boolean => {
-  const turboJson = join(projectDir, "turbo.json");
-  const pnpmWorkspace = join(projectDir, "pnpm-workspace.yaml");
+  const turboJson = path.join(projectDir, "turbo.json");
+  const pnpmWorkspace = path.join(projectDir, "pnpm-workspace.yaml");
   return existsSync(turboJson) || existsSync(pnpmWorkspace);
 };
 
@@ -88,13 +88,13 @@ export const detectPackageManager = (projectDir: string): PackageManager | null 
       return "npm";
     }
   }
-  if (existsSync(join(projectDir, "bun.lockb"))) {
+  if (existsSync(path.join(projectDir, "bun.lockb"))) {
     return "bun";
   }
-  if (existsSync(join(projectDir, "pnpm-lock.yaml"))) {
+  if (existsSync(path.join(projectDir, "pnpm-lock.yaml"))) {
     return "pnpm";
   }
-  if (existsSync(join(projectDir, "package-lock.json"))) {
+  if (existsSync(path.join(projectDir, "package-lock.json"))) {
     return "npm";
   }
   return null;

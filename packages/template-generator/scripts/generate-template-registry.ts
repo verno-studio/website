@@ -1,21 +1,22 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import { join, relative, resolve } from "node:path";
+import path from "node:path";
 import { LAYERS, toLayerOutputKey } from "../src/layers/registry";
 
 const here = import.meta.dirname;
-const packageRoot = resolve(here, "..");
-const templatesDir = join(packageRoot, "templates");
-const outFile = join(packageRoot, "src", "templates.generated.ts");
+const packageRoot = path.resolve(here, "..");
+const templatesDir = path.join(packageRoot, "templates");
+const outFile = path.join(packageRoot, "src", "templates.generated.ts");
 
 const listEntriesRecursive = async (dir: string, base: string): Promise<readonly string[]> => {
   const out: string[] = [];
   const entries = await readdir(dir, { withFileTypes: true });
   for (const e of entries) {
-    const full = join(dir, e.name);
+    const full = path.join(dir, e.name);
     if (e.isDirectory()) {
+      // oxlint-disable-next-line no-await-in-loop -- sequential by design
       out.push(...(await listEntriesRecursive(full, base)));
     } else {
-      out.push(relative(base, full));
+      out.push(path.relative(base, full));
     }
   }
   return out;
@@ -29,17 +30,20 @@ const run = async (): Promise<void> => {
   let totalFiles = 0;
 
   for (const { id: layerId } of LAYERS) {
-    const abs = join(templatesDir, layerId);
+    const abs = path.join(templatesDir, layerId);
     try {
+      // oxlint-disable-next-line no-await-in-loop -- sequential by design
       await readdir(abs);
     } catch {
       continue;
     }
+    // oxlint-disable-next-line no-await-in-loop -- sequential by design
     const rels = await listEntriesRecursive(abs, abs);
     const entries: string[] = [];
     for (const rel of [...rels].toSorted((a, b) => a.localeCompare(b))) {
-      const fullPath = join(abs, rel);
+      const fullPath = path.join(abs, rel);
       const outputKey = toLayerOutputKey(layerId, rel);
+      // oxlint-disable-next-line no-await-in-loop -- sequential by design
       const content = await readFile(fullPath, "utf-8");
       const escaped = escapeTemplateLiteral(content);
       entries.push(`    ["${outputKey}", \`${escaped}\`]`);

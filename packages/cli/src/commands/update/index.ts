@@ -192,15 +192,14 @@ export const runUpdate = async (args: {
     p.outro(
       pc.green("All updates successfully applied! Your project is fully up to date and healthy."),
     );
-    process.exitCode = 0;
   } else {
     p.outro(
       pc.yellow(
         `Updates completed, but ${String(remainingIssues)} issue(s) still require attention. Run \`verno doctor\` to audit.`,
       ),
     );
-    process.exitCode = 0;
   }
+  process.exitCode = 0;
 
   await trackEvent("update_run", {
     dry_run: false,

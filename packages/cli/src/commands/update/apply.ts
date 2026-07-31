@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import type { PackageManager } from "@vernostudio/template-generator";
 import { readCliPackageVersion } from "../../cli-version";
 import { detectVernoManifest, writeVernoManifest } from "../shared/manifest";
@@ -17,7 +17,7 @@ export interface UpdateResult {
 }
 
 export const updateUltraciteDep = (projectDir: string): UpdateResult => {
-  const pkgPath = join(projectDir, "package.json");
+  const pkgPath = path.join(projectDir, "package.json");
   if (!existsSync(pkgPath)) {
     return {
       id: "ultracite-dep",
@@ -100,18 +100,18 @@ export const regenerateUltraciteConfigs = async (
 ): Promise<UpdateResult[]> => {
   try {
     for (const id of pendingIds) {
-      const path = join(projectDir, CONFIG_FILES[id]);
+      const filePath = path.join(projectDir, CONFIG_FILES[id]);
       // Only missing or broken legacy-import files reach here (customized ones
       // are skipped upstream); clear them so ultracite init writes fresh ones.
-      if (existsSync(path)) {
-        rmSync(path);
+      if (existsSync(filePath)) {
+        rmSync(filePath);
       }
     }
     await (options.runUltraciteInit
       ? options.runUltraciteInit(projectDir)
       : runUltraciteInitProcess(projectDir, options));
     return pendingIds.map((id) => {
-      const exists = existsSync(join(projectDir, CONFIG_FILES[id]));
+      const exists = existsSync(path.join(projectDir, CONFIG_FILES[id]));
       return {
         id,
         message: exists
@@ -203,11 +203,14 @@ export const applyUpdates = async (
       // Both config files come from one `ultracite init` run; handle them together.
       if (!configsRegenerated) {
         configsRegenerated = true;
+        // oxlint-disable-next-line no-await-in-loop -- sequential by design
         results.push(...(await regenerateUltraciteConfigs(projectDir, pendingConfigIds, options)));
       }
     } else if (check.id === "globals-css-layer") {
+      // oxlint-disable-next-line no-await-in-loop -- sequential by design
       results.push(await updateGlobalsCssBaseLayer(projectDir, state.isMonorepo));
     } else if (check.id === "manifest-version") {
+      // oxlint-disable-next-line no-await-in-loop -- sequential by design
       results.push(await updateManifestVersion(projectDir));
     }
   }

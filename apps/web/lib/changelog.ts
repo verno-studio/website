@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 
 export type ChangeKind = "major" | "minor" | "patch";
 
@@ -287,10 +287,10 @@ const parseChangelog = (source: string): ChangelogRelease[] => {
       continue;
     }
 
-    const itemMatch = /^- ([0-9a-f]{7,40}): (.*)$/u.exec(line);
-    if (itemMatch) {
+    const itemMatch = /^- (?<hash>[0-9a-f]{7,40}): (?<rest>.*)$/u.exec(line);
+    if (itemMatch?.groups) {
       flushItem();
-      item = { id: itemMatch[1], lines: [itemMatch[2]] };
+      item = { id: itemMatch.groups.hash, lines: [itemMatch.groups.rest] };
       continue;
     }
 
@@ -317,14 +317,14 @@ const parseChangelog = (source: string): ChangelogRelease[] => {
 };
 
 const candidatePaths = [
-  join(process.cwd(), "..", "..", "packages", "cli", "CHANGELOG.md"),
-  join(process.cwd(), "packages", "cli", "CHANGELOG.md"),
+  path.join(process.cwd(), "..", "..", "packages", "cli", "CHANGELOG.md"),
+  path.join(process.cwd(), "packages", "cli", "CHANGELOG.md"),
 ];
 
 const readChangelog = (): string => {
-  for (const path of candidatePaths) {
+  for (const candidate of candidatePaths) {
     try {
-      return readFileSync(path, "utf-8");
+      return readFileSync(candidate, "utf-8");
     } catch {
       // try next
     }

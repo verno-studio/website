@@ -1,5 +1,5 @@
 import { existsSync, unlinkSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import type { PackageManager } from "@vernostudio/template-generator";
 import { detectProjectState, detectPackageManager } from "../init/detect";
 import { buildVernoManifestForInit, writeVernoManifest } from "../shared/manifest";
@@ -26,10 +26,10 @@ export const fixLockfiles = (projectDir: string, activePm?: PackageManager): Fix
 
   for (const lf of allLockfiles) {
     if (lf.pm !== detectedPm) {
-      const path = join(projectDir, lf.file);
-      if (existsSync(path)) {
+      const filePath = path.join(projectDir, lf.file);
+      if (existsSync(filePath)) {
         try {
-          unlinkSync(path);
+          unlinkSync(filePath);
           removedCount += 1;
           removedNames.push(lf.file);
         } catch (error) {
@@ -76,10 +76,10 @@ export const fixManifest = async (
 
     const packages: ("typescript-config" | "design-system")[] = [];
     if (state.isMonorepo) {
-      if (existsSync(join(projectDir, "packages", "typescript-config"))) {
+      if (existsSync(path.join(projectDir, "packages", "typescript-config"))) {
         packages.push("typescript-config");
       }
-      if (existsSync(join(projectDir, "packages", "design-system"))) {
+      if (existsSync(path.join(projectDir, "packages", "design-system"))) {
         packages.push("design-system");
       }
     }
@@ -88,18 +88,18 @@ export const fixManifest = async (
     let linter: "oxlint" | "biome" | "eslint" | undefined;
     if (state.hasUltracite) {
       if (
-        existsSync(join(projectDir, "oxlint.config.ts")) ||
-        existsSync(join(projectDir, "oxlint.config.js"))
+        existsSync(path.join(projectDir, "oxlint.config.ts")) ||
+        existsSync(path.join(projectDir, "oxlint.config.js"))
       ) {
         linter = "oxlint";
       } else if (
-        existsSync(join(projectDir, "biome.json")) ||
-        existsSync(join(projectDir, "biome.jsonc"))
+        existsSync(path.join(projectDir, "biome.json")) ||
+        existsSync(path.join(projectDir, "biome.jsonc"))
       ) {
         linter = "biome";
       } else if (
-        existsSync(join(projectDir, "eslint.config.js")) ||
-        existsSync(join(projectDir, "eslint.config.mjs"))
+        existsSync(path.join(projectDir, "eslint.config.js")) ||
+        existsSync(path.join(projectDir, "eslint.config.mjs"))
       ) {
         linter = "eslint";
       }
@@ -142,8 +142,8 @@ export const fixManifest = async (
 export const fixUltraciteConfigs = (projectDir: string): FixResult => {
   try {
     // Generate default configuration files directly to avoid execution stalls
-    const oxlintConfigPath = join(projectDir, "oxlint.config.ts");
-    const oxfmtConfigPath = join(projectDir, "oxfmt.config.ts");
+    const oxlintConfigPath = path.join(projectDir, "oxlint.config.ts");
+    const oxfmtConfigPath = path.join(projectDir, "oxfmt.config.ts");
 
     writeFileSync(
       oxlintConfigPath,

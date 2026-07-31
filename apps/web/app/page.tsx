@@ -8,10 +8,6 @@ export const metadata = {
   title: "Verno Studio",
 };
 
-const Home = () => (
-  <>
-    <Story />
-  </>
-);
+const Home = () => <Story />;
 
 export default Home;

@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, renameSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import path from "node:path";
 import type { PackageJsonRecord, PackageManager } from "@vernostudio/template-generator";
 import { detectPackageJson } from "./detect";
 
@@ -8,7 +8,7 @@ export const restructureForTurborepo = async (
   projectDir: string,
   packageManager: PackageManager,
 ): Promise<void> => {
-  const dirsToCreate = [join(projectDir, "apps", "web"), join(projectDir, "packages")];
+  const dirsToCreate = [path.join(projectDir, "apps", "web"), path.join(projectDir, "packages")];
 
   for (const dir of dirsToCreate) {
     mkdirSync(dir, { recursive: true });
@@ -32,9 +32,9 @@ export const restructureForTurborepo = async (
 
   const moved: string[] = [];
   for (const file of filesToMove) {
-    const srcPath = join(projectDir, file);
+    const srcPath = path.join(projectDir, file);
     if (existsSync(srcPath)) {
-      const destPath = join(projectDir, "apps", "web", file);
+      const destPath = path.join(projectDir, "apps", "web", file);
       if (existsSync(destPath)) {
         process.stderr.write(`\nWarning: ${file} already exists in apps/web/, skipping move.\n`);
         continue;
@@ -48,7 +48,7 @@ export const restructureForTurborepo = async (
     process.stdout.write(`Moved to apps/web/: ${moved.join(", ")}\n`);
   }
 
-  const webPackageJsonPath = join(projectDir, "apps", "web", "package.json");
+  const webPackageJsonPath = path.join(projectDir, "apps", "web", "package.json");
   if (existsSync(webPackageJsonPath)) {
     process.stderr.write("\nWarning: apps/web/package.json already exists, skipping generation.\n");
   } else {
@@ -66,7 +66,7 @@ export const restructureForTurborepo = async (
     await writeFile(webPackageJsonPath, `${JSON.stringify(webPackageJson, null, 2)}\n`, "utf-8");
   }
 
-  const turboJsonPath = join(projectDir, "turbo.json");
+  const turboJsonPath = path.join(projectDir, "turbo.json");
   if (existsSync(turboJsonPath)) {
     process.stderr.write("\nWarning: turbo.json already exists, skipping generation.\n");
   } else {
@@ -112,7 +112,7 @@ export const restructureForTurborepo = async (
   }
 
   await writeFile(
-    join(projectDir, "package.json"),
+    path.join(projectDir, "package.json"),
     `${JSON.stringify(rootPkg, null, 2)}\n`,
     "utf-8",
   );

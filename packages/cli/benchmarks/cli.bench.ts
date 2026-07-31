@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import path from "node:path";
 import { bench, group, run } from "mitata";
 import {
   detectPackageJson,
@@ -12,11 +12,14 @@ import {
 } from "../src/commands/init/detect";
 
 const makeTmpDir = (files: Record<string, string> = {}): string => {
-  const dir = join(tmpdir(), `verno-bench-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const dir = path.join(
+    tmpdir(),
+    `verno-bench-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  );
   mkdirSync(dir, { recursive: true });
   for (const [name, content] of Object.entries(files)) {
-    const filePath = join(dir, name);
-    mkdirSync(join(filePath, ".."), { recursive: true });
+    const filePath = path.join(dir, name);
+    mkdirSync(path.join(filePath, ".."), { recursive: true });
     writeFileSync(filePath, content);
   }
   return dir;

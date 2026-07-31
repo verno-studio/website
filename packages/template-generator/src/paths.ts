@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import path from "node:path";
 
 export const scoped = (scope: string, name: string): string => `@${scope}/${name}`;
 
@@ -13,4 +13,4 @@ export const mergeFileTrees = (base: FileTree, ...rest: FileTree[]): FileTree =>
 };
 
 export const resolveUnderRoot = (root: string, relativePosix: string): string =>
-  join(root, ...relativePosix.split("/").filter((s) => s.length > 0));
+  path.join(root, ...relativePosix.split("/").filter((s) => s.length > 0));

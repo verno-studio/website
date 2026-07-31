@@ -12,7 +12,13 @@ import {
 import type { UiMode } from "../shared/input-primitives";
 import { parseUltraciteFrameworksFlag, parseUltraciteLinterFlag } from "../shared/ultracite";
 
-export { DEFAULT_SHADCN_PRESET, isPackageManager, isUiMode, PACKAGE_MANAGERS, type UiMode };
+export {
+  DEFAULT_SHADCN_PRESET,
+  isPackageManager,
+  isUiMode,
+  PACKAGE_MANAGERS,
+  type UiMode,
+} from "../shared/input-primitives";
 
 /** Raw CLI flags for `verno init`. */
 export interface InitCommandOptions {

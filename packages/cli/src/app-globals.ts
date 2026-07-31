@@ -1,14 +1,14 @@
 import { existsSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import path from "node:path";
 import { VERNO_APP_GLOBALS_BASE_LAYER, VERNO_APP_GLOBALS_BASE_MARKER } from "./constants";
 
 const trimEndWhitespace = (value: string): string => value.replace(/\s+$/u, "");
 
 export const getAppGlobalsCssPath = (projectDir: string, monorepo: boolean): string =>
   monorepo
-    ? join(projectDir, "apps", "web", "app", "globals.css")
-    : join(projectDir, "app", "globals.css");
+    ? path.join(projectDir, "apps", "web", "app", "globals.css")
+    : path.join(projectDir, "app", "globals.css");
 
 const stripAppGlobalsBaseLayer = (content: string): string => {
   const markerIndex = content.indexOf(VERNO_APP_GLOBALS_BASE_MARKER);
@@ -51,13 +51,13 @@ export const ensureAppGlobalsBaseLayerAtEnd = async (
   projectDir: string,
   monorepo: boolean,
 ): Promise<void> => {
-  const path = getAppGlobalsCssPath(projectDir, monorepo);
-  if (!existsSync(path)) {
+  const cssPath = getAppGlobalsCssPath(projectDir, monorepo);
+  if (!existsSync(cssPath)) {
     return;
   }
-  const raw = await readFile(path, "utf-8");
+  const raw = await readFile(cssPath, "utf-8");
   const next = ensureAppGlobalsBaseLayerContent(raw);
   if (next !== raw) {
-    await writeFile(path, next, "utf-8");
+    await writeFile(cssPath, next, "utf-8");
   }
 };

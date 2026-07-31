@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import { detectProjectState } from "../init/detect";
 import { detectVernoManifest } from "../shared/manifest";
 import type { VernoManifest } from "../shared/manifest";
@@ -15,7 +15,7 @@ export interface Diagnostic {
 
 export const runManifestAudit = (projectDir: string): Diagnostic[] => {
   const diagnostics: Diagnostic[] = [];
-  const manifestPath = join(projectDir, ".verno", "manifest.json");
+  const manifestPath = path.join(projectDir, ".verno", "manifest.json");
 
   if (!existsSync(manifestPath)) {
     diagnostics.push({
@@ -62,7 +62,7 @@ export const runManifestAudit = (projectDir: string): Diagnostic[] => {
 
 export const runLockfileAudit = (projectDir: string): Diagnostic[] => {
   const diagnostics: Diagnostic[] = [];
-  const pkgPath = join(projectDir, "package.json");
+  const pkgPath = path.join(projectDir, "package.json");
 
   if (!existsSync(pkgPath)) {
     diagnostics.push({
@@ -99,7 +99,7 @@ export const runLockfileAudit = (projectDir: string): Diagnostic[] => {
     { file: "package-lock.json", pm: "npm" },
   ];
 
-  const presentLockfiles = lockfiles.filter((lf) => existsSync(join(projectDir, lf.file)));
+  const presentLockfiles = lockfiles.filter((lf) => existsSync(path.join(projectDir, lf.file)));
 
   if (presentLockfiles.length === 0) {
     diagnostics.push({
@@ -182,7 +182,7 @@ export const runTurborepoAudit = (
   }
 
   // Check turbo.json
-  const turboPath = join(projectDir, "turbo.json");
+  const turboPath = path.join(projectDir, "turbo.json");
   if (existsSync(turboPath)) {
     try {
       JSON.parse(readFileSync(turboPath, "utf-8"));
@@ -213,10 +213,10 @@ export const runTurborepoAudit = (
   }
 
   // Check workspaces packages
-  const packagesDir = join(projectDir, "packages");
+  const packagesDir = path.join(projectDir, "packages");
   if (existsSync(packagesDir)) {
-    const dsPath = join(packagesDir, "design-system");
-    const tcPath = join(packagesDir, "typescript-config");
+    const dsPath = path.join(packagesDir, "design-system");
+    const tcPath = path.join(packagesDir, "typescript-config");
 
     if (manifest?.packages.includes("design-system") && !existsSync(dsPath)) {
       diagnostics.push({
@@ -271,8 +271,8 @@ export const runShadcnAudit = (
   }
 
   const isMonorepo = state.isMonorepo || (manifest?.addons.includes("turborepo") ?? false);
-  const targetDir = isMonorepo ? join(projectDir, "packages", "design-system") : projectDir;
-  const configPath = join(targetDir, "components.json");
+  const targetDir = isMonorepo ? path.join(projectDir, "packages", "design-system") : projectDir;
+  const configPath = path.join(targetDir, "components.json");
 
   if (existsSync(configPath)) {
     try {
@@ -326,7 +326,7 @@ export const runUltraciteAudit = (
     return diagnostics;
   }
 
-  const pkgPath = join(projectDir, "package.json");
+  const pkgPath = path.join(projectDir, "package.json");
   let hasUltraciteDep = false;
 
   if (existsSync(pkgPath)) {
@@ -364,7 +364,7 @@ export const runUltraciteAudit = (
   ];
 
   const presentConfigs = ULTRACITE_CONFIG_FILES.filter((file) =>
-    existsSync(join(projectDir, file)),
+    existsSync(path.join(projectDir, file)),
   );
 
   if (presentConfigs.length === 0) {

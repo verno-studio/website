@@ -92,36 +92,40 @@ export const appendShadcnSteps = <TId extends string>(
     const addAll = getShadcnAddAllCommand(args.packageManager, {
       monorepoWithDesignSystem: args.mode.monorepoWithDesignSystem,
     });
-    steps.push({
-      command: { args: sh.args, cwd: args.projectDir, file: sh.file },
-      id: args.bootstrapId,
-      label: "Run shadcn init / apply",
-      willRun: true,
-    });
-    steps.push({
-      command: { args: addAll.args, cwd: args.projectDir, file: addAll.file },
-      id: args.addAllId,
-      label: "Run shadcn add --all (registry UI components)",
-      willRun: true,
-    });
+    steps.push(
+      {
+        command: { args: sh.args, cwd: args.projectDir, file: sh.file },
+        id: args.bootstrapId,
+        label: "Run shadcn init / apply",
+        willRun: true,
+      },
+      {
+        command: { args: addAll.args, cwd: args.projectDir, file: addAll.file },
+        id: args.addAllId,
+        label: "Run shadcn add --all (registry UI components)",
+        willRun: true,
+      },
+    );
     return;
   }
 
   const skippedReason =
     args.mode.kind === "already-configured" ? "shadcn is already configured" : args.mode.reason;
 
-  steps.push({
-    id: args.bootstrapId,
-    label: "Run shadcn init / apply",
-    skippedReason,
-    willRun: false,
-  });
-  steps.push({
-    id: args.addAllId,
-    label: "Run shadcn add --all",
-    skippedReason,
-    willRun: false,
-  });
+  steps.push(
+    {
+      id: args.bootstrapId,
+      label: "Run shadcn init / apply",
+      skippedReason,
+      willRun: false,
+    },
+    {
+      id: args.addAllId,
+      label: "Run shadcn add --all",
+      skippedReason,
+      willRun: false,
+    },
+  );
 };
 
 export type UltracitePlanMode =

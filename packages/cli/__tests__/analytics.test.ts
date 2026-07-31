@@ -1,9 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { mkdirSync, rmSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { join } from "node:path";
+import path from "node:path";
 
-const TEST_HOME = join(tmpdir(), `verno-analytics-test-${Math.random().toString(36).slice(2)}`);
+const TEST_HOME = path.join(
+  tmpdir(),
+  `verno-analytics-test-${Math.random().toString(36).slice(2)}`,
+);
 
 let originalEnv: NodeJS.ProcessEnv;
 

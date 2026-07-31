@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+import path from "node:path";
 import { generate, writeTree } from "@vernostudio/template-generator";
 import type { PackageManager, ProjectConfig } from "@vernostudio/template-generator";
 import { runProcess } from "../../run";
@@ -13,7 +13,7 @@ export {
 } from "../shared/manifest";
 export type { VernoManifest } from "../shared/manifest";
 
-export const getProjectPath = (name: string): string => resolve(process.cwd(), name);
+export const getProjectPath = (name: string): string => path.resolve(process.cwd(), name);
 
 export const assertPathAvailable = (projectDir: string): void => {
   if (existsSync(projectDir)) {

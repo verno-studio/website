@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import type {
   AddonId,
   FrontendId,
@@ -80,9 +80,9 @@ export const writeVernoManifest = async (
   projectDir: string,
   manifest: VernoManifest,
 ): Promise<void> => {
-  const dir = join(projectDir, VERNO_MANIFEST_DIR);
+  const dir = path.join(projectDir, VERNO_MANIFEST_DIR);
   await mkdir(dir, { recursive: true });
-  const out = join(dir, "manifest.json");
+  const out = path.join(dir, "manifest.json");
   await writeFile(out, `${JSON.stringify(manifest, null, 2)}\n`, "utf-8");
 };
 
@@ -107,9 +107,9 @@ const isVernoManifestRecord = (value: unknown): value is VernoManifest => {
 };
 
 export const detectVernoManifest = (projectDir: string): VernoManifest | null => {
-  const path = join(projectDir, VERNO_MANIFEST_DIR, "manifest.json");
+  const filePath = path.join(projectDir, VERNO_MANIFEST_DIR, "manifest.json");
   try {
-    const raw = readFileSync(path, "utf-8");
+    const raw = readFileSync(filePath, "utf-8");
     const parsed: unknown = JSON.parse(raw);
     return isVernoManifestRecord(parsed) ? parsed : null;
   } catch {

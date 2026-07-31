@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach, afterEach } from "bun:test";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import path from "node:path";
 import { tmpdir } from "node:os";
 import {
   checkCliVersion,
@@ -13,7 +13,10 @@ import {
 } from "../src/commands/update/detect";
 import { readCliPackageVersion } from "../src/cli-version";
 
-const TEST_DIR = join(tmpdir(), `verno-update-detect-test-${Math.random().toString(36).slice(2)}`);
+const TEST_DIR = path.join(
+  tmpdir(),
+  `verno-update-detect-test-${Math.random().toString(36).slice(2)}`,
+);
 
 beforeEach(() => {
   mkdirSync(TEST_DIR, { recursive: true });
@@ -47,7 +50,7 @@ describe("Update Detect Actions", () => {
 
     // package.json with outdated ultracite
     writeFileSync(
-      join(TEST_DIR, "package.json"),
+      path.join(TEST_DIR, "package.json"),
       JSON.stringify({
         devDependencies: {
           ultracite: "7.5.0",
@@ -61,7 +64,7 @@ describe("Update Detect Actions", () => {
 
     // package.json with current ultracite
     writeFileSync(
-      join(TEST_DIR, "package.json"),
+      path.join(TEST_DIR, "package.json"),
       JSON.stringify({
         devDependencies: {
           ultracite: EXPECTED_ULTRACITE_VERSION,
@@ -80,7 +83,7 @@ describe("Update Detect Actions", () => {
 
     // Canonical config (current ultracite subpath layout)
     writeFileSync(
-      join(TEST_DIR, "oxlint.config.ts"),
+      path.join(TEST_DIR, "oxlint.config.ts"),
       'import core from "ultracite/oxlint/core";\n\nexport default { extends: [core] };',
     );
     check = checkOxlintConfig(TEST_DIR);
@@ -90,7 +93,7 @@ describe("Update Detect Actions", () => {
 
     // Legacy preset import (no longer resolves in ultracite 7.8+) — must be regenerated
     writeFileSync(
-      join(TEST_DIR, "oxlint.config.ts"),
+      path.join(TEST_DIR, "oxlint.config.ts"),
       'import ultracite from "ultracite/presets/oxlint";\nexport default ultracite();',
     );
     check = checkOxlintConfig(TEST_DIR);
@@ -99,7 +102,7 @@ describe("Update Detect Actions", () => {
     expect(check.skipReason).toBeUndefined();
 
     // Customized config
-    writeFileSync(join(TEST_DIR, "oxlint.config.ts"), "// custom config");
+    writeFileSync(path.join(TEST_DIR, "oxlint.config.ts"), "// custom config");
     check = checkOxlintConfig(TEST_DIR);
     // skip/do not update
     expect(check.needsUpdate).toBe(false);
@@ -115,7 +118,7 @@ describe("Update Detect Actions", () => {
 
     // Canonical config (current ultracite subpath layout)
     writeFileSync(
-      join(TEST_DIR, "oxfmt.config.ts"),
+      path.join(TEST_DIR, "oxfmt.config.ts"),
       'import ultracite from "ultracite/oxfmt";\n\nexport default { extends: [ultracite] };',
     );
     check = checkOxfmtConfig(TEST_DIR);
@@ -125,7 +128,7 @@ describe("Update Detect Actions", () => {
 
     // Legacy preset import (no longer resolves in ultracite 7.8+) — must be regenerated
     writeFileSync(
-      join(TEST_DIR, "oxfmt.config.ts"),
+      path.join(TEST_DIR, "oxfmt.config.ts"),
       'import ultracite from "ultracite/presets/oxfmt";\nexport default ultracite();',
     );
     check = checkOxfmtConfig(TEST_DIR);
@@ -134,7 +137,7 @@ describe("Update Detect Actions", () => {
     expect(check.skipReason).toBeUndefined();
 
     // Customized config
-    writeFileSync(join(TEST_DIR, "oxfmt.config.ts"), "// custom config");
+    writeFileSync(path.join(TEST_DIR, "oxfmt.config.ts"), "// custom config");
     check = checkOxfmtConfig(TEST_DIR);
     expect(check.needsUpdate).toBe(false);
     expect(check.current).toBe("customized");
@@ -142,9 +145,9 @@ describe("Update Detect Actions", () => {
   });
 
   test("checkGlobalsCssBaseLayer detects presence or absence of base layer", () => {
-    const cssDir = join(TEST_DIR, "app");
+    const cssDir = path.join(TEST_DIR, "app");
     mkdirSync(cssDir, { recursive: true });
-    const cssPath = join(cssDir, "globals.css");
+    const cssPath = path.join(cssDir, "globals.css");
 
     // Missing file
     let check = checkGlobalsCssBaseLayer(TEST_DIR, false);
@@ -166,16 +169,16 @@ describe("Update Detect Actions", () => {
 
   test("runUpdateChecks runs checks and returns correct status", async () => {
     writeFileSync(
-      join(TEST_DIR, "package.json"),
+      path.join(TEST_DIR, "package.json"),
       JSON.stringify({
         devDependencies: {
           ultracite: "7.5.0",
         },
       }),
     );
-    mkdirSync(join(TEST_DIR, ".verno"), { recursive: true });
+    mkdirSync(path.join(TEST_DIR, ".verno"), { recursive: true });
     writeFileSync(
-      join(TEST_DIR, ".verno", "manifest.json"),
+      path.join(TEST_DIR, ".verno", "manifest.json"),
       JSON.stringify({
         addons: ["ultracite"],
         createdAt: new Date().toISOString(),

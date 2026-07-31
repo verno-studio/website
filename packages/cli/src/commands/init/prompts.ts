@@ -239,8 +239,8 @@ export const runInteractiveInitWizard = async (args: {
   ];
 
   if (ultraciteOn) {
-    summaryLines.push(`Ultracite linter: ${ultraciteLinter ?? DEFAULT_ULTRACITE_LINTER}`);
     summaryLines.push(
+      `Ultracite linter: ${ultraciteLinter ?? DEFAULT_ULTRACITE_LINTER}`,
       `Ultracite frameworks: ${(ultraciteFrameworks ?? DEFAULT_ULTRACITE_FRAMEWORKS).join(", ")}`,
     );
   }

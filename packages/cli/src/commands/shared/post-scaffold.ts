@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import path from "node:path";
 import type { PackageManager } from "@vernostudio/template-generator";
 import {
   getPmInstallCommand,
@@ -16,7 +16,7 @@ export const getShadcnWorkingDirectory = (
   projectDir: string,
   monorepoWithDesignSystem: boolean,
 ): string =>
-  monorepoWithDesignSystem ? join(projectDir, "packages", "design-system") : projectDir;
+  monorepoWithDesignSystem ? path.join(projectDir, "packages", "design-system") : projectDir;
 
 export const runInstallIfEnabled = async (
   enabled: boolean,
@@ -37,7 +37,7 @@ export const runInstallIfEnabled = async (
  * its presence already satisfies shadcn's detection.
  */
 export const shouldWriteDecoyConfig = (workingDir: string): boolean =>
-  !existsSync(join(workingDir, "vite.config.ts"));
+  !existsSync(path.join(workingDir, "vite.config.ts"));
 
 export const runShadcnIfEnabled = async (options: {
   readonly enabled: boolean;
@@ -57,7 +57,7 @@ export const runShadcnIfEnabled = async (options: {
 
   // shadcn apply/add requires a detected framework (Next.js, Vite, etc.).
   // We write a temporary dummy config to ensure detection passes in all environments.
-  const dummyConfigPath = join(workingDir, "vite.config.ts");
+  const dummyConfigPath = path.join(workingDir, "vite.config.ts");
   const hasRealViteConfig = !shouldWriteDecoyConfig(workingDir);
   if (!hasRealViteConfig) {
     await writeFile(dummyConfigPath, "export default {};\n", "utf-8");
@@ -73,6 +73,7 @@ export const runShadcnIfEnabled = async (options: {
     });
 
     for (const cmd of [bootstrap, addAll]) {
+      // oxlint-disable-next-line no-await-in-loop -- sequential by design
       await runProcess(cmd.file, cmd.args, {
         ciSafe: false,
         cwd: options.projectDir,

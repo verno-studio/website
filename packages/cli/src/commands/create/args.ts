@@ -27,7 +27,7 @@ export {
   isValidProjectName,
   PACKAGE_MANAGERS,
   type UiMode,
-};
+} from "../shared/input-primitives";
 
 export const isFrontendId = (value: string | undefined): value is FrontendId =>
   value !== undefined && (FRONTENDS as readonly string[]).includes(value);
