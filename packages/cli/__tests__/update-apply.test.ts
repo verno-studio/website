@@ -4,8 +4,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import {
   updateUltraciteDep,
-  regenerateOxlintConfig,
-  regenerateOxfmtConfig,
+  regenerateUltraciteConfigs,
   updateGlobalsCssBaseLayer,
   updateManifestVersion,
   applyUpdates,
@@ -64,24 +63,45 @@ describe("Update Apply Actions", () => {
     expect(pkg.dependencies?.ultracite).toBe(EXPECTED_ULTRACITE_VERSION);
   });
 
-  test("regenerateOxlintConfig generates oxlint config file", () => {
-    const res = regenerateOxlintConfig(TEST_DIR);
-    expect(res.success).toBe(true);
+  test("regenerateUltraciteConfigs clears legacy configs, delegates to ultracite init once, and reports produced files", async () => {
+    // A broken legacy config that must be replaced, alongside a missing oxfmt config.
+    writeFileSync(
+      join(TEST_DIR, "oxlint.config.ts"),
+      'import ultracite from "ultracite/presets/oxlint";\nexport default ultracite();',
+    );
 
-    const path = join(TEST_DIR, "oxlint.config.ts");
-    expect(existsSync(path)).toBe(true);
-    const content = readFileSync(path, "utf-8");
-    expect(content).toContain("ultracite/presets/oxlint");
+    const calls: string[] = [];
+    const results = await regenerateUltraciteConfigs(TEST_DIR, ["oxlint-config", "oxfmt-config"], {
+      packageManager: "bun",
+      runUltraciteInit: (projectDir) => {
+        calls.push(projectDir);
+        // The legacy file must already be cleared when init runs.
+        expect(existsSync(join(projectDir, "oxlint.config.ts"))).toBe(false);
+        writeFileSync(
+          join(projectDir, "oxlint.config.ts"),
+          'import core from "ultracite/oxlint/core";\n',
+        );
+        writeFileSync(
+          join(projectDir, "oxfmt.config.ts"),
+          'import ultracite from "ultracite/oxfmt";\n',
+        );
+        return Promise.resolve();
+      },
+    });
+
+    expect(calls).toEqual([TEST_DIR]);
+    expect(results.map((r) => r.id).toSorted()).toEqual(["oxfmt-config", "oxlint-config"]);
+    expect(results.every((r) => r.success)).toBe(true);
+    expect(readFileSync(join(TEST_DIR, "oxlint.config.ts"), "utf-8")).not.toContain("presets");
   });
 
-  test("regenerateOxfmtConfig generates oxfmt config file", () => {
-    const res = regenerateOxfmtConfig(TEST_DIR);
-    expect(res.success).toBe(true);
-
-    const path = join(TEST_DIR, "oxfmt.config.ts");
-    expect(existsSync(path)).toBe(true);
-    const content = readFileSync(path, "utf-8");
-    expect(content).toContain("ultracite/presets/oxfmt");
+  test("regenerateUltraciteConfigs reports failure when init does not produce a config", async () => {
+    const results = await regenerateUltraciteConfigs(TEST_DIR, ["oxlint-config"], {
+      packageManager: "bun",
+      runUltraciteInit: () => Promise.resolve(),
+    });
+    expect(results.length).toBe(1);
+    expect(results[0]?.success).toBe(false);
   });
 
   test("updateGlobalsCssBaseLayer injects verno base layer", async () => {
@@ -125,6 +145,45 @@ describe("Update Apply Actions", () => {
       generatorVersion: string;
     };
     expect(manifest.generatorVersion).toBe(readCliPackageVersion());
+  });
+
+  test("applyUpdates regenerates both configs with a single ultracite init run", async () => {
+    const checks = [
+      {
+        category: "config" as const,
+        current: "missing",
+        description: "oxlint.config.ts",
+        expected: "canonical",
+        id: "oxlint-config",
+        needsUpdate: true,
+      },
+      {
+        category: "config" as const,
+        current: "legacy preset import",
+        description: "oxfmt.config.ts",
+        expected: "canonical",
+        id: "oxfmt-config",
+        needsUpdate: true,
+      },
+    ];
+
+    let runs = 0;
+    const results = await applyUpdates(TEST_DIR, checks, {
+      packageManager: "bun",
+      runUltraciteInit: (projectDir) => {
+        runs += 1;
+        writeFileSync(
+          join(projectDir, "oxlint.config.ts"),
+          'import c from "ultracite/oxlint/core";\n',
+        );
+        writeFileSync(join(projectDir, "oxfmt.config.ts"), 'import u from "ultracite/oxfmt";\n');
+        return Promise.resolve();
+      },
+    });
+
+    expect(runs).toBe(1);
+    expect(results.length).toBe(2);
+    expect(results.every((r) => r.success)).toBe(true);
   });
 
   test("applyUpdates executes correct update functions based on needsUpdate", async () => {
@@ -184,7 +243,10 @@ describe("Update Apply Actions", () => {
       },
     ];
 
-    const results = await applyUpdates(TEST_DIR, checks);
+    const results = await applyUpdates(TEST_DIR, checks, {
+      packageManager: "bun",
+      runUltraciteInit: () => Promise.resolve(),
+    });
     expect(results.length).toBe(2);
 
     const manifestRes = results.find((r) => r.id === "manifest-version");

@@ -113,11 +113,19 @@ export const checkUltraciteDep = (projectDir: string): UpdateCheck => {
   };
 };
 
+const LEGACY_OXLINT_IMPORT = "ultracite/presets/oxlint";
+const LEGACY_OXFMT_IMPORT = "ultracite/presets/oxfmt";
+
+/** Ultracite 7.8+ exposes presets as `ultracite/oxlint/<preset>` and `ultracite/oxfmt`; the `ultracite/presets/*` subpaths no longer resolve. */
 const isCanonicalOxlintConfig = (content: string): boolean =>
-  content.includes("ultracite/presets/oxlint");
+  !content.includes(LEGACY_OXLINT_IMPORT) && content.includes("ultracite/oxlint");
+
+const isLegacyOxlintConfig = (content: string): boolean => content.includes(LEGACY_OXLINT_IMPORT);
 
 const isCanonicalOxfmtConfig = (content: string): boolean =>
-  content.includes("ultracite/presets/oxfmt");
+  !content.includes(LEGACY_OXFMT_IMPORT) && content.includes("ultracite/oxfmt");
+
+const isLegacyOxfmtConfig = (content: string): boolean => content.includes(LEGACY_OXFMT_IMPORT);
 
 export const checkOxlintConfig = (projectDir: string): UpdateCheck => {
   const path = join(projectDir, "oxlint.config.ts");
@@ -130,6 +138,9 @@ export const checkOxlintConfig = (projectDir: string): UpdateCheck => {
       const content = readFileSync(path, "utf-8");
       if (isCanonicalOxlintConfig(content)) {
         current = "canonical";
+      } else if (isLegacyOxlintConfig(content)) {
+        current = "legacy preset import";
+        needsUpdate = true;
       } else {
         current = "customized";
         skipReason = "Config file has been customized; skipping to preserve user changes.";
@@ -163,6 +174,9 @@ export const checkOxfmtConfig = (projectDir: string): UpdateCheck => {
       const content = readFileSync(path, "utf-8");
       if (isCanonicalOxfmtConfig(content)) {
         current = "canonical";
+      } else if (isLegacyOxfmtConfig(content)) {
+        current = "legacy preset import";
+        needsUpdate = true;
       } else {
         current = "customized";
         skipReason = "Config file has been customized; skipping to preserve user changes.";

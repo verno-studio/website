@@ -78,14 +78,24 @@ describe("Update Detect Actions", () => {
     expect(check.needsUpdate).toBe(true);
     expect(check.current).toBe("missing");
 
-    // Canonical config
+    // Canonical config (current ultracite subpath layout)
+    writeFileSync(
+      join(TEST_DIR, "oxlint.config.ts"),
+      'import core from "ultracite/oxlint/core";\n\nexport default { extends: [core] };',
+    );
+    check = checkOxlintConfig(TEST_DIR);
+    expect(check.needsUpdate).toBe(false);
+    expect(check.current).toBe("canonical");
+    expect(check.skipReason).toBeUndefined();
+
+    // Legacy preset import (no longer resolves in ultracite 7.8+) — must be regenerated
     writeFileSync(
       join(TEST_DIR, "oxlint.config.ts"),
       'import ultracite from "ultracite/presets/oxlint";\nexport default ultracite();',
     );
     check = checkOxlintConfig(TEST_DIR);
-    expect(check.needsUpdate).toBe(false);
-    expect(check.current).toBe("canonical");
+    expect(check.needsUpdate).toBe(true);
+    expect(check.current).toBe("legacy preset import");
     expect(check.skipReason).toBeUndefined();
 
     // Customized config
@@ -103,14 +113,24 @@ describe("Update Detect Actions", () => {
     expect(check.needsUpdate).toBe(true);
     expect(check.current).toBe("missing");
 
-    // Canonical config
+    // Canonical config (current ultracite subpath layout)
+    writeFileSync(
+      join(TEST_DIR, "oxfmt.config.ts"),
+      'import ultracite from "ultracite/oxfmt";\n\nexport default { extends: [ultracite] };',
+    );
+    check = checkOxfmtConfig(TEST_DIR);
+    expect(check.needsUpdate).toBe(false);
+    expect(check.current).toBe("canonical");
+    expect(check.skipReason).toBeUndefined();
+
+    // Legacy preset import (no longer resolves in ultracite 7.8+) — must be regenerated
     writeFileSync(
       join(TEST_DIR, "oxfmt.config.ts"),
       'import ultracite from "ultracite/presets/oxfmt";\nexport default ultracite();',
     );
     check = checkOxfmtConfig(TEST_DIR);
-    expect(check.needsUpdate).toBe(false);
-    expect(check.current).toBe("canonical");
+    expect(check.needsUpdate).toBe(true);
+    expect(check.current).toBe("legacy preset import");
     expect(check.skipReason).toBeUndefined();
 
     // Customized config
