@@ -48,46 +48,42 @@ export const restructureForTurborepo = async (
     process.stdout.write(`Moved to apps/web/: ${moved.join(", ")}\n`);
   }
 
-  const webPackageJson = {
-    dependencies: {},
-    name: "web",
-    private: true,
-    scripts: {
-      build: "next build",
-      dev: "next dev",
-      start: "next start",
-    },
-    version: "0.1.0",
-  };
-  await writeFile(
-    join(projectDir, "apps", "web", "package.json"),
-    `${JSON.stringify(webPackageJson, null, 2)}\n`,
-    "utf-8",
-  );
+  const webPackageJsonPath = join(projectDir, "apps", "web", "package.json");
+  if (existsSync(webPackageJsonPath)) {
+    process.stderr.write("\nWarning: apps/web/package.json already exists, skipping generation.\n");
+  } else {
+    const webPackageJson = {
+      dependencies: {},
+      name: "web",
+      private: true,
+      scripts: {
+        build: "next build",
+        dev: "next dev",
+        start: "next start",
+      },
+      version: "0.1.0",
+    };
+    await writeFile(webPackageJsonPath, `${JSON.stringify(webPackageJson, null, 2)}\n`, "utf-8");
+  }
 
-  const turboJson = {
-    $schema: "https://turbo.build/schema.json",
-    extends: ["@vernostudio/turborepo-utils/turbo.json"],
-    tasks: {
-      build: {
-        dependsOn: ["^build"],
-        outputs: [".next/**"],
+  const turboJsonPath = join(projectDir, "turbo.json");
+  if (existsSync(turboJsonPath)) {
+    process.stderr.write("\nWarning: turbo.json already exists, skipping generation.\n");
+  } else {
+    const turboJson = {
+      $schema: "https://turborepo.dev/schema.json",
+      tasks: {
+        build: {
+          dependsOn: ["^build"],
+          inputs: ["$TURBO_DEFAULT$", ".env*"],
+          outputs: [".next/**", "!.next/cache/**", "dist/**"],
+        },
+        dev: { cache: false, persistent: true },
+        typecheck: { dependsOn: ["^typecheck"] },
       },
-      dev: {
-        cache: false,
-        dependsOn: ["^build"],
-        persistent: true,
-      },
-      lint: {
-        dependsOn: ["^build"],
-      },
-    },
-  };
-  await writeFile(
-    join(projectDir, "turbo.json"),
-    `${JSON.stringify(turboJson, null, 2)}\n`,
-    "utf-8",
-  );
+    };
+    await writeFile(turboJsonPath, `${JSON.stringify(turboJson, null, 2)}\n`, "utf-8");
+  }
 
   const existingPkg = detectPackageJson(projectDir);
   const rootPkg = existingPkg ?? ({ name: "project", private: true } as PackageJsonRecord);
@@ -95,12 +91,9 @@ export const restructureForTurborepo = async (
   const rootScripts: Record<string, unknown> = rootPkg.scripts
     ? (rootPkg.scripts as Record<string, unknown>)
     : {};
-  const filteredScripts = Object.fromEntries(
-    Object.entries(rootScripts).filter(([key]) => !["dev", "build", "start", "lint"].includes(key)),
-  );
 
   rootPkg.scripts = {
-    ...filteredScripts,
+    ...rootScripts,
     build: "turbo run build",
     dev: "turbo run dev",
     lint: "turbo run lint",
