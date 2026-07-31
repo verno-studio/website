@@ -34,6 +34,7 @@ export const toInitCommandOptions = (raw: {
   readonly dryRun?: boolean;
   readonly yes?: boolean;
   readonly noInstall?: boolean;
+  readonly install?: boolean;
   readonly skipShadcn?: boolean;
   readonly skipUltracite?: boolean;
   readonly addons?: string;
@@ -47,7 +48,7 @@ export const toInitCommandOptions = (raw: {
   dryRun: raw.dryRun ?? false,
   frameworks: raw.frameworks,
   linter: raw.linter,
-  noInstall: raw.noInstall ?? false,
+  noInstall: raw.noInstall ?? raw.install === false,
   packageManager: raw.packageManager,
   shadcnPreset: raw.shadcnPreset,
   skipShadcn: raw.skipShadcn ?? false,
