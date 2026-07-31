@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import { Command, Option } from "commander";
 import packageJson from "../package.json";
 
 export interface ProgramHandlers {
@@ -48,7 +48,8 @@ export const buildProgram = (handlers: ProgramHandlers): Command => {
   program
     .command("init")
     .description("Add components/addons to an existing Verno Studio project")
-    .option("--addon <list>", "Comma-separated: turborepo, ultracite (e.g. turborepo,ultracite)")
+    .option("--addons <list>", "Comma-separated: turborepo, ultracite (e.g. turborepo,ultracite)")
+    .addOption(new Option("--addon <list>", "Alias of --addons").hideHelp())
     .option("--ui <mode>", "shadcn | none")
     .option("--shadcn-preset <name>", "shadcn preset (e.g. nova)")
     .option(

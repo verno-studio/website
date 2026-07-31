@@ -24,8 +24,9 @@ const handlers: ProgramHandlers = {
   onInit: async (opts) => {
     const { runInit } = await import("./commands/init");
     const { toInitCommandOptions } = await import("./commands/init/args");
+    const merged = { ...opts, addons: (opts.addons ?? opts.addon) as string | undefined };
     await runInit({
-      options: toInitCommandOptions(opts),
+      options: toInitCommandOptions(merged),
     });
   },
   onUpdate: async (opts) => {
