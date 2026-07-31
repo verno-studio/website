@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { getDependencyVersion } from "@vernostudio/template-generator";
 import semver from "semver";
 import { readCliPackageVersion } from "../../cli-version";
 import { detectVernoManifest } from "../shared/manifest";
@@ -17,7 +18,8 @@ export interface UpdateCheck {
   readonly skipReason?: string;
 }
 
-export const EXPECTED_ULTRACITE_VERSION = "^7.7.0";
+/** Single source of truth: the same catalog range that generated projects are pinned to. */
+export const EXPECTED_ULTRACITE_VERSION = getDependencyVersion("ultracite");
 
 export const checkCliVersion = (manifestVersion: string): UpdateCheck => {
   const currentCliVersion = readCliPackageVersion();
