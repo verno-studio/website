@@ -4,7 +4,7 @@
   "private": true,
   "sideEffects": false,
   "scripts": {
-    "typecheck": "tsgo --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -32,7 +32,7 @@
     "@types/react-dom": "^19",
     "@vernostudio/typescript-config": "workspace:*",
     "shadcn": "^4.10.0",
-    "typescript": "^6"
+    "typescript": "^7"
   },
   "peerDependencies": {
     "react": "19.2.7",
