@@ -46,7 +46,7 @@
     "prebuild": "bun run generate:templates",
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "typecheck": "bun run generate:templates && tsgo --noEmit",
+    "typecheck": "bun run generate:templates && tsc --noEmit",
     "test": "bun run generate:templates && bun test",
     "test:coverage": "bun run generate:templates && bun test --coverage"
   },
@@ -60,6 +60,6 @@
     "@typescript/native-preview": "^7.0.0-dev.20260605.1",
     "@vernostudio/typescript-config": "workspace:*",
     "tsdown": "^0.22.2",
-    "typescript": "^6"
+    "typescript": "^7"
   }
 }
