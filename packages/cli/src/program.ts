@@ -43,7 +43,7 @@ export const buildProgram = (handlers: ProgramHandlers): Command => {
     .option("--no-git", "Skip git init")
     .option("--skip-shadcn", "Skip shadcn bootstrap")
     .option("--skip-ultracite", "Skip ultracite add-on and ultracite init")
-    .action(async (name: string | undefined, opts) => await handlers.onCreate(name, opts));
+    .action((name: string | undefined, opts) => handlers.onCreate(name, opts));
 
   program
     .command("init")
@@ -66,7 +66,7 @@ export const buildProgram = (handlers: ProgramHandlers): Command => {
     .option("--no-install", "Skip dependency install")
     .option("--skip-shadcn", "Skip shadcn bootstrap")
     .option("--skip-ultracite", "Skip ultracite add-on")
-    .action(async (opts) => await handlers.onInit(opts));
+    .action((opts) => handlers.onInit(opts));
 
   program
     .command("doctor")
@@ -74,7 +74,7 @@ export const buildProgram = (handlers: ProgramHandlers): Command => {
     .option("-y, --yes", "Automatically apply fixes without prompting", false)
     .option("--fix", "Attempt to fix any autofixable issues automatically", false)
     .option("-p, --package-manager <pm>", "Override package manager for dependency operations")
-    .action(async (opts) => await handlers.onDoctor(opts));
+    .action((opts) => handlers.onDoctor(opts));
 
   program
     .command("update")
@@ -85,7 +85,7 @@ export const buildProgram = (handlers: ProgramHandlers): Command => {
     .option("--dry-run", "Preview changes without applying them", false)
     .option("--no-install", "Skip dependency install")
     .option("-p, --package-manager <pm>", "Override package manager for dependency operations")
-    .action(async (opts) => await handlers.onUpdate(opts));
+    .action((opts) => handlers.onUpdate(opts));
 
   return program;
 };
