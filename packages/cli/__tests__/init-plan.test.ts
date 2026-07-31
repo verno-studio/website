@@ -65,6 +65,18 @@ describe("buildInitPlan", () => {
     expect(steps.find((s) => s.id === "restructure")?.willRun).toBe(true);
   });
 
+  test("lists restructure before install, matching execution order", () => {
+    const resolved = makeResolved({
+      addons: ["turborepo"] as const,
+    });
+    const { steps } = buildInitPlan(resolved, detected, "/tmp/demo");
+
+    const restructureIndex = steps.findIndex((s) => s.id === "restructure");
+    const installIndex = steps.findIndex((s) => s.id === "install");
+    expect(restructureIndex).toBeGreaterThanOrEqual(0);
+    expect(restructureIndex).toBeLessThan(installIndex);
+  });
+
   test("does not include restructure step when already monorepo", () => {
     const resolved = makeResolved({
       addons: ["turborepo", "ultracite"] as const,

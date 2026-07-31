@@ -80,13 +80,7 @@ export const buildInitPlan = (
 } => {
   const steps: InitStepPlan[] = [];
 
-  appendInstallStep(steps, {
-    doInstall: resolved.doInstall,
-    id: "install",
-    packageManager: resolved.packageManager,
-    projectDir,
-  });
-
+  // Mirrors execution order in init/index.ts: restructure runs before install.
   const needsRestructure = resolved.addons.includes("turborepo") && !detected.isMonorepo;
   if (needsRestructure) {
     steps.push({
@@ -95,6 +89,13 @@ export const buildInitPlan = (
       willRun: true,
     });
   }
+
+  appendInstallStep(steps, {
+    doInstall: resolved.doInstall,
+    id: "install",
+    packageManager: resolved.packageManager,
+    projectDir,
+  });
 
   appendShadcnSteps(steps, {
     addAllId: "shadcn-all",
