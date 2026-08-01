@@ -50,12 +50,8 @@ describe("app globals base layer contract", () => {
     const applied = [...templateBaseLayer().matchAll(/@apply (?<utilities>[^;]+);/gu)]
       .flatMap((match) => (match.groups?.utilities ?? "").split(/\s+/u))
       .filter(Boolean);
-    const designSystemOnly = new Set([
-      "font-heading",
-      "tracking-snug",
-      "tracking-tight",
-      "tracking-tighter",
-    ]);
+    // Not tracking-tight/-tighter: Tailwind ships both, the package only reprices them.
+    const designSystemOnly = new Set(["font-heading", "tracking-snug"]);
     expect(applied.filter((utility) => designSystemOnly.has(utility))).toEqual([]);
   });
 
