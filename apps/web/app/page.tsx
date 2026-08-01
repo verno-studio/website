@@ -1,3 +1,4 @@
+import { Showcase } from "@/components/showcase";
 import { Story } from "@/components/story";
 
 export const metadata = {
@@ -8,6 +9,11 @@ export const metadata = {
   title: "Verno Studio",
 };
 
-const Home = () => <Story />;
+const Home = () => (
+  <>
+    <Story />
+    <Showcase />
+  </>
+);
 
 export default Home;

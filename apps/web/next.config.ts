@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
 
   images: {
     formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        hostname: "*.netlify.app",
+        pathname: "/preview.png",
+        protocol: "https",
+      },
+    ],
   },
 };
 

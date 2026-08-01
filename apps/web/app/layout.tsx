@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { url } from "@/lib/url";
 import { Header } from "@/components/header";
 import { PHProvider } from "@/components/providers/posthog";
+import { Footer } from "@/components/footer";
 
 const title = "Verno Studio";
 const description =
@@ -79,17 +80,22 @@ interface RootLayoutProps {
 }
 
 const RootLayout = ({ children }: RootLayoutProps) => (
-  <html lang="en" suppressHydrationWarning>
+  <html lang="en" className={fonts} data-scroll-behavior="smooth" suppressHydrationWarning>
     <head>
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
     </head>
-    <body className={fonts}>
+    <body className="isolate relative">
       <PHProvider>
         <DesignSystemProvider>
-          <main className="relative z-10 mx-auto grid w-full max-w-2xl gap-16 sm:gap-24 px-4 py-16 sm:py-32">
-            <Header />
-            <div className="flex flex-1 flex-col gap-12">{children}</div>
-          </main>
+          <div className="flex min-w-0">
+            <div className="@container flex-1 min-w-0">
+              <main className="relative z-10 mx-auto grid w-full max-w-168 gap-16 @sm:gap-24 px-4 py-16 @sm:py-32">
+                <Header />
+                <div className="flex flex-1 flex-col gap-12">{children}</div>
+                <Footer />
+              </main>
+            </div>
+          </div>
         </DesignSystemProvider>
       </PHProvider>
     </body>
