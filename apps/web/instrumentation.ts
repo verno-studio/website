@@ -1,10 +1,9 @@
 export const onRequestError = async (
-  error: { digest: string } & Error,
+  requestError: { digest: string } & Error,
   request: { path: string; method: string },
   context: { routeType: string },
 ) => {
-  const { PostHog } = await import("posthog-node");
-  const { env } = await import("@/env");
+  const [{ PostHog }, { env }] = await Promise.all([import("posthog-node"), import("@/env")]);
 
   const client = new PostHog(env.NEXT_PUBLIC_POSTHOG_TOKEN, {
     flushAt: 1,
@@ -16,10 +15,10 @@ export const onRequestError = async (
     distinctId: "server",
     event: "$exception",
     properties: {
-      $exception_digest: error.digest,
-      $exception_message: error.message,
-      $exception_stack_trace_raw: error.stack,
-      $exception_type: error.name,
+      $exception_digest: requestError.digest,
+      $exception_message: requestError.message,
+      $exception_stack_trace_raw: requestError.stack,
+      $exception_type: requestError.name,
       $request_method: request.method,
       $request_path: request.path,
       $route_type: context.routeType,
