@@ -535,7 +535,8 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 /* Geist scale, taken from Vercel's brand foundation
    (https://vercel.com/geist/vercel-brand.css). The only raw values here;
    everything below derives, so light and dark cannot drift apart. Chromatic
-   steps exist only where color carries meaning — focus and destructive. */
+   steps exist only where color carries meaning — focus, destructive, and the
+   five chart series, which need hues a reader can tell apart. */
 :root,
 .light {
   color-scheme: light;
@@ -557,6 +558,10 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --gray-alpha-700: oklch(0 0 0 / 0.44);
   --blue-700: oklch(57.61% 0.2508 258.23);
   --red-700: oklch(62.56% 0.2524 23.03);
+  --purple-700: oklch(55.5% 0.3008 306.12);
+  --teal-700: oklch(64.92% 0.1572 181.95);
+  --amber-700: oklch(81.87% 0.1969 76.46);
+  --pink-700: oklch(63.52% 0.238 1.01);
   --shadow-tint: oklch(0 0 0 / 0.04);
 }
 
@@ -580,6 +585,10 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --gray-alpha-700: oklch(1 0 0 / 0.54);
   --blue-700: oklch(71.7% 0.1648 250.794);
   --red-700: oklch(62.56% 0.2234 23.03);
+  --purple-700: oklch(55.5% 0.2186 306.12);
+  --teal-700: oklch(64.92% 0.1403 181.95);
+  --amber-700: oklch(81.87% 0.1969 76.46);
+  --pink-700: oklch(63.52% 0.2346 1.01);
   --shadow-tint: oklch(0 0 0 / 0.5);
 }
 
@@ -606,6 +615,28 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --border-strong: var(--gray-alpha-700);
   --input: var(--gray-alpha-400);
   --ring: var(--blue-700);
+
+  /* \`shadcn add --all\` installs sidebar.tsx, which styles itself entirely
+     through these. Tailwind omits a utility whose theme key is missing, so
+     without them bg-sidebar and friends compile to nothing at all. Greys
+     only — a sidebar is chrome, not content. */
+  --sidebar: var(--background-100);
+  --sidebar-foreground: var(--gray-1000);
+  --sidebar-primary: var(--gray-1000);
+  --sidebar-primary-foreground: var(--background-100);
+  --sidebar-accent: var(--gray-200);
+  --sidebar-accent-foreground: var(--gray-1000);
+  --sidebar-border: var(--gray-alpha-400);
+  --sidebar-ring: var(--blue-700);
+
+  /* Series colors for chart.tsx. Spread around the wheel rather than ordered
+     by the palette, so adjacent series stay distinguishable: 258° 306° 182°
+     76° 1°. Red sits this one out — it means destructive everywhere else. */
+  --chart-1: var(--blue-700);
+  --chart-2: var(--purple-700);
+  --chart-3: var(--teal-700);
+  --chart-4: var(--amber-700);
+  --chart-5: var(--pink-700);
 
   /* Geist publishes two radii and nothing between them. */
   --radius-small: 0.375rem;
@@ -646,6 +677,21 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
 
   /* 4px steps land on Geist's space scale: 4 8 12 16 20 24 32 40 48 64. */
   --spacing: 0.25rem;
