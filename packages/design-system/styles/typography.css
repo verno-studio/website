@@ -1,0 +1,131 @@
+/* Typography Heading — https://vercel.com/geist/typography */
+
+@utility text-heading-72 {
+  @apply font-sans font-semibold text-[72px] leading-[72px] tracking-[-4.32px];
+}
+
+@utility text-heading-64 {
+  @apply font-sans font-semibold text-[64px] leading-[64px] tracking-[-3.84px];
+}
+
+@utility text-heading-56 {
+  @apply font-sans font-semibold text-[56px] leading-[56px] tracking-[-3.36px];
+}
+
+@utility text-heading-48 {
+  @apply font-sans font-semibold text-[48px] leading-[56px] tracking-[-2.88px];
+}
+
+@utility text-heading-40 {
+  @apply font-sans font-semibold text-[40px] leading-[48px] tracking-[-2.4px];
+}
+
+@utility text-heading-32 {
+  @apply font-sans font-semibold [&>strong]:font-medium [&>strong]:text-gray-900 text-[32px] leading-[40px] tracking-[-1.28px];
+}
+
+@utility text-heading-24 {
+  @apply font-sans font-semibold [&>strong]:font-medium [&>strong]:text-gray-900 text-[24px] leading-[32px] tracking-[-0.96px];
+}
+
+@utility text-heading-20 {
+  @apply font-sans font-semibold [&>strong]:font-medium [&>strong]:text-gray-900 text-[20px] leading-[26px] tracking-[-0.4px];
+}
+
+@utility text-heading-16 {
+  @apply font-sans font-semibold [&>strong]:font-medium [&>strong]:text-gray-900 text-[16px] leading-[24px] tracking-[-0.32px];
+}
+
+@utility text-heading-14 {
+  @apply font-sans font-semibold text-[14px] leading-[20px] tracking-[-0.28px];
+}
+
+/* Typography Button */
+
+@utility text-button-16 {
+  @apply font-sans font-medium text-[16px] leading-[20px];
+}
+
+@utility text-button-14 {
+  @apply font-sans font-medium text-[14px] leading-[20px];
+}
+
+@utility text-button-12 {
+  @apply font-sans font-medium text-[12px] leading-[16px];
+}
+
+/* Typography Label */
+
+@utility text-label-20 {
+  @apply font-sans font-normal text-[20px] leading-[32px];
+}
+
+@utility text-label-18 {
+  @apply font-sans font-normal text-[18px] leading-[20px];
+}
+
+@utility text-label-16 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[16px] leading-[20px];
+}
+
+@utility text-label-16-mono {
+  @apply font-mono font-normal text-[16px] leading-[20px];
+}
+
+@utility text-label-14 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[14px] leading-[20px];
+}
+
+@utility text-label-14-mono {
+  @apply font-mono font-normal text-[14px] leading-[20px];
+}
+
+@utility text-label-13 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[13px] leading-[16px];
+}
+
+@utility text-label-13-mono {
+  @apply font-mono font-normal text-[13px] leading-[20px];
+}
+
+@utility text-label-12 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[12px] leading-[16px];
+}
+
+@utility text-label-12-mono {
+  @apply font-mono font-normal text-[12px] leading-[16px];
+}
+
+/* Typography Copy */
+
+@utility text-copy-24 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[24px] leading-[36px];
+}
+
+@utility text-copy-20 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[20px] leading-[36px];
+}
+
+@utility text-copy-18 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[18px] leading-[28px];
+}
+
+@utility text-copy-16 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[16px] leading-[24px];
+}
+
+@utility text-copy-14 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[14px] leading-[20px];
+}
+
+@utility text-copy-14-mono {
+  @apply font-mono font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[14px] leading-[20px];
+}
+
+@utility text-copy-13 {
+  @apply font-sans font-normal [&>strong]:font-medium [&>strong]:text-gray-1000 text-[13px] leading-[18px];
+}
+
+@utility text-copy-13-mono {
+  @apply font-mono font-normal text-[13px] leading-[18px];
+}
