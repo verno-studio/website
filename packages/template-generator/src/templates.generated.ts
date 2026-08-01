@@ -532,133 +532,281 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 @source "../../../**/*.{ts,tsx}";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --shadow-2xs: var(--shadow-2xs);
-  --shadow-xs: var(--shadow-xs);
-  --shadow-sm: var(--shadow-sm);
-  --shadow: var(--shadow);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
-  --shadow-2xl: var(--shadow-2xl);
-}
-
+/* Geist scale, taken from Vercel's brand foundation
+   (https://vercel.com/geist/vercel-brand.css). The only raw values here;
+   everything below derives, so light and dark cannot drift apart. Chromatic
+   steps exist only where color carries meaning — focus and destructive. */
 :root,
 .light {
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0 0 0);
-  --popover: oklch(0.99 0 0);
-  --popover-foreground: oklch(0 0 0);
-  --primary: oklch(0 0 0);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.94 0 0);
-  --secondary-foreground: oklch(0 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.44 0 0);
-  --accent: oklch(0.94 0 0);
-  --accent-foreground: oklch(0 0 0);
-  --destructive: oklch(0.63 0.19 23.03);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.92 0 0);
-  --input: oklch(0.94 0 0);
-  --ring: oklch(0 0 0);
-  --chart-1: oklch(0.81 0.17 75.35);
-  --chart-2: oklch(0.55 0.22 264.53);
-  --chart-3: oklch(0.72 0 0);
-  --chart-4: oklch(0.92 0 0);
-  --chart-5: oklch(0.56 0 0);
-  --sidebar: oklch(0.99 0 0);
-  --sidebar-foreground: oklch(0 0 0);
-  --sidebar-primary: oklch(0 0 0);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.94 0 0);
-  --sidebar-accent-foreground: oklch(0 0 0);
-  --sidebar-border: oklch(0.94 0 0);
-  --sidebar-ring: oklch(0 0 0);
-  --radius: 0rem;
-  --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
-  --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.09);
-  --shadow-sm: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
-  --shadow: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 1px 2px -1px hsl(0 0% 0% / 0.18);
-  --shadow-md: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 2px 4px -1px hsl(0 0% 0% / 0.18);
-  --shadow-lg: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 4px 6px -1px hsl(0 0% 0% / 0.18);
-  --shadow-xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.18), 0px 8px 10px -1px hsl(0 0% 0% / 0.18);
-  --shadow-2xl: 0px 1px 2px 0px hsl(0 0% 0% / 0.45);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
+  color-scheme: light;
+
+  --background-100: oklch(1 0 0);
+  --background-200: oklch(0.984 0 0);
+  --gray-100: oklch(0.961 0 0);
+  --gray-200: oklch(0.94 0 0);
+  --gray-300: oklch(0.925 0 0);
+  --gray-400: oklch(0.937 0 0);
+  --gray-500: oklch(0.836 0 0);
+  --gray-600: oklch(0.732 0 0);
+  --gray-700: oklch(0.65 0 0);
+  --gray-800: oklch(0.59 0 0);
+  --gray-900: oklch(0.42 0 0);
+  --gray-1000: oklch(0.205 0 0);
+  --gray-alpha-300: oklch(0 0 0 / 0.1);
+  --gray-alpha-400: oklch(0 0 0 / 0.08);
+  --gray-alpha-700: oklch(0 0 0 / 0.44);
+  --blue-700: oklch(57.61% 0.2508 258.23);
+  --red-700: oklch(62.56% 0.2524 23.03);
+  --shadow-tint: oklch(0 0 0 / 0.04);
 }
 
 .dark {
-  --background: oklch(0 0 0);
-  --foreground: oklch(1 0 0);
-  --card: oklch(0.14 0 0);
-  --card-foreground: oklch(1 0 0);
-  --popover: oklch(0.18 0 0);
-  --popover-foreground: oklch(1 0 0);
-  --primary: oklch(1 0 0);
-  --primary-foreground: oklch(0 0 0);
-  --secondary: oklch(0.25 0 0);
-  --secondary-foreground: oklch(1 0 0);
-  --muted: oklch(0.23 0 0);
-  --muted-foreground: oklch(0.72 0 0);
-  --accent: oklch(0.32 0 0);
-  --accent-foreground: oklch(1 0 0);
-  --destructive: oklch(0.69 0.2 23.91);
-  --destructive-foreground: oklch(0 0 0);
-  --border: oklch(0.26 0 0);
-  --input: oklch(0.32 0 0);
-  --ring: oklch(0.72 0 0);
-  --chart-1: oklch(0.81 0.17 75.35);
-  --chart-2: oklch(0.58 0.21 260.84);
-  --chart-3: oklch(0.56 0 0);
-  --chart-4: oklch(0.44 0 0);
-  --chart-5: oklch(0.92 0 0);
-  --sidebar: oklch(0.18 0 0);
-  --sidebar-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(1 0 0);
-  --sidebar-primary-foreground: oklch(0 0 0);
-  --sidebar-accent: oklch(0.32 0 0);
-  --sidebar-accent-foreground: oklch(1 0 0);
-  --sidebar-border: oklch(0.32 0 0);
-  --sidebar-ring: oklch(0.72 0 0);
+  color-scheme: dark;
+
+  --background-100: oklch(0 0 0);
+  --background-200: oklch(0.027 0 0);
+  --gray-100: oklch(0.218 0 0);
+  --gray-200: oklch(0.239 0 0);
+  --gray-300: oklch(0.281 0 0);
+  --gray-400: oklch(0.301 0 0);
+  --gray-500: oklch(0.39 0 0);
+  --gray-600: oklch(0.623 0 0);
+  --gray-700: oklch(0.65 0 0);
+  --gray-800: oklch(0.59 0 0);
+  --gray-900: oklch(0.706 0 0);
+  --gray-1000: oklch(0.946 0 0);
+  --gray-alpha-300: oklch(1 0 0 / 0.13);
+  --gray-alpha-400: oklch(1 0 0 / 0.14);
+  --gray-alpha-700: oklch(1 0 0 / 0.54);
+  --blue-700: oklch(71.7% 0.1648 250.794);
+  --red-700: oklch(62.56% 0.2234 23.03);
+  --shadow-tint: oklch(0 0 0 / 0.5);
+}
+
+/* The contract \`shadcn add\` writes against. Every value is a Geist step, so a
+   generated component and a hand-written surface cannot disagree. */
+:root {
+  --background: var(--background-100);
+  --foreground: var(--gray-1000);
+  --card: var(--background-100);
+  --card-foreground: var(--gray-1000);
+  --popover: var(--background-100);
+  --popover-foreground: var(--gray-1000);
+  --primary: var(--gray-1000);
+  --primary-foreground: var(--background-100);
+  --secondary: var(--gray-100);
+  --secondary-foreground: var(--gray-1000);
+  --muted: var(--gray-100);
+  --muted-foreground: var(--gray-900);
+  --accent: var(--gray-200);
+  --accent-foreground: var(--gray-1000);
+  --destructive: var(--red-700);
+  --destructive-foreground: oklch(1 0 0);
+  --border: var(--gray-alpha-400);
+  --border-strong: var(--gray-alpha-700);
+  --input: var(--gray-alpha-400);
+  --ring: var(--blue-700);
+
+  /* Geist publishes two radii and nothing between them. */
+  --radius-small: 0.375rem;
+  --radius: 0.5rem;
+}
+
+@theme {
+  /* Geist replaces Tailwind's gray so a non-brand neutral cannot slip in. */
+  --color-gray-*: initial;
+}
+
+@theme inline {
+  --color-background-100: var(--background-100);
+  --color-background-200: var(--background-200);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
+  --color-gray-900: var(--gray-900);
+  --color-gray-1000: var(--gray-1000);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* 4px steps land on Geist's space scale: 4 8 12 16 20 24 32 40 48 64. */
+  --spacing: 0.25rem;
+
+  /* sm and md collapse onto the small step so the scale cannot drift into a
+     third value. */
+  --radius-sm: var(--radius-small);
+  --radius-md: var(--radius-small);
+  --radius-lg: var(--radius);
+
+  /* Elevation earns a hairline first and depth only when something floats. */
+  --shadow-border: 0 0 0 1px var(--border);
+  --shadow-xs: 0 1px 2px 0 var(--shadow-tint);
+  --shadow-sm: 0 2px 4px 0 var(--shadow-tint);
+  --shadow-md: 0 4px 8px 0 var(--shadow-tint);
+  --shadow-lg: 0 8px 16px 0 var(--shadow-tint);
+
+  /* Geist's published type roles, in Tailwind's slots, so \`text-*\` cannot
+     produce a size that isn't a role. */
+  --text-xs: 0.8125rem; /* label, metadata */
+  --text-xs--line-height: 1.125rem;
+  --text-sm: 0.875rem; /* compact */
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem; /* body */
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem; /* lede */
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem; /* heading-20 */
+  --text-xl--line-height: 1.625rem;
+  --text-xl--letter-spacing: -0.02em;
+  --text-2xl: 1.5rem; /* heading-24 */
+  --text-2xl--line-height: 2rem;
+  --text-2xl--letter-spacing: -0.04em;
+  --text-3xl: 2rem; /* title */
+  --text-3xl--line-height: 2.5rem;
+  --text-3xl--letter-spacing: -0.06em;
+  --text-4xl: 2.5rem; /* page title */
+  --text-4xl--line-height: 3rem;
+  --text-4xl--letter-spacing: -0.06em;
+  --text-5xl: 3rem; /* display */
+  --text-5xl--line-height: 3.5rem;
+  --text-5xl--letter-spacing: -0.06em;
+
+  --font-weight-heading: 450;
+  --tracking-tighter: -0.06em;
+  --tracking-tight: -0.04em;
+  --tracking-snug: -0.02em;
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    @apply border-border;
+  }
+
+  ::selection {
+    @apply bg-primary text-background;
+  }
+
+  html {
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 0,
+      "ss11" 1;
+    font-kerning: normal;
+    font-optical-sizing: auto;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply min-h-dvh bg-background text-base text-foreground;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading text-foreground;
+    text-wrap: balance;
+  }
+
+  /* Prose stays near 60-68 characters; rewrite before shrinking. */
+  h1 {
+    @apply max-w-[24ch] text-4xl;
+  }
+  h2 {
+    @apply text-2xl;
+  }
+  h3 {
+    @apply text-xl;
+  }
+  h4,
+  h5,
+  h6 {
+    @apply text-base tracking-snug;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Links inherit their color and carry a quiet rule that firms up on hover. */
+  a {
+    color: inherit;
+    text-decoration-color: var(--gray-600);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    @apply font-mono;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--gray-700);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  summary:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 `],
     ["packages/design-system/tsconfig.json", `{
