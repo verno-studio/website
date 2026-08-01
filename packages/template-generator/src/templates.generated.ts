@@ -532,11 +532,11 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 @source "../../../**/*.{ts,tsx}";
 
-/* Geist scale, taken from Vercel's brand foundation
-   (https://vercel.com/geist/vercel-brand.css). The only raw values here;
-   everything below derives, so light and dark cannot drift apart. Chromatic
-   steps exist only where color carries meaning — focus, destructive, and the
-   five chart series, which need hues a reader can tell apart. */
+/* The only raw values in this file. Everything below derives from them, so
+   light and dark cannot drift apart, and re-theming means editing these two
+   blocks and nothing else. Chromatic steps exist only where color carries
+   meaning — focus, destructive, and the five chart series, which need hues a
+   reader can tell apart. */
 :root,
 .light {
   color-scheme: light;
@@ -592,8 +592,9 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --shadow-tint: oklch(0 0 0 / 0.5);
 }
 
-/* The contract \`shadcn add\` writes against. Every value is a Geist step, so a
-   generated component and a hand-written surface cannot disagree. */
+/* The contract \`shadcn add\` writes against. Every value is a step from the
+   scale above, so a generated component and a hand-written surface cannot
+   disagree. */
 :root {
   --background: var(--background-100);
   --foreground: var(--gray-1000);
@@ -638,7 +639,8 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --chart-4: var(--amber-700);
   --chart-5: var(--pink-700);
 
-  /* Geist publishes two radii and nothing between them. */
+  /* Two radii, nothing between them — a third value is where a scale starts
+     to drift. */
   --radius-small: 0.375rem;
   --radius: 0.5rem;
 }
@@ -693,7 +695,7 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  /* 4px steps land on Geist's space scale: 4 8 12 16 20 24 32 40 48 64. */
+  /* 4px steps, so spacing lands on 4 8 12 16 20 24 32 40 48 64. */
   --spacing: 0.25rem;
 
   /* sm and md collapse onto the small step so the scale cannot drift into a
@@ -709,8 +711,8 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --shadow-md: 0 4px 8px 0 var(--shadow-tint);
   --shadow-lg: 0 8px 16px 0 var(--shadow-tint);
 
-  /* Geist's published type roles, in Tailwind's slots, so \`text-*\` cannot
-     produce a size that isn't a role. */
+  /* One slot per type role, so \`text-*\` cannot produce a size that isn't a
+     role. */
   --text-xs: 0.8125rem; /* label, metadata */
   --text-xs--line-height: 1.125rem;
   --text-sm: 0.875rem; /* compact */
@@ -751,7 +753,7 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   }
 
   ::selection {
-    @apply bg-primary text-background;
+    @apply bg-foreground text-background;
   }
 
   html {
