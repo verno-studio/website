@@ -9,7 +9,7 @@
   }
 
   li::marker {
-    color: --alpha(var(--text-gray-900) / 40%);
+    color: --alpha(var(--color-gray-900) / 40%);
   }
 
   :not(pre) > code {
