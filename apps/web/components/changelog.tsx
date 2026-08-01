@@ -21,31 +21,30 @@ const KIND_CLASS: Record<ChangeKind, string> = {
 
 const InlineContent = ({ nodes }: { nodes: InlineNode[] }) => (
   <>
-    {nodes.map((node, index) => {
-      const key = `${index}`;
+    {nodes.map((node) => {
       if (node.type === "text") {
-        return <span key={key}>{node.value}</span>;
+        return <span key={node.id}>{node.value}</span>;
       }
       if (node.type === "code") {
-        return <code key={key}>{node.value}</code>;
+        return <code key={node.id}>{node.value}</code>;
       }
       if (node.type === "strong") {
         return (
-          <strong key={key}>
+          <strong key={node.id}>
             <InlineContent nodes={node.nodes} />
           </strong>
         );
       }
       if (node.type === "em") {
         return (
-          <em key={key}>
+          <em key={node.id}>
             <InlineContent nodes={node.nodes} />
           </em>
         );
       }
       return (
         <a
-          key={key}
+          key={node.id}
           href={node.href}
           rel="noopener noreferrer"
           target="_blank"

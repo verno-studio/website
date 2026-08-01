@@ -4,11 +4,11 @@ import path from "node:path";
 export type ChangeKind = "major" | "minor" | "patch";
 
 export type InlineNode =
-  | { type: "text"; value: string }
-  | { type: "code"; value: string }
-  | { type: "link"; href: string; label: string }
-  | { type: "strong"; nodes: InlineNode[] }
-  | { type: "em"; nodes: InlineNode[] };
+  | { id: string; type: "text"; value: string }
+  | { id: string; type: "code"; value: string }
+  | { id: string; type: "link"; href: string; label: string }
+  | { id: string; type: "strong"; nodes: InlineNode[] }
+  | { id: string; type: "em"; nodes: InlineNode[] };
 
 export type ChangelogBlock =
   | { id: string; type: "paragraph"; nodes: InlineNode[] }
@@ -52,7 +52,7 @@ const parseInline = (text: string): InlineNode[] => {
       last.value += value;
       return;
     }
-    nodes.push({ type: "text", value });
+    nodes.push({ id: crypto.randomUUID(), type: "text", value });
   };
 
   while (i < text.length) {
@@ -61,7 +61,7 @@ const parseInline = (text: string): InlineNode[] => {
     if (ch === "`") {
       const end = text.indexOf("`", i + 1);
       if (end !== -1) {
-        nodes.push({ type: "code", value: text.slice(i + 1, end) });
+        nodes.push({ id: crypto.randomUUID(), type: "code", value: text.slice(i + 1, end) });
         i = end + 1;
         continue;
       }
@@ -74,7 +74,7 @@ const parseInline = (text: string): InlineNode[] => {
         if (hrefEnd !== -1) {
           const label = text.slice(i + 1, close);
           const href = text.slice(close + 2, hrefEnd);
-          nodes.push({ href, label, type: "link" });
+          nodes.push({ href, id: crypto.randomUUID(), label, type: "link" });
           i = hrefEnd + 1;
           continue;
         }
@@ -85,6 +85,7 @@ const parseInline = (text: string): InlineNode[] => {
       const end = text.indexOf("**", i + 2);
       if (end !== -1) {
         nodes.push({
+          id: crypto.randomUUID(),
           nodes: parseInline(text.slice(i + 2, end)),
           type: "strong",
         });
@@ -105,6 +106,7 @@ const parseInline = (text: string): InlineNode[] => {
         const end = text.indexOf("_", i + 1);
         if (end !== -1 && end > i + 1) {
           nodes.push({
+            id: crypto.randomUUID(),
             nodes: parseInline(text.slice(i + 1, end)),
             type: "em",
           });
