@@ -1,0 +1,49 @@
+/* Material — https://vercel.com/geist/materials (square corners by design) */
+
+@utility material-base {
+  box-shadow: var(--ds-shadow-border);
+  border-radius: var(--radius-md);
+  @apply bg-background-100;
+}
+
+@utility material-small {
+  box-shadow: var(--ds-shadow-border-small);
+  border-radius: var(--radius-md);
+  @apply bg-background-100;
+}
+
+@utility material-medium {
+  box-shadow: var(--ds-shadow-border-medium);
+  border-radius: var(--radius-lg);
+  @apply bg-background-100;
+}
+
+@utility material-large {
+  box-shadow: var(--ds-shadow-border-large);
+  border-radius: var(--radius-xl);
+  @apply bg-background-100;
+}
+
+@utility material-tooltip {
+  box-shadow: var(--ds-shadow-tooltip);
+  border-radius: var(--radius-md);
+  @apply bg-background-100;
+}
+
+@utility material-menu {
+  box-shadow: var(--ds-shadow-menu);
+  border-radius: var(--radius-xl);
+  @apply bg-background-100;
+}
+
+@utility material-modal {
+  box-shadow: var(--ds-shadow-modal);
+  border-radius: var(--radius-xl);
+  @apply bg-background-100;
+}
+
+@utility material-fullscreen {
+  box-shadow: var(--ds-shadow-fullscreen);
+  border-radius: var(--radius-2xl);
+  @apply bg-background-100;
+}

@@ -5,6 +5,9 @@ import { VERNO_APP_GLOBALS_BASE_LAYER, VERNO_APP_GLOBALS_BASE_MARKER } from "./c
 
 const trimEndWhitespace = (value: string): string => value.replace(/\s+$/u, "");
 
+export const hasStyleContract = (content: string): boolean =>
+  /@import\s+["'][^"']*\/styles\/globals\.css["']/u.test(content) || /--border\s*:/u.test(content);
+
 export const getAppGlobalsCssPath = (projectDir: string, monorepo: boolean): string =>
   monorepo
     ? path.join(projectDir, "apps", "web", "app", "globals.css")
@@ -56,6 +59,9 @@ export const ensureAppGlobalsBaseLayerAtEnd = async (
     return;
   }
   const raw = await readFile(cssPath, "utf-8");
+  if (!hasStyleContract(raw)) {
+    return;
+  }
   const next = ensureAppGlobalsBaseLayerContent(raw);
   if (next !== raw) {
     await writeFile(cssPath, next, "utf-8");

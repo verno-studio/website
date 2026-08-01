@@ -1,41 +1,25 @@
 @import "tailwindcss";
 @import "@vernostudio/design-system/styles/globals.css";
-@import "@vernostudio/design-system/styles/dotmatrix-loader.css";
-
-:root,
-.light {
-  --radius: 0.5rem !important;
-}
 
 @layer base {
   ul,
   ol {
-    @apply flex text-base leading-relaxed flex-col gap-2 pl-5 list-disc text-muted-foreground sm:text-sm;
+    @apply flex flex-col gap-2 pl-5 list-disc text-gray-900;
     overflow-wrap: anywhere;
   }
 
   li::marker {
-    color: --alpha(var(--color-muted-foreground) / 40%);
+    color: --alpha(var(--color-gray-900) / 40%);
   }
 
   :not(pre) > code {
-    @apply px-1 rounded-sm bg-muted font-mono text-foreground;
+    @apply rounded-sm bg-gray-100 px-1 text-gray-1000;
     overflow-wrap: anywhere;
-    /* Geist Mono's contextual alternates collapse `--` against adjacent
-       text (and across DOM boundaries with Shiki). See code-block.tsx for
-       the matching reset on syntax-highlighted blocks. */
+    /* Geist Mono's contextual alternates collapse `--` against adjacent text,
+       so a flag like `--filter` reads as an en dash. */
     font-feature-settings:
       "liga" 0,
       "calt" 0;
     font-variant-ligatures: none;
   }
-}
-
-.dark .shiki,
-.dark .shiki span {
-  color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
-  text-decoration: var(--shiki-dark-text-decoration) !important;
 }

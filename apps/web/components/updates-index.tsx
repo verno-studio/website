@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightIcon, SearchIcon } from "lucide-react";
+import { SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 
@@ -35,12 +35,12 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
       <div className="relative">
         <SearchIcon
           aria-hidden
-          className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+          className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gray-900"
         />
         <input
           aria-label="Search updates by version or content"
           autoComplete="off"
-          className="w-full rounded-md border bg-transparent py-2.5 pr-3 pl-9 text-sm placeholder:text-muted-foreground focus:outline-1 focus:outline-ring transition-colors duration-200 ease-out"
+          className="w-full material-base bg-transparent py-2.5 pr-3 pl-9 placeholder:text-gray-900 transition-colors duration-200 ease-out"
           id={inputId}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={`Search ${releases.length} updates by version or content...`}
@@ -50,36 +50,26 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="px-4 py-8 text-center text-sm text-muted-foreground">
+        <p className="px-4 py-8 text-center text-gray-900">
           No updates match &ldquo;{query}&rdquo;.
         </p>
       ) : (
-        <ul className="flex list-none flex-col gap-0 pl-0">
+        <ul className="flex list-none flex-col gap-7 @sm:gap-4 pl-0">
           {filtered.map(({ slug, version, itemCount, headline }) => (
-            <li className="border-b last:border-b-0" key={slug}>
+            <li key={slug}>
               <Link
-                className="group flex items-start gap-4 py-4 transition-colors duration-200 ease-out hover:text-foreground"
+                className="flex flex-col gap-2 -mx-3 px-3 @sm:py-3 rounded-md transition-colors duration-200 ease-out hover:bg-gray-100"
                 href={`/updates/${slug}`}
               >
-                <div className="flex flex-1 flex-col gap-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-sm text-foreground">v{version}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {itemCount} {itemCount === 1 ? "change" : "changes"}
-                    </span>
-                  </div>
-                  {headline ? (
-                    <p className="line-clamp-2 text-sm text-muted-foreground leading-relaxed">
-                      {headline}
-                    </p>
-                  ) : null}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-gray-1000">v{version}</span>
+                  <span className="text-xs text-gray-900">
+                    {itemCount} {itemCount === 1 ? "change" : "changes"}
+                  </span>
                 </div>
-                <span
-                  aria-hidden="true"
-                  className="flex shrink-0 -translate-x-0.5 scale-75 items-center justify-center text-gray-1000 opacity-0 transition-[opacity,translate,scale] duration-300 ease-out will-change-[translate,scale,opacity] group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100"
-                >
-                  <ArrowRightIcon className="size-4" />
-                </span>
+                {headline ? (
+                  <p className="line-clamp-2 text-gray-900 leading-relaxed">{headline}</p>
+                ) : null}
               </Link>
             </li>
           ))}

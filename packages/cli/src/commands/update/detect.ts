@@ -6,6 +6,7 @@ import { readCliPackageVersion } from "../../cli-version";
 import { detectVernoManifest } from "../shared/manifest";
 import { detectProjectState } from "../init/detect";
 import { VERNO_APP_GLOBALS_BASE_MARKER } from "../../constants";
+import { hasStyleContract } from "../../app-globals";
 
 export interface UpdateCheck {
   readonly id: string;
@@ -179,17 +180,21 @@ export const checkGlobalsCssBaseLayer = (projectDir: string, isMonorepo: boolean
     ? path.join(projectDir, "apps", "web", "app", "globals.css")
     : path.join(projectDir, "app", "globals.css");
 
-  let current = "missing";
+  let current: string;
   let needsUpdate = false;
+  let skipReason: string | undefined;
 
   if (existsSync(globalsCssPath)) {
     try {
       const content = readFileSync(globalsCssPath, "utf-8");
       if (content.includes(VERNO_APP_GLOBALS_BASE_MARKER)) {
         current = "present";
-      } else {
+      } else if (hasStyleContract(content)) {
         current = "missing base layer";
         needsUpdate = true;
+      } else {
+        current = "not applicable";
+        skipReason = "No design system or shadcn config defines the colour contract.";
       }
     } catch {
       current = "error reading";
@@ -205,6 +210,7 @@ export const checkGlobalsCssBaseLayer = (projectDir: string, isMonorepo: boolean
     expected: "present",
     id: "globals-css-layer",
     needsUpdate,
+    skipReason,
   };
 };
 

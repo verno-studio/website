@@ -1,16 +1,18 @@
-import { ExternalLink } from "./external-link";
+import { TurborepoIcon } from "@vernostudio/design-system/components/icons/turborepo";
+import { NextJsIcon } from "@vernostudio/design-system/components/icons/nextjs";
+import { ProseLink } from "@vernostudio/design-system/components/prose-link";
 import { Installer } from "./installer";
 
 export const Story = () => (
-  <article className="grid gap-6 [&_p]:text-pretty [&_p]:text-muted-foreground">
+  <article className="grid gap-6 [&_p]:text-pretty [&_p]:text-gray-900">
     <p>
       Today, starters can do in minutes what used to take days. But the surface is shallow. Nothing
       ships taste at the speed tools ship code.
     </p>
 
     <p>
-      <span className="text-foreground">I built Verno Studio</span> to close that gap. It is a
-      monorepo and a shared design system, tuned so experience and design engineering are the
+      <span className="text-gray-1000 font-serif">I built Verno Studio</span> to close that gap. It
+      is a monorepo and a shared design system, tuned so experience and design engineering are the
       default path, not an afterthought.
     </p>
 
@@ -23,14 +25,18 @@ export const Story = () => (
     </div>
 
     <p>
-      It sits on <ExternalLink href="https://turborepo.dev/">Turborepo</ExternalLink>,{" "}
-      <ExternalLink href="https://nextjs.org/">Next.js</ExternalLink>, and TypeScript, with a real
-      design system you can fork, extend, and keep coherent as the product grows.
-    </p>
-
-    <p>
-      Built by <ExternalLink href="https://www.pungrumpy.com">Noppakorn Kaewsalabnil</ExternalLink>,
-      focusing on the invisible details that make software feel great. The template is the product.
+      It sits on{" "}
+      <ProseLink href="https://turborepo.dev/">
+        <TurborepoIcon className="mr-1 mb-0.5 inline-block size-4" />
+        Turborepo
+      </ProseLink>
+      ,{" "}
+      <ProseLink href="https://nextjs.org/">
+        <NextJsIcon className="mr-1 mb-0.5 inline-block size-4" />
+        Next.js
+      </ProseLink>
+      , and TypeScript, with a real design system you can fork, extend, and keep coherent as the
+      product grows.
     </p>
   </article>
 );

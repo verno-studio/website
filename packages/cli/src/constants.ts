@@ -1,11 +1,17 @@
 /** Project metadata directory written by `verno create` / `verno init`. */
 export const VERNO_MANIFEST_DIR = ".verno" as const;
 
-/** Sync with `packages/template-generator/templates/frontends/next/app/globals.css.hbs`. */
+/**
+ * `shadcn init` rewrites the app stylesheet, so the CLI restores this block
+ * afterwards. It must stay byte-identical to the tail of
+ * `packages/template-generator/templates/frontends/next/app/globals.css.hbs`
+ * — `app-globals-contract.test.ts` fails the build if the two drift.
+ */
 export const VERNO_APP_GLOBALS_BASE_MARKER = "/* This layer is by Verno Studio */" as const;
 
 export const VERNO_APP_GLOBALS_BASE_LAYER = `${VERNO_APP_GLOBALS_BASE_MARKER}
 @layer base {
+  *,
   ::after,
   ::before,
   ::backdrop,
@@ -13,38 +19,91 @@ export const VERNO_APP_GLOBALS_BASE_LAYER = `${VERNO_APP_GLOBALS_BASE_MARKER}
     @apply border-border;
   }
   ::selection {
-    @apply bg-primary text-background;
-  }
-  * {
-    @apply border-border outline-ring/50;
+    @apply bg-foreground text-background;
   }
   html {
-    font-feature-settings: "ss01";
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 0,
+      "ss11" 1;
+    font-kerning: normal;
+    font-optical-sizing: auto;
+    font-synthesis: none;
     text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
   }
   body {
     @apply min-h-dvh;
     @apply bg-background text-foreground;
   }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-foreground;
+    font-weight: var(--font-weight-heading, 450);
+    text-wrap: balance;
+  }
+  /* Prose stays near 60-68 characters; rewrite before shrinking. */
+  h1 {
+    @apply max-w-[24ch] text-4xl;
+  }
+  h2 {
+    @apply text-2xl;
+  }
+  h3 {
+    @apply text-xl;
+  }
+  h4,
+  h5,
+  h6 {
+    @apply text-base;
+    letter-spacing: var(--tracking-snug, -0.02em);
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* Links inherit their color and carry a quiet rule that firms up on hover. */
+  a {
+    color: inherit;
+    text-decoration-color: var(--border);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+  code,
+  kbd,
+  samp,
+  pre {
+    @apply font-mono;
+  }
   input::placeholder,
   textarea::placeholder {
-    @apply text-muted-foreground;
+    color: var(--muted-foreground);
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     @apply cursor-pointer;
+  }
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  summary:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
   }
   a[target="_blank"],
   a[target="_blank"] *,
   a[href^="mailto:"],
   a[href^="mailto:"] * {
     @apply cursor-alias;
-  }
-  button:focus,
-  input:focus,
-  textarea:focus,
-  a:focus {
-    @apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -56,8 +115,7 @@ export const VERNO_APP_GLOBALS_BASE_LAYER = `${VERNO_APP_GLOBALS_BASE_MARKER}
       transition-duration: 0.01ms !important;
     }
   }
-}
-`;
+}`;
 
 export const VERNO_INITIAL_COMMIT_SUBJECT = "Initial commit from Verno Studio" as const;
 export const VERNO_INITIAL_COMMIT_BODY = "Generated-by: Verno Studio" as const;
