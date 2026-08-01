@@ -154,8 +154,21 @@ describe("Update Detect Actions", () => {
     // missing globals.css doesn't trigger base layer update by default
     expect(check.needsUpdate).toBe(false);
 
-    // File without marker
+    // No marker, and nothing defines the contract — adding the layer would break the build
     writeFileSync(cssPath, "body { color: red; }");
+    check = checkGlobalsCssBaseLayer(TEST_DIR, false);
+    expect(check.needsUpdate).toBe(false);
+    expect(check.current).toBe("not applicable");
+    expect(check.skipReason).toBeDefined();
+
+    // No marker, contract written in place as `shadcn init` leaves it
+    writeFileSync(cssPath, ":root { --border: oklch(0.92 0 0); }");
+    check = checkGlobalsCssBaseLayer(TEST_DIR, false);
+    expect(check.needsUpdate).toBe(true);
+    expect(check.current).toBe("missing base layer");
+
+    // No marker, contract supplied by a workspace design system
+    writeFileSync(cssPath, '@import "@acme/design-system/styles/globals.css";');
     check = checkGlobalsCssBaseLayer(TEST_DIR, false);
     expect(check.needsUpdate).toBe(true);
     expect(check.current).toBe("missing base layer");

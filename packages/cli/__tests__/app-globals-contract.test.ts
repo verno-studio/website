@@ -15,12 +15,17 @@ const HBS_PATH = path.join(
   "globals.css.hbs",
 );
 
-/** The block the scaffold writes: everything from the marker to end of file. */
+const readTemplate = (): string => readFileSync(HBS_PATH, "utf-8");
+
+/** The block the scaffold writes, without the handlebars guard around it. */
 const templateBaseLayer = (): string => {
-  const source = readFileSync(HBS_PATH, "utf-8");
+  const source = readTemplate();
   const start = source.indexOf(VERNO_APP_GLOBALS_BASE_MARKER);
   expect(start).toBeGreaterThanOrEqual(0);
-  return source.slice(start).trimEnd();
+  return source
+    .slice(start)
+    .replace(/\{\{\/if\}\}\s*$/u, "")
+    .trimEnd();
 };
 
 describe("app globals base layer contract", () => {
@@ -32,10 +37,16 @@ describe("app globals base layer contract", () => {
     expect(templateBaseLayer()).not.toContain("{{");
   });
 
+  test("the block is guarded by hasStyleContract — its utilities do not exist without one", () => {
+    const source = readTemplate();
+    const guard = source.lastIndexOf("{{#if hasStyleContract}}");
+    expect(guard).toBeGreaterThanOrEqual(0);
+    expect(guard).toBeLessThan(source.indexOf(VERNO_APP_GLOBALS_BASE_MARKER));
+    expect(source.trimEnd().endsWith("{{/if}}")).toBe(true);
+  });
+
   test("the block applies no utility the design-system package alone defines", () => {
-    // A generated project can omit the design-system package. `@apply` on an
-    // undefined utility fails the whole build, so the layer may only apply the
-    // shadcn contract (which `shadcn init` writes) or a Tailwind built-in.
+    // `@apply` on an undefined utility fails the whole build, not just the rule.
     const applied = [...templateBaseLayer().matchAll(/@apply (?<utilities>[^;]+);/gu)]
       .flatMap((match) => (match.groups?.utilities ?? "").split(/\s+/u))
       .filter(Boolean);
@@ -49,10 +60,7 @@ describe("app globals base layer contract", () => {
   });
 
   test("every var() outside the shadcn contract carries a fallback", () => {
-    // Contract variables are guaranteed either way — the design-system package
-    // defines them, and `shadcn init` writes them when it is absent. Anything
-    // else only exists with the package, so a bare var() silently loses its
-    // value in a project generated without one.
+    // These are guaranteed either way; anything else needs the package to exist.
     const contract = new Set([
       "--background",
       "--foreground",

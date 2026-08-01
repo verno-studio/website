@@ -111,7 +111,7 @@ describe("Update Apply Actions", () => {
     const cssDir = path.join(TEST_DIR, "app");
     mkdirSync(cssDir, { recursive: true });
     const cssPath = path.join(cssDir, "globals.css");
-    writeFileSync(cssPath, "body { color: blue; }\n");
+    writeFileSync(cssPath, ":root { --border: oklch(0.92 0 0); }\nbody { color: blue; }\n");
 
     const res = await updateGlobalsCssBaseLayer(TEST_DIR, false);
     expect(res.success).toBe(true);
@@ -119,6 +119,18 @@ describe("Update Apply Actions", () => {
     const content = readFileSync(cssPath, "utf-8");
     expect(content).toContain("/* This layer is by Verno Studio */");
     expect(content).toContain("@layer base");
+  });
+
+  test("updateGlobalsCssBaseLayer leaves a stylesheet with no colour contract alone", async () => {
+    const cssDir = path.join(TEST_DIR, "app");
+    mkdirSync(cssDir, { recursive: true });
+    const cssPath = path.join(cssDir, "globals.css");
+    const original = '@import "tailwindcss";\n';
+    writeFileSync(cssPath, original);
+
+    const res = await updateGlobalsCssBaseLayer(TEST_DIR, false);
+    expect(res.success).toBe(true);
+    expect(readFileSync(cssPath, "utf-8")).toBe(original);
   });
 
   test("updateManifestVersion updates manifest version to match current CLI version", async () => {

@@ -46,18 +46,22 @@ export interface HandlebarsTemplateContext {
   readonly ultracite: boolean;
   readonly hasDesignSystem: boolean;
   readonly hasTypescriptConfigPackage: boolean;
+  /** The design-system package declares the shadcn contract; `shadcn init` writes it otherwise. */
+  readonly hasStyleContract: boolean;
 }
 
 /** Values passed to Handlebars for every template file and optional templated paths. */
 export const buildHandlebarsContext = (config: ProjectConfig): HandlebarsTemplateContext => {
   const dsName = scoped(config.npmScope, "design-system");
   const tsConfigName = scoped(config.npmScope, "typescript-config");
+  const designSystem = hasDesignSystem(config);
   return {
     componentsStyle: componentsStyleFromShadcnPreset(config.shadcnPreset),
     devCommand: devScriptCommand(config.packageManager),
     dsName,
     frontend: config.frontend,
-    hasDesignSystem: hasDesignSystem(config),
+    hasDesignSystem: designSystem,
+    hasStyleContract: designSystem || config.ui === "shadcn",
     hasTypescriptConfigPackage: hasTypescriptConfigPackage(config),
     npmScope: config.npmScope,
     packageManagerField: packageManagerField(config.packageManager),

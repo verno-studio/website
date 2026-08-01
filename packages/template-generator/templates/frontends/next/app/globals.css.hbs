@@ -2,6 +2,7 @@
 {{#if hasDesignSystem}}
 @import "{{dsName}}/styles/globals.css";
 {{/if}}
+{{#if hasStyleContract}}
 /* This layer is by Verno Studio */
 @layer base {
   *,
@@ -109,3 +110,4 @@
     }
   }
 }
+{{/if}}

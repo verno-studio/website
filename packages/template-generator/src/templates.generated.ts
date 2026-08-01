@@ -129,6 +129,7 @@ dist
 {{#if hasDesignSystem}}
 @import "{{dsName}}/styles/globals.css";
 {{/if}}
+{{#if hasStyleContract}}
 /* This layer is by Verno Studio */
 @layer base {
   *,
@@ -235,7 +236,9 @@ dist
       transition-duration: 0.01ms !important;
     }
   }
-}`],
+}
+{{/if}}
+`],
     ["app/layout.tsx", `import "./globals.css";
 {{#if useShadcn}}
 import type { Metadata } from "next";

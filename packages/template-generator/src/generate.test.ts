@@ -46,6 +46,12 @@ const expectSingleAppGlobalsBaseLayer = (globalsCss: string): void => {
   expect(globalsCss.trimEnd().endsWith("}")).toBe(true);
 };
 
+/** With no design system and no shadcn, the layer's utilities do not exist — the app styles itself. */
+const expectNoGlobalsBaseLayer = (globalsCss: string): void => {
+  expect(globalsCss).not.toContain(vernoAppGlobalsBaseMarker);
+  expect(globalsCss.trim()).toBe('@import "tailwindcss";');
+};
+
 describe("defaultNpmScopeFromProjectName", () => {
   test("slugifies and strips invalid characters", () => {
     expect(defaultNpmScopeFromProjectName("My App!")).toBe("my-app");
@@ -105,7 +111,7 @@ describe("generate + writeTree", () => {
     const pkg = JSON.parse(pkgRaw) as { devDependencies?: Record<string, string> };
     expect(pkg.devDependencies?.ultracite).toBeDefined();
     const globalsCss = await readFile(path.join(out, "app", "globals.css"), "utf-8");
-    expectSingleAppGlobalsBaseLayer(globalsCss);
+    expectNoGlobalsBaseLayer(globalsCss);
   });
 
   test("Turborepo writes monorepo layout", async () => {
