@@ -56,11 +56,11 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
       ) : (
         <ul className="flex list-none flex-col gap-7 @sm:gap-4 pl-0">
           {filtered.map(({ slug, version, itemCount, headline }) => (
-            <li
-              key={slug}
-              className="group flex items-start gap-4 -mx-3 px-3 @sm:py-3 rounded-md transition-colors duration-200 ease-out hover:bg-gray-100"
-            >
-              <Link className="flex flex-1 flex-col gap-2" href={`/updates/${slug}`}>
+            <li key={slug}>
+              <Link
+                className="flex flex-col gap-2 -mx-3 px-3 @sm:py-3 rounded-md transition-colors duration-200 ease-out hover:bg-gray-100"
+                href={`/updates/${slug}`}
+              >
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-gray-1000">v{version}</span>
                   <span className="text-xs text-gray-900">
