@@ -612,11 +612,6 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --radius: 0.5rem;
 }
 
-@theme {
-  /* Geist replaces Tailwind's gray so a non-brand neutral cannot slip in. */
-  --color-gray-*: initial;
-}
-
 @theme inline {
   --color-background-100: var(--background-100);
   --color-background-200: var(--background-200);
