@@ -131,6 +131,7 @@ dist
 {{/if}}
 /* This layer is by Verno Studio */
 @layer base {
+  *,
   ::after,
   ::before,
   ::backdrop,
@@ -138,38 +139,91 @@ dist
     @apply border-border;
   }
   ::selection {
-    @apply bg-primary text-background;
-  }
-  * {
-    @apply border-border outline-ring/50;
+    @apply bg-foreground text-background;
   }
   html {
-    font-feature-settings: "ss01";
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 0,
+      "ss11" 1;
+    font-kerning: normal;
+    font-optical-sizing: auto;
+    font-synthesis: none;
     text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
   }
   body {
     @apply min-h-dvh;
     @apply bg-background text-foreground;
   }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-foreground;
+    font-weight: var(--font-weight-heading, 450);
+    text-wrap: balance;
+  }
+  /* Prose stays near 60-68 characters; rewrite before shrinking. */
+  h1 {
+    @apply max-w-[24ch] text-4xl;
+  }
+  h2 {
+    @apply text-2xl;
+  }
+  h3 {
+    @apply text-xl;
+  }
+  h4,
+  h5,
+  h6 {
+    @apply text-base;
+    letter-spacing: var(--tracking-snug, -0.02em);
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* Links inherit their color and carry a quiet rule that firms up on hover. */
+  a {
+    color: inherit;
+    text-decoration-color: var(--border);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+  code,
+  kbd,
+  samp,
+  pre {
+    @apply font-mono;
+  }
   input::placeholder,
   textarea::placeholder {
-    @apply text-muted-foreground;
+    color: var(--muted-foreground);
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     @apply cursor-pointer;
+  }
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  summary:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
   }
   a[target="_blank"],
   a[target="_blank"] *,
   a[href^="mailto:"],
   a[href^="mailto:"] * {
     @apply cursor-alias;
-  }
-  button:focus,
-  input:focus,
-  textarea:focus,
-  a:focus {
-    @apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -181,8 +235,7 @@ dist
       transition-duration: 0.01ms !important;
     }
   }
-}
-`],
+}`],
     ["app/layout.tsx", `import "./globals.css";
 {{#if useShadcn}}
 import type { Metadata } from "next";
@@ -741,115 +794,6 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
   --tracking-tighter: -0.06em;
   --tracking-tight: -0.04em;
   --tracking-snug: -0.02em;
-}
-
-@layer base {
-  *,
-  ::after,
-  ::before,
-  ::backdrop,
-  ::file-selector-button {
-    @apply border-border;
-  }
-
-  ::selection {
-    @apply bg-foreground text-background;
-  }
-
-  html {
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 0,
-      "ss11" 1;
-    font-kerning: normal;
-    font-optical-sizing: auto;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  body {
-    @apply min-h-dvh bg-background text-base text-foreground;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-heading text-foreground;
-    text-wrap: balance;
-  }
-
-  /* Prose stays near 60-68 characters; rewrite before shrinking. */
-  h1 {
-    @apply max-w-[24ch] text-4xl;
-  }
-  h2 {
-    @apply text-2xl;
-  }
-  h3 {
-    @apply text-xl;
-  }
-  h4,
-  h5,
-  h6 {
-    @apply text-base tracking-snug;
-  }
-
-  p {
-    text-wrap: pretty;
-  }
-
-  /* Links inherit their color and carry a quiet rule that firms up on hover. */
-  a {
-    color: inherit;
-    text-decoration-color: var(--gray-600);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-  }
-  a:hover {
-    text-decoration-color: currentColor;
-  }
-
-  code,
-  kbd,
-  samp,
-  pre {
-    @apply font-mono;
-  }
-
-  input::placeholder,
-  textarea::placeholder {
-    color: var(--gray-700);
-  }
-
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    @apply cursor-pointer;
-  }
-
-  a:focus-visible,
-  button:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  summary:focus-visible,
-  textarea:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 3px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      scroll-behavior: auto !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
 }
 `],
     ["packages/design-system/tsconfig.json", `{
