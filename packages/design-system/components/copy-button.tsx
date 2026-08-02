@@ -9,19 +9,21 @@ import { cn } from "../lib/utils";
 
 interface CopyButtonProps extends Omit<ComponentProps<"button">, "onClick"> {
   readonly value: string;
+  readonly onCopy?: () => void;
 }
 
-export const CopyButton = ({ value, className, ...props }: CopyButtonProps) => {
+export const CopyButton = ({ value, onCopy, className, ...props }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
+      onCopy?.();
     } catch {
       // clipboard not available
     }
-  }, [value]);
+  }, [value, onCopy]);
 
   useEffect(() => {
     if (!copied) {

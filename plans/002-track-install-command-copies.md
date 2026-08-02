@@ -1,6 +1,6 @@
 # 002 — Fire a real analytics event when the install command is copied
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7672258
 - **Severity**: HIGH
 - **Category**: Maintainability & architecture
@@ -68,6 +68,7 @@ Make `Installer` a client component that supplies the callback:
 
     import { CopyButton } from "@vernostudio/design-system/components/copy-button";
     import { usePostHog } from "posthog-js/react";
+    import { useCallback } from "react";
 
     interface InstallerProps {
       readonly command: string;
@@ -75,6 +76,10 @@ Make `Installer` a client component that supplies the callback:
 
     export const Installer = ({ command }: InstallerProps) => {
       const posthog = usePostHog();
+
+      const handleCopy = useCallback(() => {
+        posthog.capture("install_command_copied", { command });
+      }, [posthog, command]);
 
       return (
         <div className="flex w-full items-center material-medium gap-3 py-1.5 pr-1.5 pl-4">
@@ -84,11 +89,7 @@ Make `Installer` a client component that supplies the callback:
           <pre className="flex-1 truncate">
             <code className="shimmer select-all text-gray-900">{command}</code>
           </pre>
-          <CopyButton
-            aria-label="Copy install command"
-            onCopy={() => posthog.capture("install_command_copied", { command })}
-            value={command}
-          />
+          <CopyButton aria-label="Copy install command" onCopy={handleCopy} value={command} />
         </div>
       );
     };
@@ -136,10 +137,11 @@ Make `Installer` a client component that supplies the callback:
 ## Verification
 
 - **Mechanical**:
-  - `npx react-doctor@latest --verbose --scope changed` — score stays at 100. In
-    particular confirm no `jsx-no-new-function-as-prop` diagnostic appears for
-    the inline `onCopy` arrow; if it does, hoist it into a `useCallback` keyed on
-    `[posthog, command]`.
+  - `npx react-doctor@latest --verbose --scope changed` — score stays at 100.
+    `handleCopy` is wrapped in `useCallback` keyed on `[posthog, command]` both
+    to avoid `jsx-no-new-function-as-prop` and because `onCopy` is now a
+    dependency of `CopyButton`'s own `useCallback` — an inline arrow would
+    rebuild that callback on every render.
   - `bun run typecheck`, `bun run lint`, `bun run test`.
   - `grep -rn "data-track" apps packages` returns nothing.
 - **Behavior check**:

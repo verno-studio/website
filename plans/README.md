@@ -14,7 +14,7 @@ Each plan is self-contained. An executor needs only the plan file and the repo.
 | #   | Plan                                                                                 | Severity | Category           | Status |
 | --- | ------------------------------------------------------------------------------------ | -------- | ------------------ | ------ |
 | 001 | [Report and recover from route-level errors](001-report-and-recover-route-errors.md) | HIGH     | Bugs & correctness | DONE   |
-| 002 | [Track install command copies](002-track-install-command-copies.md)                  | HIGH     | Maintainability    | TODO   |
+| 002 | [Track install command copies](002-track-install-command-copies.md)                  | HIGH     | Maintainability    | DONE   |
 | 003 | [Capture client-side pageviews](003-capture-client-side-pageviews.md)                | MEDIUM   | Bugs & correctness | TODO   |
 | 004 | [Deterministic changelog node ids](004-deterministic-changelog-node-ids.md)          | MEDIUM   | Bugs & correctness | TODO   |
 | 005 | [Announce updates search results](005-announce-updates-search-results.md)            | MEDIUM   | Accessibility      | TODO   |
