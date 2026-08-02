@@ -5,7 +5,7 @@ import type { ComponentProps } from "react";
 
 import { CheckIcon } from "@/components/icons/check";
 import { CopyIcon } from "@/components/icons/copy";
-import { cn } from "@vernostudio/design-system/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface CopyButtonProps extends Omit<ComponentProps<"button">, "onClick"> {
   readonly value: string;

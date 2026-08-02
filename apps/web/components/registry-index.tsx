@@ -66,9 +66,11 @@ export const RegistryIndex = ({ items }: RegistryIndexProps) => {
             >
               <span className="flex w-full items-center justify-between gap-2 font-medium">
                 <span className="flex-1 text-gray-1000">{title}</span>
-                <span className="shrink-0 font-normal text-gray-900 text-xs">
-                  {fileCount} {fileCount === 1 ? "file" : "files"}
-                </span>
+                {fileCount > 0 ? (
+                  <span className="shrink-0 font-normal text-gray-900 text-xs">
+                    {fileCount} {fileCount === 1 ? "file" : "files"}
+                  </span>
+                ) : null}
               </span>
               <span className="text-gray-900 leading-relaxed">{description}</span>
             </Link>

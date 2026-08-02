@@ -1,4 +1,4 @@
-import { cn } from "@vernostudio/design-system/lib/utils";
+import { cn } from "@/lib/utils";
 import type { ChangeKind, ChangelogBlock, ChangelogRelease, InlineNode } from "@/lib/changelog";
 
 const KIND_LABEL: Record<ChangeKind, string> = {

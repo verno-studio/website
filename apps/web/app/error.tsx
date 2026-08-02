@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@vernostudio/design-system/lib/utils";
+import { cn } from "@/lib/utils";
 import posthog from "posthog-js";
 import { useEffect } from "react";
 

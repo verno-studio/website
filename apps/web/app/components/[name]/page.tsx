@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Fragment } from "react";
 import { notFound } from "next/navigation";
 
 import { Installer } from "@/components/installer";
@@ -42,6 +43,8 @@ const ComponentPage = async ({ params }: ComponentPageProps) => {
 
   const preview = getPreview(item.name);
   const dependencies = item.dependencies ?? [];
+  // The light block is the source of truth; dark redeclares the same names.
+  const tokens = Object.entries(item.cssVars?.light ?? {});
 
   return (
     <>
@@ -79,6 +82,24 @@ const ComponentPage = async ({ params }: ComponentPageProps) => {
               </li>
             ))}
           </ul>
+        </section>
+      ) : null}
+
+      {tokens.length > 0 ? (
+        <section className="flex flex-col gap-3">
+          <h2 className="font-medium text-gray-1000">Tokens</h2>
+          <p className="text-gray-900">
+            {tokens.length} variables land in your stylesheet. Dark mode redeclares the same names,
+            so nothing downstream has to know which mode it is in.
+          </p>
+          <dl className="grid max-h-96 grid-cols-[auto_1fr] gap-x-4 gap-y-1 overflow-y-auto material-large px-4 py-4 font-mono text-sm">
+            {tokens.map(([name, value]) => (
+              <Fragment key={name}>
+                <dt className="text-gray-1000">--{name}</dt>
+                <dd className="truncate text-gray-900">{value}</dd>
+              </Fragment>
+            ))}
+          </dl>
         </section>
       ) : null}
 

@@ -66,48 +66,18 @@ const readCssVars = () => {
 
 const items = [
   {
-    dependencies: ["clsx", "tailwind-merge"],
-    description: "Merges Tailwind classes without letting later ones lose to specificity.",
-    files: [{ path: "lib/utils.ts", type: "registry:lib" }],
-    name: "utils",
-    title: "cn",
-    type: "registry:lib",
-  },
-  {
     cssVars: readCssVars(),
     dependencies: ["tw-animate-css"],
     description:
       "The color scale plus the variables shadcn components read, so a component from " +
       "either registry agrees with the other on what --background means.",
+    docs:
+      "Everything here is a CSS variable, so it lands in your globals.css and nothing " +
+      "else changes. `cn` is not published alongside it — `shadcn init` already writes one.",
     files: [],
     name: "theme",
     title: "Theme",
     type: "registry:theme",
-  },
-  {
-    dependencies: ["next-themes"],
-    description: "Wires the dark variant to a class on <html>, following the system by default.",
-    files: [
-      {
-        path: "components/providers/client.tsx",
-        target: "components/providers/client.tsx",
-        type: "registry:component",
-      },
-    ],
-    name: "theme-provider",
-    title: "Theme Provider",
-    type: "registry:component",
-  },
-  {
-    dependencies: ["next"],
-    description: "Geist, Geist Mono and Libre Baskerville as CSS variables.",
-    docs:
-      "Apply the exported `fonts` class to <html>. Next.js only — the one item here that " +
-      "imports next/font/google, and so the one that will not work anywhere else.",
-    files: [{ path: "lib/fonts.ts", type: "registry:lib" }],
-    name: "fonts",
-    title: "Fonts",
-    type: "registry:lib",
   },
 ];
 

@@ -1,6 +1,6 @@
 import "./globals.css";
-import { fonts } from "@vernostudio/design-system/lib/fonts";
-import { DesignSystemProvider } from "@vernostudio/design-system/components/providers/client";
+import { fonts } from "@/lib/fonts";
+import { DesignSystemProvider } from "@/components/providers/client";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { url } from "@/lib/url";
