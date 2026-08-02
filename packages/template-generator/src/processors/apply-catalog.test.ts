@@ -63,7 +63,7 @@ describe("applyDependencyCatalog", () => {
     expect(tree["packages/design-system/package.json"]).toBeUndefined();
   });
 
-  test("when ui is shadcn, the app gets the theme provider, toast and cn dependencies", () => {
+  test("when ui is shadcn, the app gets the theme provider and cn dependencies", () => {
     const config: ProjectConfig = { ...fullMonorepo, ui: "shadcn" };
     const vfs = virtualFileSystemFromFileTree(buildInterpolatedFileTree(config));
     applyDependencyCatalog(vfs, config);
@@ -73,7 +73,6 @@ describe("applyDependencyCatalog", () => {
       devDependencies?: Record<string, string>;
     };
     expect(web.dependencies?.["next-themes"]).toBe(dependencyVersionMap["next-themes"]);
-    expect(web.dependencies?.sonner).toBe(dependencyVersionMap.sonner);
     expect(web.dependencies?.clsx).toBe(dependencyVersionMap.clsx);
     expect(web.dependencies?.["tailwind-merge"]).toBe(dependencyVersionMap["tailwind-merge"]);
   });

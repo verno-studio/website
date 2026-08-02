@@ -16,7 +16,6 @@ export const dependencyVersionMap = {
   "next-themes": "^0.4.6",
   react: "^19.0.0",
   "react-dom": "^19.0.0",
-  sonner: "^2.0.5",
   "tailwind-merge": "^3.5.0",
   tailwindcss: "^4.0.0",
   turbo: "^2.9.0",

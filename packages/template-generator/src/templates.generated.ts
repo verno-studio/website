@@ -324,16 +324,15 @@ export default Home;
     ["components/providers/client.tsx", `"use client";
 
 import { ThemeProvider } from "next-themes";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Toaster } from "@/components/ui/sonner";
 import type { PropsWithChildren } from "react";
 
+// Depends on nothing but next-themes, which is a real package. Wrapping in
+// \`TooltipProvider\` or rendering a \`<Toaster />\` here would import
+// components/ui files that do not exist until \`shadcn add tooltip sonner\` has
+// run — add them once you have.
 export const DesignSystemProvider = ({ children }: PropsWithChildren) => (
   <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange enableSystem>
-    <TooltipProvider delayDuration={0}>
-      {children}
-      <Toaster />
-    </TooltipProvider>
+    {children}
   </ThemeProvider>
 );
 `],

@@ -29,7 +29,8 @@ const webAppDeps: {
   devDependencies: nextWebAppDevDependencies,
 };
 
-const SHADCN_UI_RUNTIME: readonly AvailableDependencies[] = ["next-themes", "sonner"];
+/** What the scaffolded provider imports. `shadcn add` installs its own. */
+const SHADCN_UI_RUNTIME: readonly AvailableDependencies[] = ["next-themes"];
 
 /** `lib/utils.ts` (cn) lives in the app, so its two dependencies do too. */
 const SHADCN_STANDALONE_LIB_UTILS: readonly AvailableDependencies[] = ["clsx", "tailwind-merge"];
