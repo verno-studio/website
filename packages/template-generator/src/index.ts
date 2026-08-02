@@ -28,6 +28,7 @@ export {
   type PackageJsonRecord,
 } from "./utils/add-deps";
 export {
+  getRegistries,
   getShadcnExecSpec,
   getUltraciteExecSpec,
   packageManagerField,

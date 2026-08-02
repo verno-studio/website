@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { getRegistries, TOOLING } from "@vernostudio/template-generator";
 import { detectProjectState } from "../init/detect";
 import { detectVernoManifest } from "../shared/manifest";
 import type { VernoManifest } from "../shared/manifest";
@@ -12,6 +13,17 @@ export interface Diagnostic {
   readonly fixable: boolean;
   readonly details?: string;
 }
+
+const hasVernoRegistry = (config: unknown): boolean => {
+  if (typeof config !== "object" || config === null) {
+    return false;
+  }
+  const registries = (config as Record<string, unknown>).registries;
+  if (typeof registries !== "object" || registries === null) {
+    return false;
+  }
+  return TOOLING.registryNamespace in registries;
+};
 
 export const runManifestAudit = (projectDir: string): Diagnostic[] => {
   const diagnostics: Diagnostic[] = [];
@@ -276,7 +288,7 @@ export const runShadcnAudit = (
 
   if (existsSync(configPath)) {
     try {
-      JSON.parse(readFileSync(configPath, "utf-8"));
+      const config: unknown = JSON.parse(readFileSync(configPath, "utf-8"));
       diagnostics.push({
         fixable: false,
         id: "shadcn-ok",
@@ -284,6 +296,16 @@ export const runShadcnAudit = (
         severity: "ok",
         type: "shadcn",
       });
+      if (!hasVernoRegistry(config)) {
+        diagnostics.push({
+          details: `Add "registries": ${JSON.stringify(getRegistries())} to components.json to install components with \`shadcn add ${TOOLING.registryNamespace}/<name>\`.`,
+          fixable: false,
+          id: "shadcn-registries-missing",
+          message: "components.json does not point at the Verno Studio registry.",
+          severity: "warning",
+          type: "shadcn",
+        });
+      }
     } catch {
       diagnostics.push({
         fixable: false,

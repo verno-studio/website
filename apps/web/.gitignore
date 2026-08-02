@@ -6,6 +6,10 @@
 .pnp.js
 .yarn/install-state.gz
 
+# registry — `shadcn build` writes these from packages/design-system/registry.json
+# on every build, so they are an artifact rather than source.
+/public/r
+
 # testing
 /coverage
 

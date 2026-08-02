@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ComponentProps } from "react";
 
-import { Check } from "./icons/check";
-import { Copy } from "./icons/copy";
-import { cn } from "../lib/utils";
+import { CheckIcon } from "@vernostudio/design-system/components/icons/check";
+import { CopyIcon } from "@vernostudio/design-system/components/icons/copy";
+import { cn } from "@vernostudio/design-system/lib/utils";
 
 interface CopyButtonProps extends Omit<ComponentProps<"button">, "onClick"> {
   readonly value: string;
@@ -49,14 +49,14 @@ export const CopyButton = ({ value, onCopy, className, ...props }: CopyButtonPro
       aria-label="Copy to clipboard"
       {...props}
     >
-      <Copy
+      <CopyIcon
         aria-hidden
         className={cn(
           "size-4 transition-all duration-200 ease-out",
           copied ? "opacity-0 scale-[0.6] blur-xs" : "opacity-100 scale-100 blur-0",
         )}
       />
-      <Check
+      <CheckIcon
         aria-hidden
         className={cn(
           "absolute inset-0 size-4 m-auto transition-all duration-200 ease-out",

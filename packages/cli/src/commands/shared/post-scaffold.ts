@@ -10,6 +10,7 @@ import {
 } from "../../pm-exec";
 import type { UltraciteInitMode } from "../../pm-exec";
 import type { UltraciteLinterId } from "../../ultracite-linter";
+import { ensureComponentsJsonRegistries } from "../../components-json";
 import { runProcess } from "../../run";
 
 export const getShadcnWorkingDirectory = (
@@ -87,6 +88,9 @@ export const runShadcnIfEnabled = async (options: {
       });
     }
   }
+
+  // `shadcn apply` rewrote components.json; put the registry namespace back.
+  await ensureComponentsJsonRegistries(options.projectDir, options.monorepoWithDesignSystem);
 };
 
 export const runUltraciteIfEnabled = async (

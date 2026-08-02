@@ -7,6 +7,11 @@ export const TOOLING = {
     npm: "10.9.0",
     pnpm: "9.15.0",
   } as const satisfies Record<PackageManager, string>,
+  // The namespace generated projects resolve `shadcn add @vernostudio/<item>`
+  // against. `{name}` is shadcn's placeholder, not a template variable — it is
+  // substituted by the shadcn CLI at install time, not by Handlebars.
+  registryNamespace: "@vernostudio" as const,
+  registryUrl: "https://verno-studio.vercel.app/r/{name}.json" as const,
   shadcnExecPackage: "shadcn@latest" as const,
   // Pinned to the dependency catalog so the executed CLI matches the version
   // written into generated projects; bump both via the catalog in one place.
@@ -14,6 +19,10 @@ export const TOOLING = {
 } as const;
 
 export const getShadcnExecSpec = (): string => TOOLING.shadcnExecPackage;
+
+export const getRegistries = (): Record<string, string> => ({
+  [TOOLING.registryNamespace]: TOOLING.registryUrl,
+});
 
 export const getUltraciteExecSpec = (): string => TOOLING.ultraciteExecPackage;
 

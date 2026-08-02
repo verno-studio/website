@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import type { ProjectConfig } from "./config";
 import { buildInterpolatedFileTree } from "./generator";
-import { defaultNpmScopeFromProjectName, generate, writeTree } from "./index";
+import { defaultNpmScopeFromProjectName, generate, getRegistries, writeTree } from "./index";
 
 let dir: string;
 
@@ -148,6 +148,9 @@ describe("generate + writeTree", () => {
     );
     expect(componentsJson).toContain(`"style": "radix-lyra"`);
     expect(componentsJson).toContain(`"components": "${ds}/components"`);
+    // The registry namespace ships with the scaffold, so `shadcn add
+    // @vernostudio/<name>` works in a fresh project without extra setup.
+    expect(JSON.parse(componentsJson).registries).toEqual(getRegistries());
 
     const appCss = await readFile(path.join(out, "apps", "web", "app", "globals.css"), "utf-8");
     expect(appCss).toContain(`@import "${ds}/styles/globals.css";`);

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "aliases": {
+    "components": "@vernostudio/design-system/components",
+    "hooks": "@vernostudio/design-system/hooks",
+    "lib": "@vernostudio/design-system/lib",
+    "ui": "@vernostudio/design-system/components",
+    "utils": "@vernostudio/design-system/lib/utils"
+  },
+  "iconLibrary": "lucide",
+  "registries": {},
+  "rsc": true,
+  "tailwind": {
+    "baseColor": "neutral",
+    "config": "",
+    "css": "styles/globals.css",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "tsx": true
+}
