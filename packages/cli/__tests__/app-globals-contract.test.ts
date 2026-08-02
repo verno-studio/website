@@ -37,9 +37,11 @@ describe("app globals base layer contract", () => {
     expect(templateBaseLayer()).not.toContain("{{");
   });
 
-  test("the block is guarded by hasStyleContract — its utilities do not exist without one", () => {
+  test("the block is guarded by useShadcn — its utilities do not exist without the contract", () => {
     const source = readTemplate();
-    const guard = source.lastIndexOf("{{#if hasStyleContract}}");
+    // `shadcn apply` writes the token contract these utilities resolve against,
+    // so the block only makes sense when shadcn is on.
+    const guard = source.lastIndexOf("{{#if useShadcn}}");
     expect(guard).toBeGreaterThanOrEqual(0);
     expect(guard).toBeLessThan(source.indexOf(VERNO_APP_GLOBALS_BASE_MARKER));
     expect(source.trimEnd().endsWith("{{/if}}")).toBe(true);
@@ -50,9 +52,9 @@ describe("app globals base layer contract", () => {
     const applied = [...templateBaseLayer().matchAll(/@apply (?<utilities>[^;]+);/gu)]
       .flatMap((match) => (match.groups?.utilities ?? "").split(/\s+/u))
       .filter(Boolean);
-    // Not tracking-tight/-tighter: Tailwind ships both, the package only reprices them.
-    const designSystemOnly = new Set(["font-heading", "tracking-snug"]);
-    expect(applied.filter((utility) => designSystemOnly.has(utility))).toEqual([]);
+    // Not tracking-tight/-tighter: Tailwind ships both, the theme only reprices them.
+    const outsideContract = new Set(["font-heading", "tracking-snug"]);
+    expect(applied.filter((utility) => outsideContract.has(utility))).toEqual([]);
   });
 
   test("every var() outside the shadcn contract carries a fallback", () => {
