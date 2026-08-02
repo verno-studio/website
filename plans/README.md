@@ -17,6 +17,7 @@ Each plan is self-contained. An executor needs only the plan file and the repo.
 | 002 | [Track install command copies](002-track-install-command-copies.md)                  | HIGH     | Maintainability    | TODO   |
 | 003 | [Capture client-side pageviews](003-capture-client-side-pageviews.md)                | MEDIUM   | Bugs & correctness | TODO   |
 | 004 | [Deterministic changelog node ids](004-deterministic-changelog-node-ids.md)          | MEDIUM   | Bugs & correctness | TODO   |
+| 005 | [Announce updates search results](005-announce-updates-search-results.md)            | MEDIUM   | Accessibility      | TODO   |
 
 ## Recommended order
 
@@ -25,6 +26,7 @@ Each plan is self-contained. An executor needs only the plan file and the repo.
 3. **003** — one line, and it fixes the denominator for every funnel 002 feeds.
 4. **004** — the largest diff here; do it when nothing else is touching
    `lib/changelog.ts`.
+5. **005** — independent of everything above.
 
 ## Dependencies
 
