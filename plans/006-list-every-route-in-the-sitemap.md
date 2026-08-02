@@ -1,6 +1,6 @@
 # 006 — List every route in the sitemap
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7672258
 - **Severity**: LOW
 - **Category**: Maintainability & architecture
