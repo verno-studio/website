@@ -4,10 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Repo root — the design-system package ships the components this app renders,
-   so its class names have to be scanned from here too. */
-@source "../../../**/*.{ts,tsx}";
-
 /* Viewport — https://vercel.com/home */
 
 @theme inline {
