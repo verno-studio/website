@@ -25,13 +25,11 @@ const buildShadcnCliInvocation = (
   subcommands: readonly string[],
 ): { readonly args: readonly string[]; readonly file: string } => {
   const spec = getShadcnExecSpec();
-  // Avoid `bun x shadcn@latest`: Bun often stalls after resolving the ephemeral CLI lockfile on some setups (e.g. WSL2).
-  if (pm === "bun") {
-    return { args: ["--yes", spec, ...subcommands], file: "npx" };
-  }
   if (pm === "pnpm") {
     return { args: ["dlx", spec, ...subcommands], file: "pnpm" };
   }
+  // bun falls through to npx as well: `bun x shadcn@latest` often stalls after
+  // resolving the ephemeral CLI lockfile on some setups (e.g. WSL2).
   return { args: ["--yes", spec, ...subcommands], file: "npx" };
 };
 
