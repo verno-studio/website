@@ -41,7 +41,7 @@ const ComponentPage = async ({ params }: ComponentPageProps) => {
     notFound();
   }
 
-  const preview = getPreview(item.name);
+  const preview = getPreview(item);
   const dependencies = item.dependencies ?? [];
   // The light block is the source of truth; dark redeclares the same names.
   const tokens = Object.entries(item.cssVars?.light ?? {});

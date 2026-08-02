@@ -21,7 +21,7 @@ const Home = () => {
   const components: EntryListItem[] = getRegistryItems().map((item) => ({
     description: item.description ?? "",
     href: `/components/${item.name}`,
-    preview: getThumbnail(item.name),
+    preview: getThumbnail(item),
     title: item.title ?? item.name,
   }));
 
