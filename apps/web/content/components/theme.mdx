@@ -1,0 +1,21 @@
+---
+title: Theme
+---
+
+Everything here is a CSS variable, so it lands in your `globals.css` and nothing
+else changes. There is no component to import and no wrapper to mount — the
+values simply become what `bg-background`, `text-muted-foreground` and the rest
+resolve to.
+
+## Why it is not just a palette
+
+Two registries can each ship a perfectly good set of colors and still disagree
+about which one `--background` means. This item defines both halves: the raw
+scale, and the contract names that shadcn's own components read. Install it and
+a component pulled from ui.shadcn.com lands in the same theme as one pulled from
+here.
+
+## What it does not ship
+
+`cn` is not published alongside it — `shadcn init` already writes one, and a
+second copy would only start an argument about which file wins.

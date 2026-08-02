@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import { notFound } from "next/navigation";
 
 import { Installer } from "@/components/installer";
+import { mdxComponents } from "@/components/registry/mdx-components";
 import { getPreview } from "@/components/registry/previews";
 import {
   getRegistryItem,
@@ -10,6 +11,7 @@ import {
   installCommand,
   installUrlCommand,
 } from "@/lib/registry";
+import { componentDocs } from "@/lib/source";
 
 interface ComponentPageProps {
   params: Promise<{ name: string }>;
@@ -42,6 +44,10 @@ const ComponentPage = async ({ params }: ComponentPageProps) => {
   }
 
   const preview = getPreview(item);
+  // Prose is optional: a slug with no MDX file renders its generated sections
+  // and nothing else, so adding a registry item never requires writing a page.
+  const doc = componentDocs.getPage([item.name]);
+  const Prose = doc?.data.body;
   const dependencies = item.dependencies ?? [];
   // The light block is the source of truth; dark redeclares the same names.
   const tokens = Object.entries(item.cssVars?.light ?? {});
@@ -51,7 +57,6 @@ const ComponentPage = async ({ params }: ComponentPageProps) => {
       <section className="flex flex-col gap-4">
         <h1 className="font-medium text-gray-1000">{item.title ?? item.name}</h1>
         {item.description ? <p className="text-gray-900 text-pretty">{item.description}</p> : null}
-        {item.docs ? <p className="text-gray-900 text-pretty">{item.docs}</p> : null}
       </section>
 
       {preview ? (
@@ -60,6 +65,12 @@ const ComponentPage = async ({ params }: ComponentPageProps) => {
           <div className="flex min-h-32 items-center justify-center material-large px-4 py-8">
             {preview}
           </div>
+        </section>
+      ) : null}
+
+      {Prose ? (
+        <section className="flex flex-col gap-3">
+          <Prose components={mdxComponents} />
         </section>
       ) : null}
 

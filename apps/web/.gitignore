@@ -10,6 +10,9 @@
 # on every build, so they are an artifact rather than source.
 /public/r
 
+# fumadocs — regenerated from content/ by the postinstall hook
+/.source
+
 # testing
 /coverage
 

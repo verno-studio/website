@@ -70,9 +70,6 @@ const items = [
     description:
       "The color scale plus the variables shadcn components read, so a component from " +
       "either registry agrees with the other on what --background means.",
-    docs:
-      "Everything here is a CSS variable, so it lands in your globals.css and nothing " +
-      "else changes. `cn` is not published alongside it — `shadcn init` already writes one.",
     files: [],
     name: "theme",
     title: "Theme",
