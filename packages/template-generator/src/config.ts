@@ -46,7 +46,6 @@ export const hasPackage = (config: ProjectConfig, id: PackageId): boolean =>
 
 export const isMonorepo = (config: ProjectConfig): boolean => hasAddon(config, "turborepo");
 
-
 export const hasTypescriptConfigPackage = (config: ProjectConfig): boolean =>
   isMonorepo(config) && hasPackage(config, "typescript-config");
 
@@ -90,5 +89,4 @@ export const assertValidProjectConfig = (config: ProjectConfig): void => {
       }
     }
   }
-
 };

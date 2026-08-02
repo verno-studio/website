@@ -35,7 +35,6 @@ const SHADCN_UI_RUNTIME: readonly AvailableDependencies[] = ["next-themes", "son
 /** `lib/utils.ts` (cn) lives in the app, so its two dependencies do too. */
 const SHADCN_STANDALONE_LIB_UTILS: readonly AvailableDependencies[] = ["clsx", "tailwind-merge"];
 
-
 const devDepsWithOptionalUltracite = (
   config: ProjectConfig,
   base: readonly AvailableDependencies[],
@@ -76,7 +75,6 @@ const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): vo
     packagePath: "apps/web/package.json",
     vfs,
   });
-
 };
 
 export const applyDependencyCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): void => {

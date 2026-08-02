@@ -4,10 +4,7 @@ import pc from "picocolors";
 import { dimPath } from "../../ui";
 import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } from "../../errors";
 import { runInteractiveCreateWizard } from "./prompts";
-import {
-  resolveCreateInputsNonInteractive,
-  resolvedUsesTurborepo,
-} from "./args";
+import { resolveCreateInputsNonInteractive, resolvedUsesTurborepo } from "./args";
 import type { CreateCommandOptions, ResolvedCreateInputs } from "./args";
 import {
   assertPathAvailable,
