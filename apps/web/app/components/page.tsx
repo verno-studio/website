@@ -21,8 +21,8 @@ const ComponentsPage = () => {
         <h1 className="font-medium text-gray-1000">Components</h1>
         <p className="text-gray-900 text-pretty">
           The parts of this design system that are meant to be shared, published as a shadcn
-          registry. Install the source into your project and own it from there — start with
-          the theme, which every other item is built against:
+          registry. Install the source into your project and own it from there — start with the
+          theme, which every other item is built against:
         </p>
         <Installer command="bunx shadcn@latest add https://verno-studio.vercel.app/r/theme.json" />
       </section>
