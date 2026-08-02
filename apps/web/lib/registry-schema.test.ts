@@ -9,7 +9,7 @@ describe("registryItemSchema", () => {
       description: "A button that copies a string.",
       files: [
         {
-          content: 'export const CopyButton = () => null;\n',
+          content: "export const CopyButton = () => null;\n",
           path: "components/copy-button.tsx",
           type: "registry:ui",
         },

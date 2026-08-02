@@ -42,7 +42,7 @@ const readItems = (): RegistryItem[] => {
     }
   }
 
-  return items.sort((a, b) => a.name.localeCompare(b.name));
+  return items.toSorted((a, b) => a.name.localeCompare(b.name));
 };
 
 let cached: RegistryItem[] | null = null;

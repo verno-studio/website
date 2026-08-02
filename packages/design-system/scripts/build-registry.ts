@@ -45,12 +45,15 @@ const cssBlock = (css: string, header: string): string => {
   throw new Error(`unterminated block in styles/globals.css: ${header}`);
 };
 
-const DECLARATION = /^\s*(--[\w-]+)\s*:\s*([^;]+);/gmu;
+const DECLARATION = /^\s*--(?<name>[\w-]+)\s*:\s*(?<value>[^;]+);/gmu;
+const WHITESPACE = /\s+/gu;
 
 const declarations = (body: string): Record<string, string> => {
   const vars: Record<string, string> = {};
-  for (const [, name, value] of body.matchAll(DECLARATION)) {
-    vars[name.slice(2)] = value.replace(/\s+/gu, " ").trim();
+  for (const { groups } of body.matchAll(DECLARATION)) {
+    if (groups?.name && groups.value) {
+      vars[groups.name] = groups.value.replace(WHITESPACE, " ").trim();
+    }
   }
   return vars;
 };
@@ -91,7 +94,7 @@ const items = [
   },
   {
     description: "Framework and brand marks, sized by className and colored by currentColor.",
-    files: [...BRAND_ICONS, ...UI_ICONS].sort().map(iconFile),
+    files: [...BRAND_ICONS, ...UI_ICONS].toSorted().map(iconFile),
     name: "icons",
     title: "Icons",
     type: "registry:component",
