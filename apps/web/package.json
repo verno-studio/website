@@ -6,6 +6,7 @@
     "build": "next build",
     "dev": "next dev --port 3000",
     "postinstall": "fumadocs-mdx",
+    "prebuild": "fumadocs-mdx",
     "start": "next start",
     "test": "bun test",
     "typecheck": "next typegen && tsc --noEmit"
