@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@vernostudio/design-system/lib/utils";
 import posthog from "posthog-js";
 import { useEffect } from "react";
 
@@ -14,13 +15,19 @@ const Error = ({ error, reset }: ErrorProps) => {
   }, [error]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-balance font-normal font-serif text-3xl text-gray-1000 sm:text-5xl">
-        Something went wrong
-      </h1>
-      <p className="text-gray-900">An unexpected error occurred.</p>
+    <div className="flex min-h-[40dvh] flex-col items-center justify-center gap-6">
+      <div className="flex flex-col gap-2 text-center">
+        <h1 className="font-medium text-gray-1000">Something went wrong</h1>
+        <p className="text-pretty text-gray-900">
+          An unexpected error occurred and has been reported. Trying again may be enough.
+        </p>
+      </div>
       <button
-        className="self-start material-base cursor-pointer px-4 py-2 text-gray-1000 active:scale-[0.97] transition-[transform,background-color] duration-150 ease-out hover:bg-gray-100"
+        className={cn(
+          "rounded-full bg-background-100 px-4 py-1.5 font-medium text-gray-1000 ring-1 ring-gray-alpha-400 ring-inset cursor-pointer",
+          "active:scale-[0.96] transition-[transform,background-color] duration-150 ease-out",
+          "[@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100",
+        )}
         onClick={reset}
         type="button"
       >
