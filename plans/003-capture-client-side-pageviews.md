@@ -1,6 +1,6 @@
 # 003 — Capture pageviews on client-side navigation
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7672258
 - **Severity**: MEDIUM
 - **Category**: Bugs & correctness

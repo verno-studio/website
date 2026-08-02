@@ -11,6 +11,7 @@ export const PHProvider = ({ children }: PropsWithChildren) => {
     posthog.init(env.NEXT_PUBLIC_POSTHOG_TOKEN, {
       api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
       capture_exceptions: true,
+      defaults: "2025-05-24",
       person_profiles: "identified_only",
     });
   }, []);
