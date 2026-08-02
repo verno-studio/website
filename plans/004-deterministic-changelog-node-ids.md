@@ -1,6 +1,6 @@
 # 004 — Give changelog nodes deterministic ids
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7672258
 - **Severity**: MEDIUM
 - **Category**: Bugs & correctness

@@ -10,10 +10,15 @@ export type InlineNode =
   | { id: string; type: "strong"; nodes: InlineNode[] }
   | { id: string; type: "em"; nodes: InlineNode[] };
 
+export interface ChangelogListItem {
+  id: string;
+  nodes: InlineNode[];
+}
+
 export type ChangelogBlock =
   | { id: string; type: "paragraph"; nodes: InlineNode[] }
   | { id: string; type: "code"; lang: string; code: string }
-  | { id: string; type: "list"; items: InlineNode[][] };
+  | { id: string; type: "list"; items: ChangelogListItem[] };
 
 export interface ChangelogItem {
   id: string;
@@ -37,6 +42,13 @@ const HEADING_KIND: Record<string, ChangeKind> = {
   "Patch Changes": "patch",
 };
 
+// Node ids double as React keys, so they must be identical across builds of the
+// same source — a random id per parse gives every build a different RSC payload
+// for byte-identical release pages. Reset per parse; unique among siblings is
+// all a key needs to be.
+let idCounter = 0;
+const nextId = () => `n${(idCounter += 1)}`;
+
 const versionToSlug = (version: string) => `v${version.replaceAll(".", "-")}`;
 
 const parseInline = (text: string): InlineNode[] => {
@@ -52,7 +64,7 @@ const parseInline = (text: string): InlineNode[] => {
       last.value += value;
       return;
     }
-    nodes.push({ id: crypto.randomUUID(), type: "text", value });
+    nodes.push({ id: nextId(), type: "text", value });
   };
 
   while (i < text.length) {
@@ -61,7 +73,7 @@ const parseInline = (text: string): InlineNode[] => {
     if (ch === "`") {
       const end = text.indexOf("`", i + 1);
       if (end !== -1) {
-        nodes.push({ id: crypto.randomUUID(), type: "code", value: text.slice(i + 1, end) });
+        nodes.push({ id: nextId(), type: "code", value: text.slice(i + 1, end) });
         i = end + 1;
         continue;
       }
@@ -74,7 +86,7 @@ const parseInline = (text: string): InlineNode[] => {
         if (hrefEnd !== -1) {
           const label = text.slice(i + 1, close);
           const href = text.slice(close + 2, hrefEnd);
-          nodes.push({ href, id: crypto.randomUUID(), label, type: "link" });
+          nodes.push({ href, id: nextId(), label, type: "link" });
           i = hrefEnd + 1;
           continue;
         }
@@ -85,7 +97,7 @@ const parseInline = (text: string): InlineNode[] => {
       const end = text.indexOf("**", i + 2);
       if (end !== -1) {
         nodes.push({
-          id: crypto.randomUUID(),
+          id: nextId(),
           nodes: parseInline(text.slice(i + 2, end)),
           type: "strong",
         });
@@ -106,7 +118,7 @@ const parseInline = (text: string): InlineNode[] => {
         const end = text.indexOf("_", i + 1);
         if (end !== -1 && end > i + 1) {
           nodes.push({
-            id: crypto.randomUUID(),
+            id: nextId(),
             nodes: parseInline(text.slice(i + 1, end)),
             type: "em",
           });
@@ -129,16 +141,16 @@ const flushParagraph = (buffer: string[], blocks: ChangelogBlock[]) => {
   if (!text) {
     return;
   }
-  blocks.push({ id: crypto.randomUUID(), nodes: parseInline(text), type: "paragraph" });
+  blocks.push({ id: nextId(), nodes: parseInline(text), type: "paragraph" });
 };
 
-const flushList = (items: InlineNode[][], buffer: string[], blocks: ChangelogBlock[]) => {
+const flushList = (items: ChangelogListItem[], buffer: string[], blocks: ChangelogBlock[]) => {
   if (buffer.length) {
-    items.push(parseInline(buffer.join(" ").trim()));
+    items.push({ id: nextId(), nodes: parseInline(buffer.join(" ").trim()) });
     buffer.length = 0;
   }
   if (items.length) {
-    blocks.push({ id: crypto.randomUUID(), items: [...items], type: "list" });
+    blocks.push({ id: nextId(), items: [...items], type: "list" });
     items.length = 0;
   }
 };
@@ -146,7 +158,7 @@ const flushList = (items: InlineNode[][], buffer: string[], blocks: ChangelogBlo
 const parseItemBody = (lines: string[]): ChangelogBlock[] => {
   const blocks: ChangelogBlock[] = [];
   const paraBuffer: string[] = [];
-  const listItems: InlineNode[][] = [];
+  const listItems: ChangelogListItem[] = [];
   const listBuffer: string[] = [];
 
   let mode: "para" | "list" | "code" = "para";
@@ -166,7 +178,7 @@ const parseItemBody = (lines: string[]): ChangelogBlock[] => {
       if (line.trimStart().startsWith("```")) {
         blocks.push({
           code: codeLines.join("\n"),
-          id: crypto.randomUUID(),
+          id: nextId(),
           lang: codeLang,
           type: "code",
         });
@@ -192,7 +204,7 @@ const parseItemBody = (lines: string[]): ChangelogBlock[] => {
     if (!line.trim()) {
       if (mode === "list") {
         if (listBuffer.length) {
-          listItems.push(parseInline(listBuffer.join(" ").trim()));
+          listItems.push({ id: nextId(), nodes: parseInline(listBuffer.join(" ").trim()) });
           listBuffer.length = 0;
         }
       } else {
@@ -204,7 +216,7 @@ const parseItemBody = (lines: string[]): ChangelogBlock[] => {
     if (line.startsWith("- ")) {
       closePara();
       if (mode === "list" && listBuffer.length) {
-        listItems.push(parseInline(listBuffer.join(" ").trim()));
+        listItems.push({ id: nextId(), nodes: parseInline(listBuffer.join(" ").trim()) });
         listBuffer.length = 0;
       }
       mode = "list";
@@ -227,7 +239,7 @@ const parseItemBody = (lines: string[]): ChangelogBlock[] => {
   if (mode === "code") {
     blocks.push({
       code: codeLines.join("\n"),
-      id: crypto.randomUUID(),
+      id: nextId(),
       lang: codeLang,
       type: "code",
     });
@@ -241,6 +253,7 @@ const parseItemBody = (lines: string[]): ChangelogBlock[] => {
 };
 
 const parseChangelog = (source: string): ChangelogRelease[] => {
+  idCounter = 0;
   const lines = source.split("\n");
   const releases: ChangelogRelease[] = [];
 
@@ -364,7 +377,7 @@ const blockToText = (block: ChangelogBlock): string => {
     return inlineToText(block.nodes);
   }
   if (block.type === "list") {
-    return block.items.map(inlineToText).join(" ");
+    return block.items.map((item) => inlineToText(item.nodes)).join(" ");
   }
   return block.code;
 };
