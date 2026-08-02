@@ -14,7 +14,6 @@ const OUTPUT = path.join(PACKAGE_ROOT, "registry.json");
 
 const REGISTRY_NAME = "vernostudio";
 const HOMEPAGE = "https://verno-studio.vercel.app/components";
-// Cross-item `registryDependencies` go here as full URLs when an item grows one.
 
 const cssBlock = (css: string, header: string): string => {
   const start = css.indexOf(header);
