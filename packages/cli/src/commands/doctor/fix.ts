@@ -74,13 +74,10 @@ export const fixManifest = async (
       addons.push("ultracite");
     }
 
-    const packages: ("typescript-config" | "design-system")[] = [];
+    const packages: "typescript-config"[] = [];
     if (state.isMonorepo) {
       if (existsSync(path.join(projectDir, "packages", "typescript-config"))) {
         packages.push("typescript-config");
-      }
-      if (existsSync(path.join(projectDir, "packages", "design-system"))) {
-        packages.push("design-system");
       }
     }
 

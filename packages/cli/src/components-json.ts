@@ -12,12 +12,9 @@ import { getRegistries } from "@vernostudio/template-generator";
  * Only missing namespaces are added — a project that has repointed `@vernostudio`
  * at a fork, or added registries of its own, keeps what it chose.
  */
-export const getComponentsJsonPath = (
-  projectDir: string,
-  monorepoWithDesignSystem: boolean,
-): string =>
-  monorepoWithDesignSystem
-    ? path.join(projectDir, "packages", "design-system", "components.json")
+export const getComponentsJsonPath = (projectDir: string, monorepo: boolean): string =>
+  monorepo
+    ? path.join(projectDir, "apps", "web", "components.json")
     : path.join(projectDir, "components.json");
 
 export const ensureComponentsJsonRegistriesContent = (content: string): string => {
@@ -50,9 +47,9 @@ export const ensureComponentsJsonRegistriesContent = (content: string): string =
 
 export const ensureComponentsJsonRegistries = async (
   projectDir: string,
-  monorepoWithDesignSystem: boolean,
+  monorepo: boolean,
 ): Promise<void> => {
-  const configPath = getComponentsJsonPath(projectDir, monorepoWithDesignSystem);
+  const configPath = getComponentsJsonPath(projectDir, monorepo);
   if (!existsSync(configPath)) {
     return;
   }

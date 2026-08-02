@@ -7,17 +7,13 @@ import { ensureComponentsJsonRegistriesContent } from "../src/components-json";
 const templatePath = (...segments: string[]): string =>
   path.join(import.meta.dir, "..", "..", "template-generator", "templates", ...segments);
 
-const TEMPLATES = [
-  templatePath("packages", "design-system", "components.json"),
-  templatePath("frontends", "next", "components.json"),
-];
+const TEMPLATE = templatePath("frontends", "next", "components.json");
 
 describe("components.json registries contract", () => {
-  test("both scaffolded configs already point at the registry", () => {
-    for (const file of TEMPLATES) {
-      const config = JSON.parse(readFileSync(file, "utf-8"));
-      expect(config.registries[TOOLING.registryNamespace]).toBe(TOOLING.registryUrl);
-    }
+  test("the scaffolded config already points at the registry", () => {
+    const config = JSON.parse(readFileSync(TEMPLATE, "utf-8"));
+
+    expect(config.registries[TOOLING.registryNamespace]).toBe(TOOLING.registryUrl);
   });
 
   test("restores the namespace shadcn apply stripped", () => {

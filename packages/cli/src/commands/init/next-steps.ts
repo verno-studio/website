@@ -63,7 +63,7 @@ export const getNextSteps = (args: {
     const sh = shadcnRunner(packageManager);
     if (monorepo) {
       steps.push(
-        `To switch shadcn preset later: cd packages/design-system && ${sh} apply --preset <code>`,
+        `To switch shadcn preset later: cd apps/web && ${sh} apply --preset <code>`,
       );
     } else {
       steps.push(`To switch shadcn preset later: ${sh} apply --preset <code>`);

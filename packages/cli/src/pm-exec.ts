@@ -12,10 +12,13 @@ export const getPmInstallCommand = (
   file: pm,
 });
 
-const getShadcnCwdArgs = (
-  monorepoWithDesignSystem: boolean,
-): readonly ["-c", "packages/design-system"] | [] =>
-  monorepoWithDesignSystem ? ["-c", "packages/design-system"] : [];
+/**
+ * `components.json` is scaffolded next to the app it configures: `apps/web` in a
+ * Turborepo layout, the project root otherwise. shadcn resolves it from its own
+ * cwd and does not search downward, so a monorepo has to be pointed at the app.
+ */
+const getShadcnCwdArgs = (monorepo: boolean): readonly ["-c", "apps/web"] | [] =>
+  monorepo ? ["-c", "apps/web"] : [];
 
 const buildShadcnCliInvocation = (
   pm: PackageManager,
@@ -34,9 +37,9 @@ const buildShadcnCliInvocation = (
 
 export const getShadcnBootstrapCommand = (
   pm: PackageManager,
-  options: { readonly preset: string; readonly monorepoWithDesignSystem: boolean },
+  options: { readonly preset: string; readonly monorepo: boolean },
 ): { readonly file: string; readonly args: readonly string[] } => {
-  const cwdArgs = getShadcnCwdArgs(options.monorepoWithDesignSystem);
+  const cwdArgs = getShadcnCwdArgs(options.monorepo);
 
   // We always use 'apply' because we scaffold a starting 'components.json' from our templates.
   // This bypasses the interactive/guessing nature of 'init' and ensures consistent setup.
@@ -46,9 +49,9 @@ export const getShadcnBootstrapCommand = (
 /** Adds every component from the default registry after {@link getShadcnBootstrapCommand}. */
 export const getShadcnAddAllCommand = (
   pm: PackageManager,
-  options: { readonly monorepoWithDesignSystem: boolean },
+  options: { readonly monorepo: boolean },
 ): { readonly file: string; readonly args: readonly string[] } => {
-  const cwdArgs = getShadcnCwdArgs(options.monorepoWithDesignSystem);
+  const cwdArgs = getShadcnCwdArgs(options.monorepo);
   return buildShadcnCliInvocation(pm, ["add", "--all", "-y", ...cwdArgs]);
 };
 

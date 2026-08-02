@@ -9,9 +9,7 @@
     "start": "next start",
     "typecheck": "next typegen && tsgo --noEmit"
   },
-  "dependencies": {
-{{#if hasDesignSystem}}    "{{dsName}}": "workspace:*"
-{{/if}}  },
+  "dependencies": {},
 {{#if turborepo}}
   "devDependencies": {}
 {{else}}

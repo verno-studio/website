@@ -45,7 +45,7 @@ describe("app globals base layer contract", () => {
     expect(source.trimEnd().endsWith("{{/if}}")).toBe(true);
   });
 
-  test("the block applies no utility the design-system package alone defines", () => {
+  test("the block applies no utility outside the shadcn token contract", () => {
     // `@apply` on an undefined utility fails the whole build, not just the rule.
     const applied = [...templateBaseLayer().matchAll(/@apply (?<utilities>[^;]+);/gu)]
       .flatMap((match) => (match.groups?.utilities ?? "").split(/\s+/u))

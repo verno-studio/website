@@ -26,7 +26,7 @@ export const buildProgram = (handlers: ProgramHandlers): Command => {
     .option("--addons <list>", "Comma-separated: turborepo, ultracite (e.g. turborepo,ultracite)")
     .option(
       "--packages <list>",
-      "Comma-separated workspace packages when using turborepo: typescript-config, design-system",
+      "Comma-separated workspace packages when using turborepo: typescript-config",
     )
     .option("-p, --package-manager <pm>", "bun | pnpm | npm")
     .option("--ui <mode>", "shadcn | none")

@@ -48,19 +48,8 @@ export const parsePackagesArg = (raw: string | undefined): PackageId[] => {
   return out;
 };
 
-/** Ensures `typescript-config` is listed when `design-system` is selected. */
-export const ensureTypescriptWithDesignSystem = (packages: PackageId[]): PackageId[] => {
-  if (packages.includes("design-system") && !packages.includes("typescript-config")) {
-    return ["typescript-config", ...packages.filter((id) => id !== "typescript-config")];
-  }
-  return packages;
-};
-
 /** Default workspace packages when Turborepo is on and `--packages` is omitted. */
-export const DEFAULT_WORKSPACE_PACKAGES: readonly PackageId[] = [
-  "typescript-config",
-  "design-system",
-];
+export const DEFAULT_WORKSPACE_PACKAGES: readonly PackageId[] = ["typescript-config"];
 
 /** Normalized options for `verno create` (from Commander). */
 export interface CreateCommandOptions {
@@ -139,9 +128,6 @@ export interface ResolvedCreateInputs {
 export const resolvedUsesTurborepo = (r: ResolvedCreateInputs): boolean =>
   r.addons.includes("turborepo");
 
-export const resolvedHasDesignSystem = (r: ResolvedCreateInputs): boolean =>
-  resolvedUsesTurborepo(r) && r.packages.includes("design-system");
-
 const readFrontendNonInteractive = (options: CreateCommandOptions): FrontendId => {
   const raw = options.frontend;
   if (raw === undefined || raw.length === 0) {
@@ -190,7 +176,7 @@ const resolveWorkspacePackagesNonInteractive = (
   if (!turborepoOn && packages.length > 0) {
     throw new Error("--packages requires turborepo in --addons.");
   }
-  return ensureTypescriptWithDesignSystem(packages);
+  return packages;
 };
 
 export const resolveCreateInputsNonInteractive = (

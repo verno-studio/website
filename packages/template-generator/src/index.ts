@@ -11,7 +11,6 @@ export {
   type UiMode,
   defaultNpmScopeFromProjectName,
   hasAddon,
-  hasDesignSystem,
   hasPackage,
   hasTypescriptConfigPackage,
   InvalidProjectConfigError,

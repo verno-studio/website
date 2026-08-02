@@ -87,9 +87,9 @@ describe("detectShadcn", () => {
     expect(detectShadcn(TMP_DIR, false)).toBe(false);
   });
 
-  test("checks packages/design-system in monorepo mode", () => {
-    mkdirSync(path.join(TMP_DIR, "packages", "design-system"), { recursive: true });
-    writeFileSync(path.join(TMP_DIR, "packages", "design-system", "components.json"), "{}");
+  test("checks apps/web in monorepo mode", () => {
+    mkdirSync(path.join(TMP_DIR, "apps", "web"), { recursive: true });
+    writeFileSync(path.join(TMP_DIR, "apps", "web", "components.json"), "{}");
     expect(detectShadcn(TMP_DIR, true)).toBe(true);
   });
 });
@@ -172,8 +172,8 @@ describe("detectProjectState", () => {
       JSON.stringify({ name: "@scope/my-app", packageManager: "bun@1.3.12" }),
     );
     writeFileSync(path.join(TMP_DIR, "turbo.json"), "{}");
-    mkdirSync(path.join(TMP_DIR, "packages", "design-system"), { recursive: true });
-    writeFileSync(path.join(TMP_DIR, "packages", "design-system", "components.json"), "{}");
+    mkdirSync(path.join(TMP_DIR, "apps", "web"), { recursive: true });
+    writeFileSync(path.join(TMP_DIR, "apps", "web", "components.json"), "{}");
 
     const state = detectProjectState(TMP_DIR);
     expect(state.projectName).toBe("my-app");

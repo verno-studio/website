@@ -70,7 +70,7 @@ export const appendInstallStep = <TId extends string>(
 };
 
 export type ShadcnPlanMode =
-  | { readonly kind: "run"; readonly monorepoWithDesignSystem: boolean; readonly preset: string }
+  | { readonly kind: "run"; readonly monorepo: boolean; readonly preset: string }
   | { readonly kind: "already-configured" }
   | { readonly kind: "skip"; readonly reason: string };
 
@@ -86,11 +86,11 @@ export const appendShadcnSteps = <TId extends string>(
 ): void => {
   if (args.mode.kind === "run") {
     const sh = getShadcnBootstrapCommand(args.packageManager, {
-      monorepoWithDesignSystem: args.mode.monorepoWithDesignSystem,
+      monorepo: args.mode.monorepo,
       preset: args.mode.preset,
     });
     const addAll = getShadcnAddAllCommand(args.packageManager, {
-      monorepoWithDesignSystem: args.mode.monorepoWithDesignSystem,
+      monorepo: args.mode.monorepo,
     });
     steps.push(
       {

@@ -32,13 +32,13 @@ describe("shouldWriteDecoyConfig", () => {
 });
 
 describe("getShadcnWorkingDirectory", () => {
-  test("returns projectDir when not a monorepo with design-system", () => {
+  test("returns projectDir when not a monorepo", () => {
     expect(getShadcnWorkingDirectory(TEST_DIR, false)).toBe(TEST_DIR);
   });
 
-  test("returns packages/design-system when monorepo with design-system", () => {
+  test("returns apps/web when a monorepo", () => {
     expect(getShadcnWorkingDirectory(TEST_DIR, true)).toBe(
-      path.join(TEST_DIR, "packages", "design-system"),
+      path.join(TEST_DIR, "apps", "web"),
     );
   });
 });

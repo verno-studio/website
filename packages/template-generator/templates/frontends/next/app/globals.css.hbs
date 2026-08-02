@@ -1,8 +1,5 @@
 @import "tailwindcss";
-{{#if hasDesignSystem}}
-@import "{{dsName}}/styles/globals.css";
-{{/if}}
-{{#if hasStyleContract}}
+{{#if useShadcn}}
 /* This layer is by Verno Studio */
 @layer base {
   *,

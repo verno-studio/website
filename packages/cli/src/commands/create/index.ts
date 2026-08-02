@@ -6,7 +6,6 @@ import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } fro
 import { runInteractiveCreateWizard } from "./prompts";
 import {
   resolveCreateInputsNonInteractive,
-  resolvedHasDesignSystem,
   resolvedUsesTurborepo,
 } from "./args";
 import type { CreateCommandOptions, ResolvedCreateInputs } from "./args";
@@ -118,7 +117,7 @@ export const runCreate = async (args: {
       shadcn: {
         bannerSuffix: "(full output below; can take several minutes)",
         enabled: resolved.useShadcn,
-        monorepoWithDesignSystem: resolvedHasDesignSystem(resolved),
+        monorepo: resolvedUsesTurborepo(resolved),
         preset: resolved.shadcnPreset,
       },
       ultracite: {

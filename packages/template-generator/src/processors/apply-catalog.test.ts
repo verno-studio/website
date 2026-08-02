@@ -22,7 +22,7 @@ const fullMonorepo: ProjectConfig = {
   frontend: "next",
   npmScope: "acme",
   packageManager: "pnpm",
-  packages: ["typescript-config", "design-system"],
+  packages: ["typescript-config"],
   projectName: "mono",
   shadcnPreset: "a2r6bw",
   ui: "none",
@@ -47,7 +47,6 @@ describe("applyDependencyCatalog", () => {
     const vfs = virtualFileSystemFromFileTree(buildInterpolatedFileTree(fullMonorepo));
     applyDependencyCatalog(vfs, fullMonorepo);
     const tree = vfs.toFileTree();
-    const ds = scoped("acme", "design-system");
     const tsc = scoped("acme", "typescript-config");
     const root = JSON.parse(tree["package.json"] ?? "{}") as {
       devDependencies: Record<string, string>;
@@ -56,44 +55,27 @@ describe("applyDependencyCatalog", () => {
       dependencies: Record<string, string>;
       devDependencies: Record<string, string>;
     };
-    const design = JSON.parse(tree["packages/design-system/package.json"] ?? "{}") as {
-      dependencies: Record<string, string>;
-      devDependencies: Record<string, string>;
-      peerDependencies: Record<string, string>;
-    };
     expect(root.devDependencies.turbo).toBe(dependencyVersionMap.turbo);
     expect(root.devDependencies.oxlint).toBeUndefined();
     expect(root.devDependencies.oxfmt).toBeUndefined();
-    expect(web.dependencies[ds]).toBe("workspace:*");
     expect(web.dependencies.next).toBe(dependencyVersionMap.next);
     expect(web.devDependencies[tsc]).toBe("workspace:*");
-    expect(design.devDependencies.shadcn).toBe(dependencyVersionMap.shadcn);
-    expect(design.devDependencies[tsc]).toBe("workspace:*");
-    expect(design.peerDependencies.react).toBe(dependencyVersionMap.react);
+    expect(tree["packages/design-system/package.json"]).toBeUndefined();
   });
 
-  test("when ui is shadcn, adds ThemeProvider/toast deps to design-system and next.js for fonts", () => {
+  test("when ui is shadcn, the app gets the theme provider, toast and cn dependencies", () => {
     const config: ProjectConfig = { ...fullMonorepo, ui: "shadcn" };
     const vfs = virtualFileSystemFromFileTree(buildInterpolatedFileTree(config));
     applyDependencyCatalog(vfs, config);
     const tree = vfs.toFileTree();
-    const ds = scoped("acme", "design-system");
     const web = JSON.parse(tree["apps/web/package.json"] ?? "{}") as {
       dependencies?: Record<string, string>;
       devDependencies?: Record<string, string>;
     };
-    const design = JSON.parse(tree["packages/design-system/package.json"] ?? "{}") as {
-      dependencies?: Record<string, string>;
-      devDependencies?: Record<string, string>;
-    };
-    expect(design.dependencies?.["next-themes"]).toBe(dependencyVersionMap["next-themes"]);
-    expect(design.dependencies?.sonner).toBe(dependencyVersionMap.sonner);
-    expect(design.devDependencies?.next).toBe(dependencyVersionMap.next);
-    expect(web.dependencies?.[ds]).toBe("workspace:*");
-    expect(web.dependencies?.["next-themes"]).toBeUndefined();
-    expect(web.dependencies?.sonner).toBeUndefined();
-    expect(web.dependencies?.clsx).toBeUndefined();
-    expect(web.dependencies?.["tailwind-merge"]).toBeUndefined();
+    expect(web.dependencies?.["next-themes"]).toBe(dependencyVersionMap["next-themes"]);
+    expect(web.dependencies?.sonner).toBe(dependencyVersionMap.sonner);
+    expect(web.dependencies?.clsx).toBe(dependencyVersionMap.clsx);
+    expect(web.dependencies?.["tailwind-merge"]).toBe(dependencyVersionMap["tailwind-merge"]);
   });
 
   test("single app ui shadcn adds clsx and tailwind-merge for lib/utils cn()", () => {

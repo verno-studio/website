@@ -1,6 +1,6 @@
 import type { PackageManager } from "@vernostudio/template-generator";
 import type { ResolvedCreateInputs } from "./args";
-import { resolvedHasDesignSystem, resolvedUsesTurborepo } from "./args";
+import { resolvedUsesTurborepo } from "./args";
 
 const shadcnRunner = (packageManager: PackageManager): string => {
   if (packageManager === "bun") {
@@ -38,9 +38,8 @@ export const getNextSteps = (inputs: {
   readonly packageManager: PackageManager;
   readonly useShadcn: boolean;
   readonly monorepo: boolean;
-  readonly hasDesignSystem: boolean;
 }): string[] => {
-  const { name, doInstall, packageManager, useShadcn, monorepo, hasDesignSystem } = inputs;
+  const { name, doInstall, packageManager, useShadcn, monorepo } = inputs;
   const steps: string[] = [`cd ${name}`];
   if (!doInstall) {
     steps.push(installCommand(packageManager));
@@ -50,10 +49,10 @@ export const getNextSteps = (inputs: {
   } else {
     steps.push(devCommand(packageManager));
   }
-  if (useShadcn && monorepo && hasDesignSystem) {
+  if (useShadcn) {
     const sh = shadcnRunner(packageManager);
-    const ds = "packages/design-system";
-    steps.push(`To switch shadcn preset later: cd ${ds} && ${sh} apply --preset <code>`);
+    const dir = monorepo ? "apps/web" : ".";
+    steps.push(`To switch shadcn preset later: cd ${dir} && ${sh} apply --preset <code>`);
   }
   return steps;
 };
@@ -61,7 +60,6 @@ export const getNextSteps = (inputs: {
 export const getNextStepHints = (resolved: ResolvedCreateInputs): string[] =>
   getNextSteps({
     doInstall: resolved.doInstall,
-    hasDesignSystem: resolvedHasDesignSystem(resolved),
     monorepo: resolvedUsesTurborepo(resolved),
     name: resolved.name,
     packageManager: resolved.packageManager,
