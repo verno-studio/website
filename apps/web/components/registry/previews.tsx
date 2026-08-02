@@ -30,3 +30,17 @@ const previews: Record<string, ReactNode> = {
 };
 
 export const getPreview = (name: string): ReactNode => previews[name] ?? null;
+
+// The same swatches at thumbnail size, for rows too small to carry the full
+// preview. An item with no entry falls back to the generic page glyph.
+const thumbnails: Record<string, ReactNode> = {
+  theme: (
+    <div className="flex h-full w-full flex-col">
+      {swatches.map((swatch) => (
+        <div className={cn("flex-1", swatch)} key={swatch} />
+      ))}
+    </div>
+  ),
+};
+
+export const getThumbnail = (name: string): ReactNode => thumbnails[name] ?? null;

@@ -1,5 +1,10 @@
+import { EntryList } from "@/components/entry-list";
+import type { EntryListItem } from "@/components/entry-list";
+import { getThumbnail } from "@/components/registry/previews";
 import { Showcase } from "@/components/showcase";
 import { Story } from "@/components/story";
+import { getChangelog, getReleaseSummary } from "@/lib/changelog";
+import { getRegistryItems } from "@/lib/registry";
 
 export const metadata = {
   alternates: { canonical: "/" },
@@ -9,11 +14,34 @@ export const metadata = {
   title: "Verno Studio",
 };
 
-const Home = () => (
-  <>
-    <Story />
-    <Showcase />
-  </>
-);
+/** Enough to show the section is alive without turning the page into an index. */
+const LATEST_UPDATES = 3;
+
+const Home = () => {
+  const components: EntryListItem[] = getRegistryItems().map((item) => ({
+    description: item.description ?? "",
+    href: `/components/${item.name}`,
+    preview: getThumbnail(item.name),
+    title: item.title ?? item.name,
+  }));
+
+  const updates: EntryListItem[] = getChangelog()
+    .slice(0, LATEST_UPDATES)
+    .map(getReleaseSummary)
+    .map(({ slug, version, headline, itemCount }) => ({
+      description: headline || `${itemCount} ${itemCount === 1 ? "change" : "changes"}`,
+      href: `/updates/${slug}`,
+      title: <span className="font-mono">v{version}</span>,
+    }));
+
+  return (
+    <>
+      <Story />
+      <Showcase />
+      <EntryList href="/components" items={components} title="Components" />
+      <EntryList href="/updates" items={updates} title="Updates" />
+    </>
+  );
+};
 
 export default Home;
