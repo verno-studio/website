@@ -27,6 +27,7 @@
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19",
     "@vernostudio/typescript-config": "workspace:*",
+    "shadcn": "^4.16.1",
     "tailwindcss": "^4.3.0",
     "typescript": "^7"
   }
