@@ -1,36 +1,7 @@
 import type { PackageManager } from "@vernostudio/template-generator";
+import { devCommand, installCommand, shadcnRunner } from "../shared/pm-commands";
 import type { ResolvedInitInputs } from "./args";
 import type { DetectedState } from "./actions";
-
-const shadcnRunner = (packageManager: PackageManager): string => {
-  if (packageManager === "bun") {
-    return "npx --yes shadcn@latest";
-  }
-  if (packageManager === "pnpm") {
-    return "pnpm dlx shadcn@latest";
-  }
-  return "npx shadcn@latest";
-};
-
-const devCommand = (packageManager: PackageManager): string => {
-  if (packageManager === "bun") {
-    return "bun run dev";
-  }
-  if (packageManager === "pnpm") {
-    return "pnpm run dev";
-  }
-  return "npm run dev";
-};
-
-const installCommand = (packageManager: PackageManager): string => {
-  if (packageManager === "bun") {
-    return "bun install";
-  }
-  if (packageManager === "pnpm") {
-    return "pnpm install";
-  }
-  return "npm install";
-};
 
 export const getNextSteps = (args: {
   readonly doInstall: boolean;
