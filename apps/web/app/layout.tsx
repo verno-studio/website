@@ -89,7 +89,7 @@ const RootLayout = ({ children }: RootLayoutProps) => (
         <DesignSystemProvider>
           <div className="flex min-w-0">
             <div className="@container flex-1 min-w-0">
-              <main className="relative z-10 mx-auto grid w-full max-w-168 gap-16 @sm:gap-24 px-4 py-16 @sm:py-32">
+              <main className="relative z-10 mx-auto flex flex-col w-full max-w-168 gap-16 @sm:gap-24 px-4 py-16 @sm:py-32">
                 <Header />
                 <div className="flex flex-1 flex-col gap-12">{children}</div>
                 <Footer />
