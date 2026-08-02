@@ -18,6 +18,7 @@ Each plan is self-contained. An executor needs only the plan file and the repo.
 | 003 | [Capture client-side pageviews](003-capture-client-side-pageviews.md)                | MEDIUM   | Bugs & correctness | TODO   |
 | 004 | [Deterministic changelog node ids](004-deterministic-changelog-node-ids.md)          | MEDIUM   | Bugs & correctness | TODO   |
 | 005 | [Announce updates search results](005-announce-updates-search-results.md)            | MEDIUM   | Accessibility      | TODO   |
+| 006 | [List every route in the sitemap](006-list-every-route-in-the-sitemap.md)            | LOW      | Maintainability    | TODO   |
 
 ## Recommended order
 
@@ -27,7 +28,33 @@ Each plan is self-contained. An executor needs only the plan file and the repo.
 4. **004** — the largest diff here; do it when nothing else is touching
    `lib/changelog.ts`.
 5. **005** — independent of everything above.
+6. **006** — lowest severity; safe to do any time.
 
 ## Dependencies
 
-None between plans so far.
+No plan blocks another; all six touch disjoint code and can be executed in any
+order or in parallel. Two soft couplings worth knowing:
+
+- **002 and 003** are both PostHog wiring. 003 fixes the `$pageview` denominator
+  that 002's `install_command_copied` event will be measured against, so land
+  them together if you want a usable funnel on day one.
+- **004 and 006** both read `lib/changelog.ts`. 006 only calls `getChangelog()`
+  and does not care about node ids, so the order between them does not matter —
+  but rebase rather than merge if both are in flight.
+
+## Not planned
+
+Findings surfaced by the audit and deliberately rejected, recorded so they are
+not re-audited:
+
+- **JSON-LD as a `<script>` text child** (`apps/web/app/layout.tsx:85`).
+  Verified with `renderToStaticMarkup` that React does not entity-escape
+  `<script>` children — the output is byte-identical to
+  `dangerouslySetInnerHTML`. Not a bug.
+- **Shipping `searchText` for every release to the client**
+  (`apps/web/app/updates/page.tsx:15`). `packages/cli/CHANGELOG.md` is 2.4 kB
+  total; the payload is negligible. Revisit only if the changelog grows by an
+  order of magnitude.
+- **Memoization anywhere.** There is no hot render path in this app — no long
+  lists, no per-keystroke tree, no context fan-out. The `useMemo` at
+  `updates-index.tsx:17` is correct as written; adding more would be noise.
