@@ -5,7 +5,7 @@ import { NextJsIcon } from "@vernostudio/design-system/components/icons/nextjs";
 import Image from "next/image";
 import { ChevronRightIcon } from "@vernostudio/design-system/components/icons/chevron-right";
 
-export const showcase = [
+const showcase = [
   {
     name: "Boriphat Jariyatatkone",
     stack: { icon: AstroIcon, label: "Astro" },

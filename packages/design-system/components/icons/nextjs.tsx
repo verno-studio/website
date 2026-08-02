@@ -11,7 +11,7 @@ export const NextJsIcon = (props: SVGProps<SVGSVGElement>) => (
     <mask height="180" id="nextjs-icon-glyph" maskUnits="userSpaceOnUse" width="180" x="0" y="0">
       <circle cx="90" cy="90" fill="#fff" r="90" />
       <path
-        d="M149.508 157.52L69.142 54H54V125.97H66.1136V69.3836L139.999 164.845C143.333 162.614 146.509 160.165 149.508 157.52Z"
+        d="M149.51 157.52L69.14 54H54V125.97H66.11V69.38L140 164.85C143.33 162.61 146.51 160.17 149.51 157.52Z"
         fill="url(#nextjs-icon-fade-n)"
       />
       <rect fill="url(#nextjs-icon-fade-stem)" height="72" width="12" x="115" y="54" />
