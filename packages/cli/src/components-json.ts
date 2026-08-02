@@ -27,7 +27,7 @@ export const ensureComponentsJsonRegistriesContent = (content: string): string =
   }
 
   const config = parsed as Record<string, unknown>;
-  const existing = config.registries;
+  const { registries: existing } = config;
   const registries: Record<string, unknown> =
     typeof existing === "object" && existing !== null && !Array.isArray(existing)
       ? { ...(existing as Record<string, unknown>) }

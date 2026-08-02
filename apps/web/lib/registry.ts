@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { type RegistryItem, registryItemSchema } from "@/lib/registry-schema";
+import type { RegistryItem } from "@/lib/registry-schema";
+import { registryItemSchema } from "@/lib/registry-schema";
 
 // The same JSON `shadcn add` downloads. Reading the built output rather than the
 // source tree is the point: the code shown on a component's page is the code the

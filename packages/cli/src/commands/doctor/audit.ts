@@ -18,7 +18,7 @@ const hasVernoRegistry = (config: unknown): boolean => {
   if (typeof config !== "object" || config === null) {
     return false;
   }
-  const registries = (config as Record<string, unknown>).registries;
+  const { registries } = config as Record<string, unknown>;
   if (typeof registries !== "object" || registries === null) {
     return false;
   }

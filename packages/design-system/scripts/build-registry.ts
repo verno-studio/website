@@ -59,7 +59,7 @@ const declarations = (body: string): Record<string, string> => {
 };
 
 const readCssVars = () => {
-  const css = readFileSync(STYLESHEET, "utf8");
+  const css = readFileSync(STYLESHEET, "utf-8");
   return {
     // `color-scheme` is a real property rather than a custom one, so it is set
     // here instead of being picked up by the declaration regex.
@@ -86,7 +86,8 @@ const items = [
     cssVars: readCssVars(),
     dependencies: ["tw-animate-css"],
     description:
-      "The Geist-derived color scale plus the variables shadcn components read, so components from either registry agree on what --background means.",
+      "The color scale plus the variables shadcn components read, so a component from " +
+      "either registry agrees with the other on what --background means.",
     files: [],
     name: "theme",
     title: "Theme",
@@ -100,7 +101,7 @@ const items = [
     type: "registry:component",
   },
   {
-    description: "A button that copies a string and confirms it, for people and for screen readers.",
+    description: "Copies a string and confirms it, for people and for screen readers.",
     files: [
       { path: "components/copy-button.tsx", type: "registry:ui" },
       // Bundled rather than pulled in through the `icons` item: copying a string
@@ -137,9 +138,10 @@ const items = [
   },
   {
     dependencies: ["next"],
-    description:
-      "Geist, Geist Mono and Libre Baskerville as CSS variables. Next.js only — it imports next/font/google.",
-    docs: "Apply the exported `fonts` class to <html>. This is the one item here that will not work outside Next.js.",
+    description: "Geist, Geist Mono and Libre Baskerville as CSS variables.",
+    docs:
+      "Apply the exported `fonts` class to <html>. Next.js only — the one item here that " +
+      "imports next/font/google, and so the one that will not work anywhere else.",
     files: [{ path: "lib/fonts.ts", type: "registry:lib" }],
     name: "fonts",
     title: "Fonts",

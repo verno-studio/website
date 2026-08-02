@@ -33,8 +33,9 @@ const previews: Record<string, ReactNode> = {
   ),
   "prose-link": (
     <p className="text-gray-900">
-      Built on <ProseLink href="https://ui.shadcn.com/docs/registry">the shadcn registry</ProseLink>,
-      so any project can install it.
+      Built on the{" "}
+      <ProseLink href="https://ui.shadcn.com/docs/registry">shadcn registry</ProseLink>, so any
+      project can install it.
     </p>
   ),
 };
