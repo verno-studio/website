@@ -1,6 +1,6 @@
 # 001 — Report and recover from route-level errors
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7672258
 - **Severity**: HIGH
 - **Category**: Bugs & correctness
@@ -67,7 +67,7 @@ Two consequences:
           </h1>
           <p className="text-gray-900">An unexpected error occurred.</p>
           <button
-            className="self-start material-base cursor-pointer px-4 py-2 text-gray-1000 transition-colors duration-200 ease-out hover:bg-gray-100"
+            className="self-start material-base cursor-pointer px-4 py-2 text-gray-1000 active:scale-[0.97] transition-[transform,background-color] duration-150 ease-out hover:bg-gray-100"
             onClick={reset}
             type="button"
           >
@@ -89,10 +89,12 @@ Two consequences:
 - Import `posthog` as a default import from `posthog-js`, exactly as
   `global-error.tsx:4` does — not `usePostHog()`.
 - The `material-base` utility is defined at
-  `packages/design-system/styles/material.css:3`. The standard hover transition
-  in this repo is `transition-colors duration-200 ease-out` (see
-  `apps/web/components/footer.tsx:15` and
-  `apps/web/components/updates-index.tsx:61`).
+  `packages/design-system/styles/material.css:3`.
+- The button borrows its press treatment from the repo's only other button,
+  `packages/design-system/components/copy-button.tsx:42` — an `active:` scale
+  with an explicit property list and `duration-150 ease-out`. A pressable
+  element needs that feedback; a bare colour transition (as used for links at
+  `apps/web/components/footer.tsx:15`) does not confirm the press.
 - Object keys and JSX attributes are sorted alphabetically by the lint preset.
   Run `bun run format` after editing rather than hand-sorting.
 
