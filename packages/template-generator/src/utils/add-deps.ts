@@ -11,7 +11,6 @@ export const dependencyVersionMap = {
   "@types/node": "^25",
   "@types/react": "^19",
   "@types/react-dom": "^19",
-  "@typescript/native-preview": "^7.0.0-dev.20260427.1",
   clsx: "^2.1.1",
   next: "^16.2.0",
   "next-themes": "^0.4.6",
@@ -21,7 +20,7 @@ export const dependencyVersionMap = {
   "tailwind-merge": "^3.5.0",
   tailwindcss: "^4.0.0",
   turbo: "^2.9.0",
-  typescript: "^6",
+  typescript: "^7",
   ultracite: "^7.8.0",
 } as const;
 

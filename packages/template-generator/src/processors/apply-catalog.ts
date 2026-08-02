@@ -15,7 +15,6 @@ const nextWebAppDevDependencies: readonly AvailableDependencies[] = [
   "@types/node",
   "@types/react",
   "@types/react-dom",
-  "@typescript/native-preview",
   "tailwindcss",
   "typescript",
 ];

@@ -397,7 +397,7 @@ export default nextConfig;
     "build": "next build",
     "dev": "next dev{{#if turborepo}} --port 3000{{/if}}",
     "start": "next start",
-    "typecheck": "next typegen && tsgo --noEmit"
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {},
 {{#if turborepo}}
