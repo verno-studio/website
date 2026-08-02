@@ -58,7 +58,7 @@ export const getRegistryItems = (): RegistryItem[] => {
 export const getRegistryItem = (name: string): RegistryItem | undefined =>
   getRegistryItems().find((item) => item.name === name);
 
-export const registryNamespace = "@vernostudio";
+const registryNamespace = "@vernostudio";
 
 export const installCommand = (name: string) =>
   `bunx shadcn@latest add ${registryNamespace}/${name}`;
