@@ -5,12 +5,10 @@ import { scoped } from "../paths";
 import { addPackageDependency } from "../utils/add-deps";
 import type { AvailableDependencies } from "../utils/add-deps";
 
-const nextAppRuntimeDeps: { dependencies: readonly AvailableDependencies[] } = {
-  dependencies: ["next", "react", "react-dom"],
-};
+/** Both lists are shared by the single-app root and `apps/web` in the Turborepo layout. */
+const nextAppDependencies: readonly AvailableDependencies[] = ["next", "react", "react-dom"];
 
-/** Shared by single-app root and `apps/web` in the Turborepo layout. */
-const nextWebAppDevDependencies: readonly AvailableDependencies[] = [
+const nextAppDevDependencies: readonly AvailableDependencies[] = [
   "@tailwindcss/postcss",
   "@types/node",
   "@types/react",
@@ -20,14 +18,6 @@ const nextWebAppDevDependencies: readonly AvailableDependencies[] = [
 ];
 
 const monorepoRootSharedDevDeps: readonly AvailableDependencies[] = ["turbo", "typescript"];
-
-const webAppDeps: {
-  dependencies: readonly AvailableDependencies[];
-  devDependencies: readonly AvailableDependencies[];
-} = {
-  dependencies: ["next", "react", "react-dom"],
-  devDependencies: nextWebAppDevDependencies,
-};
 
 /** What the scaffolded provider imports. `shadcn add` installs its own. */
 const SHADCN_UI_RUNTIME: readonly AvailableDependencies[] = ["next-themes"];
@@ -63,7 +53,7 @@ const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): vo
     webWorkspacePins.customDevDependencies = { [tsConfigName]: "workspace:*" };
   }
 
-  const webRuntimeDependencies: AvailableDependencies[] = [...webAppDeps.dependencies];
+  const webRuntimeDependencies: AvailableDependencies[] = [...nextAppDependencies];
   if (uiShadcn) {
     webRuntimeDependencies.push(...SHADCN_UI_RUNTIME, ...SHADCN_STANDALONE_LIB_UTILS);
   }
@@ -71,7 +61,7 @@ const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): vo
   addPackageDependency({
     ...webWorkspacePins,
     dependencies: webRuntimeDependencies,
-    devDependencies: devDepsWithOptionalUltracite(config, webAppDeps.devDependencies),
+    devDependencies: devDepsWithOptionalUltracite(config, nextAppDevDependencies),
     packagePath: "apps/web/package.json",
     vfs,
   });
@@ -79,13 +69,13 @@ const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): vo
 
 export const applyDependencyCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): void => {
   if (!isMonorepo(config)) {
-    const dependencies: AvailableDependencies[] = [...nextAppRuntimeDeps.dependencies];
+    const dependencies: AvailableDependencies[] = [...nextAppDependencies];
     if (config.ui === "shadcn") {
       dependencies.push(...SHADCN_UI_RUNTIME, ...SHADCN_STANDALONE_LIB_UTILS);
     }
     addPackageDependency({
       dependencies,
-      devDependencies: devDepsWithOptionalUltracite(config, nextWebAppDevDependencies),
+      devDependencies: devDepsWithOptionalUltracite(config, nextAppDevDependencies),
       packagePath: "package.json",
       vfs,
     });
