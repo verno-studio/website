@@ -32,7 +32,7 @@ export const Showcase = () => (
   <section className="flex flex-col gap-4">
     <h2 className="font-medium text-gray-1000">Showcase</h2>
     <div className="grid gap-4 sm:grid-cols-2">
-      {showcase.map(({ name, url, stack }) => (
+      {showcase.map(({ name, url, stack }, index) => (
         <a
           aria-label={`Visit ${name}'s site`}
           className="group flex items-center justify-center overflow-hidden rounded-2xl p-1 shadow-(--ds-shadow-border) transition-shadow duration-200 ease-out hover:shadow-(--ds-shadow-border-medium)"
@@ -47,6 +47,7 @@ export const Showcase = () => (
                 alt={`Preview of ${name}'s showcase site`}
                 className="object-cover object-top"
                 fill
+                priority={index === 0}
                 sizes="(min-width: 640px) 320px, 100vw"
                 src={`${url}/preview.png`}
               />

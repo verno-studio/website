@@ -30,7 +30,7 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
   return (
     <section className="flex flex-col gap-6">
       <label className="sr-only" htmlFor={inputId}>
-        Search updates
+        Search updates by version or content
       </label>
       <div className="relative">
         <SearchIcon
@@ -38,7 +38,6 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
           className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gray-900"
         />
         <input
-          aria-label="Search updates by version or content"
           autoComplete="off"
           className="w-full material-base bg-transparent py-2.5 pr-3 pl-9 placeholder:text-gray-900 transition-colors duration-200 ease-out"
           id={inputId}
@@ -48,6 +47,15 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
           value={query}
         />
       </div>
+
+      {/* `output` carries an implicit role="status" and aria-live="polite".
+          Always mounted so assistive tech observes a content change on an
+          existing region, not a node insertion. */}
+      <output className="sr-only">
+        {query
+          ? `${filtered.length} ${filtered.length === 1 ? "update" : "updates"} match ${query}`
+          : ""}
+      </output>
 
       {filtered.length === 0 ? (
         <p className="px-4 py-8 text-center text-gray-900">

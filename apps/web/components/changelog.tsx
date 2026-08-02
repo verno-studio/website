@@ -68,24 +68,11 @@ const Block = ({ block }: { block: ChangelogBlock }) => {
   if (block.type === "list") {
     return (
       <ul>
-        {block.items.map((item) => {
-          const itemKey = item
-            .map((n) => {
-              if (n.type === "text" || n.type === "code") {
-                return n.value;
-              }
-              if (n.type === "link") {
-                return n.label;
-              }
-              return "";
-            })
-            .join("");
-          return (
-            <li key={itemKey}>
-              <InlineContent nodes={item} />
-            </li>
-          );
-        })}
+        {block.items.map((item) => (
+          <li key={item.id}>
+            <InlineContent nodes={item.nodes} />
+          </li>
+        ))}
       </ul>
     );
   }
