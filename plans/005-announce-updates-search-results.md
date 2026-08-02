@@ -1,6 +1,6 @@
 # 005 — Announce updates search results to assistive technology
 
-- **Status**: TODO
+- **Status**: DONE
 - **Commit**: 7672258
 - **Severity**: MEDIUM
 - **Category**: Accessibility
@@ -78,11 +78,11 @@ targeting), and add a permanently-mounted live region that reports the count.
       />
     </div>
 
-    <p aria-live="polite" className="sr-only" role="status">
+    <output className="sr-only">
       {query
         ? `${filtered.length} ${filtered.length === 1 ? "update" : "updates"} match ${query}`
         : ""}
-    </p>
+    </output>
 
 Note the live region is **always rendered** — only its text content changes — so
 assistive technology observes an update to an existing region rather than a node
@@ -102,8 +102,10 @@ is; it is the sighted user's feedback and the live region is the AT equivalent.
         {copied ? "Copied to clipboard" : ""}
       </span>
 
-  Follow it, adding `role="status"` for the redundancy screen readers benefit
-  from.
+  Follow its shape, but use `<output>` rather than a `<p>` with an explicit
+  `role="status"` — `output` carries that role and `aria-live="polite"`
+  implicitly, and the repo's `jsx-a11y(prefer-tag-over-role)` rule rejects the
+  explicit form.
 
 - The singular/plural ternary already exists in this file at `:67`
   (`{itemCount === 1 ? "change" : "changes"}`) — match that phrasing style.

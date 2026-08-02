@@ -17,7 +17,7 @@ Each plan is self-contained. An executor needs only the plan file and the repo.
 | 002 | [Track install command copies](002-track-install-command-copies.md)                  | HIGH     | Maintainability    | DONE   |
 | 003 | [Capture client-side pageviews](003-capture-client-side-pageviews.md)                | MEDIUM   | Bugs & correctness | DONE   |
 | 004 | [Deterministic changelog node ids](004-deterministic-changelog-node-ids.md)          | MEDIUM   | Bugs & correctness | DONE   |
-| 005 | [Announce updates search results](005-announce-updates-search-results.md)            | MEDIUM   | Accessibility      | TODO   |
+| 005 | [Announce updates search results](005-announce-updates-search-results.md)            | MEDIUM   | Accessibility      | DONE   |
 | 006 | [List every route in the sitemap](006-list-every-route-in-the-sitemap.md)            | LOW      | Maintainability    | TODO   |
 
 ## Recommended order
