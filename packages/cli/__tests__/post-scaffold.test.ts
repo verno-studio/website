@@ -37,8 +37,6 @@ describe("getShadcnWorkingDirectory", () => {
   });
 
   test("returns apps/web when a monorepo", () => {
-    expect(getShadcnWorkingDirectory(TEST_DIR, true)).toBe(
-      path.join(TEST_DIR, "apps", "web"),
-    );
+    expect(getShadcnWorkingDirectory(TEST_DIR, true)).toBe(path.join(TEST_DIR, "apps", "web"));
   });
 });

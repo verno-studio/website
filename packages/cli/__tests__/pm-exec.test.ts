@@ -19,16 +19,7 @@ describe("getShadcnBootstrapCommand", () => {
   test("monorepo adds -c apps/web so the CLI runs from repo root and uses apply", () => {
     const cmd = getShadcnBootstrapCommand("npm", { monorepo: true, preset });
     expect(cmd.file).toBe("npx");
-    expect(cmd.args).toEqual([
-      "--yes",
-      spec,
-      "apply",
-      "--preset",
-      preset,
-      "-y",
-      "-c",
-      "apps/web",
-    ]);
+    expect(cmd.args).toEqual(["--yes", spec, "apply", "--preset", preset, "-y", "-c", "apps/web"]);
   });
 });
 
