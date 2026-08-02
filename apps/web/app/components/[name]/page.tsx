@@ -92,7 +92,7 @@ const ComponentPage = async ({ params }: ComponentPageProps) => {
             {tokens.length} variables land in your stylesheet. Dark mode redeclares the same names,
             so nothing downstream has to know which mode it is in.
           </p>
-          <dl className="grid max-h-96 grid-cols-[auto_1fr] gap-x-4 gap-y-1 overflow-y-auto material-large px-4 py-4 font-mono text-sm">
+          <dl className="grid max-h-96 grid-cols-[auto_1fr] gap-x-4 gap-y-1 overflow-y-auto material-large px-4 py-4 font-mono text-sm no-scrollbar">
             {tokens.map(([token, value]) => (
               <Fragment key={token}>
                 <dt className="text-gray-1000">--{token}</dt>
