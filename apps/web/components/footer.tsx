@@ -1,5 +1,5 @@
-import { PunGrumpyIcon } from "@vernostudio/design-system/components/icons/pungrumpy";
-import { ProseLink } from "@vernostudio/design-system/components/prose-link";
+import { PunGrumpyIcon } from "@/components/icons/pungrumpy";
+import { ProseLink } from "@/components/prose-link";
 import Link from "next/link";
 
 export const Footer = () => (

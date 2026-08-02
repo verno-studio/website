@@ -20,8 +20,9 @@ const ComponentsPage = () => {
       <section className="flex flex-col gap-4">
         <h1 className="font-medium text-gray-1000">Components</h1>
         <p className="text-gray-900 text-pretty">
-          Every component on this site is published as a shadcn registry, so you can install the
-          source into your project and own it from there. Point the CLI at the registry once:
+          The parts of this design system that are meant to be shared, published as a shadcn
+          registry. Install the source into your project and own it from there — start with
+          the theme, which every other item is built against:
         </p>
         <Installer command="bunx shadcn@latest add https://verno-studio.vercel.app/r/theme.json" />
       </section>

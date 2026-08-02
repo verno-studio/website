@@ -1,6 +1,6 @@
-import { TurborepoIcon } from "@vernostudio/design-system/components/icons/turborepo";
-import { NextJsIcon } from "@vernostudio/design-system/components/icons/nextjs";
-import { ProseLink } from "@vernostudio/design-system/components/prose-link";
+import { TurborepoIcon } from "@/components/icons/turborepo";
+import { NextJsIcon } from "@/components/icons/nextjs";
+import { ProseLink } from "@/components/prose-link";
 import { Installer } from "./installer";
 
 export const Story = () => (

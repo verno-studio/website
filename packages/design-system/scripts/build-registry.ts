@@ -14,16 +14,7 @@ const OUTPUT = path.join(PACKAGE_ROOT, "registry.json");
 
 const REGISTRY_NAME = "vernostudio";
 const HOMEPAGE = "https://verno-studio.vercel.app/components";
-const ITEM_URL = (name: string) => `https://verno-studio.vercel.app/r/${name}.json`;
-
-const BRAND_ICONS = ["astro", "nextjs", "pungrumpy", "tanstack", "turborepo", "vite"] as const;
-const UI_ICONS = ["check", "chevron-right", "copy"] as const;
-
-const iconFile = (name: string) => ({
-  path: `components/icons/${name}.tsx`,
-  target: `components/icons/${name}.tsx`,
-  type: "registry:component" as const,
-});
+// Cross-item `registryDependencies` go here as full URLs when an item grows one.
 
 const cssBlock = (css: string, header: string): string => {
   const start = css.indexOf(header);
@@ -92,35 +83,6 @@ const items = [
     name: "theme",
     title: "Theme",
     type: "registry:theme",
-  },
-  {
-    description: "Framework and brand marks, sized by className and colored by currentColor.",
-    files: [...BRAND_ICONS, ...UI_ICONS].toSorted().map(iconFile),
-    name: "icons",
-    title: "Icons",
-    type: "registry:component",
-  },
-  {
-    description: "Copies a string and confirms it, for people and for screen readers.",
-    files: [
-      { path: "components/copy-button.tsx", type: "registry:ui" },
-      // Bundled rather than pulled in through the `icons` item: copying a string
-      // should not also install six framework logos.
-      iconFile("check"),
-      iconFile("copy"),
-    ],
-    name: "copy-button",
-    registryDependencies: [ITEM_URL("utils")],
-    title: "Copy Button",
-    type: "registry:ui",
-  },
-  {
-    description: "An external link styled for running text, with the target and rel already right.",
-    files: [{ path: "components/prose-link.tsx", type: "registry:ui" }],
-    name: "prose-link",
-    registryDependencies: [ITEM_URL("utils")],
-    title: "Prose Link",
-    type: "registry:ui",
   },
   {
     dependencies: ["next-themes"],

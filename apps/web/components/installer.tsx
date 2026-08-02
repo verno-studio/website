@@ -1,6 +1,6 @@
 "use client";
 
-import { CopyButton } from "@vernostudio/design-system/components/copy-button";
+import { CopyButton } from "@/components/copy-button";
 import { usePostHog } from "posthog-js/react";
 import { useCallback } from "react";
 

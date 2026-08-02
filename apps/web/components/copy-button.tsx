@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ComponentProps } from "react";
 
-import { CheckIcon } from "@vernostudio/design-system/components/icons/check";
-import { CopyIcon } from "@vernostudio/design-system/components/icons/copy";
+import { CheckIcon } from "@/components/icons/check";
+import { CopyIcon } from "@/components/icons/copy";
 import { cn } from "@vernostudio/design-system/lib/utils";
 
 interface CopyButtonProps extends Omit<ComponentProps<"button">, "onClick"> {

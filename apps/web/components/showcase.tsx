@@ -1,9 +1,9 @@
-import { AstroIcon } from "@vernostudio/design-system/components/icons/astro";
-import { TanStackIcon } from "@vernostudio/design-system/components/icons/tanstack";
-import { ViteIcon } from "@vernostudio/design-system/components/icons/vite";
-import { NextJsIcon } from "@vernostudio/design-system/components/icons/nextjs";
+import { AstroIcon } from "@/components/icons/astro";
+import { TanStackIcon } from "@/components/icons/tanstack";
+import { ViteIcon } from "@/components/icons/vite";
+import { NextJsIcon } from "@/components/icons/nextjs";
 import Image from "next/image";
-import { ChevronRightIcon } from "@vernostudio/design-system/components/icons/chevron-right";
+import { ChevronRightIcon } from "@/components/icons/chevron-right";
 
 const showcase = [
   {
