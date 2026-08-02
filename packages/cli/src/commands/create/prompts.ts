@@ -122,7 +122,7 @@ const readPackagesInteractive = async (
       required: false,
     }),
   );
-  let pkgs = selected as PackageId[];
+  const pkgs = selected as PackageId[];
   if (pkgs.length === 0) {
     p.log.warn("No packages selected — monorepo will only contain apps/web.");
   }

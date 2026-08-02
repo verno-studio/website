@@ -75,10 +75,8 @@ export const fixManifest = async (
     }
 
     const packages: "typescript-config"[] = [];
-    if (state.isMonorepo) {
-      if (existsSync(path.join(projectDir, "packages", "typescript-config"))) {
-        packages.push("typescript-config");
-      }
+    if (state.isMonorepo && existsSync(path.join(projectDir, "packages", "typescript-config"))) {
+      packages.push("typescript-config");
     }
 
     // Attempt to determine linter

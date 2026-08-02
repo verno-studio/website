@@ -46,10 +46,8 @@ export const resolveLayerStack = (config: ProjectConfig): readonly string[] => {
   if (hasAddon(config, "turborepo")) {
     out.push("addons/turborepo");
   }
-  if (isMonorepo(config)) {
-    if (config.packages.includes("typescript-config")) {
-      out.push("packages/typescript-config");
-    }
+  if (isMonorepo(config) && config.packages.includes("typescript-config")) {
+    out.push("packages/typescript-config");
   }
   return out;
 };

@@ -48,10 +48,7 @@ export const runShadcnIfEnabled = async (options: {
     return;
   }
 
-  const workingDir = getShadcnWorkingDirectory(
-    options.projectDir,
-    options.monorepo,
-  );
+  const workingDir = getShadcnWorkingDirectory(options.projectDir, options.monorepo);
 
   // shadcn apply/add requires a detected framework (Next.js, Vite, etc.).
   // We write a temporary dummy config to ensure detection passes in all environments.
