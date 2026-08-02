@@ -21,9 +21,10 @@ export const getNextSteps = (inputs: {
     steps.push(devCommand(packageManager));
   }
   if (useShadcn) {
-    const sh = shadcnRunner(packageManager);
-    const dir = monorepo ? "apps/web" : ".";
-    steps.push(`To switch shadcn preset later: cd ${dir} && ${sh} apply --preset <code>`);
+    const enterApp = monorepo ? "cd apps/web && " : "";
+    steps.push(
+      `To switch shadcn preset later: ${enterApp}${shadcnRunner(packageManager)} apply --preset <code>`,
+    );
   }
   return steps;
 };
