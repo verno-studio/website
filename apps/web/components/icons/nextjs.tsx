@@ -1,9 +1,6 @@
 import type { SVGProps } from "react";
 
 interface NextJsIconProps extends SVGProps<SVGSVGElement> {
-  // The mask and the two gradients are referenced by `url(#id)`, which resolves
-  // document-wide. Rendering this icon twice on a page would have both copies
-  // point at the first one's defs; a caller-supplied prefix keeps them apart.
   readonly idPrefix?: string;
 }
 
