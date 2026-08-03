@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "../styles/geist.css";
 
+/* Registry components live outside this app, so automatic source detection
+   never sees them and every utility they use compiles to nothing. The glob
+   belongs here rather than in the published stylesheet: that file is copied
+   into other people's projects, where a path into this monorepo is wrong. */
+@source "../../../packages/design-system/components";
+
 @layer base {
   ul,
   ol {
