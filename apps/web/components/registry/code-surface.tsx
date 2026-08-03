@@ -6,43 +6,77 @@ import { useEffect, useRef, useState } from "react";
 import { CopyButton } from "@/components/copy-button";
 import { cn } from "@/lib/utils";
 
+const COLLAPSE_AFTER = 24;
+
 interface CodeSurfaceProps {
   readonly children: ReactNode;
-  /** Shown in the header bar: a file path, or the file the snippet lands in. */
   readonly name?: string;
-  /** Shiki puts its theme classes and CSS variables on the `pre` it emits. */
+  readonly lines?: number;
   readonly className?: string;
   readonly style?: CSSProperties;
 }
 
-/**
- * The copy value is read off the rendered `<pre>` rather than passed in: a
- * highlighted block arrives as spans, not as a string.
- */
-export const CodeSurface = ({ children, name, className, style }: CodeSurfaceProps) => {
+export const CodeSurface = ({ children, name, lines, className, style }: CodeSurfaceProps) => {
   const ref = useRef<HTMLPreElement>(null);
   const [code, setCode] = useState("");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setCode(ref.current?.textContent ?? "");
   }, []);
 
+  const collapsible = Boolean(lines && lines > COLLAPSE_AFTER);
+  const collapsed = collapsible && !open;
+
   return (
-    <figure className="my-8 w-full overflow-hidden rounded-xl bg-background-100 shadow-(--ds-shadow-border)">
-      <figcaption className="flex items-center justify-between gap-2 border-gray-alpha-400 border-b bg-gray-100 py-1.5 pr-1.5 pl-3">
-        <span className="truncate font-mono text-gray-900 text-xs">{name}</span>
-        <CopyButton aria-label="Copy code" className="size-7" value={code} />
-      </figcaption>
-      <pre
-        className={cn(
-          "overflow-x-auto p-3 text-gray-900 text-sm leading-relaxed no-scrollbar",
-          className,
-        )}
-        ref={ref}
-        style={style}
-      >
-        {children}
-      </pre>
+    <figure className="relative my-8 w-full overflow-hidden rounded-xl bg-background-100 shadow-(--ds-shadow-border)">
+      {name ? (
+        <figcaption className="flex items-center justify-between gap-2 border-gray-alpha-400 border-b bg-gray-100 py-1.5 pr-1.5 pl-3">
+          <span className="truncate font-mono text-gray-900 text-xs">{name}</span>
+          <CopyButton aria-label="Copy code" className="size-7" value={code} />
+        </figcaption>
+      ) : (
+        // With no header to sit in, the control floats over the code. It keeps
+        // its own background so it never has code running underneath it.
+        <CopyButton
+          aria-label="Copy code"
+          className="absolute inset-e-2 top-2 z-10 size-7 bg-background-100 shadow-(--ds-shadow-border)"
+          value={code}
+        />
+      )}
+
+      <div className={cn("relative", collapsed && "max-h-112 overflow-hidden")}>
+        <pre
+          className={cn(
+            "overflow-x-auto p-3 text-gray-900 text-sm leading-relaxed no-scrollbar",
+            !name && "pe-12",
+            className,
+          )}
+          ref={ref}
+          style={style}
+        >
+          {children}
+        </pre>
+        {collapsed ? (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background-100 to-transparent"
+          />
+        ) : null}
+      </div>
+
+      {collapsible ? (
+        <div className="border-gray-alpha-400 border-t">
+          <button
+            aria-expanded={open}
+            className="w-full cursor-pointer bg-gray-100 py-2 text-center font-medium text-gray-900 text-xs outline-none transition-colors duration-200 ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus [@media(hover:hover)_and_(pointer:fine)]:hover:text-gray-1000"
+            onClick={() => setOpen((current) => !current)}
+            type="button"
+          >
+            {open ? "Show less" : `Show all ${lines} lines`}
+          </button>
+        </div>
+      ) : null}
     </figure>
   );
 };

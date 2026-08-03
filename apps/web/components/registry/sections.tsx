@@ -1,7 +1,10 @@
+import { highlight } from "fumadocs-core/highlight";
 import { Fragment } from "react";
+import type { ComponentProps } from "react";
 
 import { Installer } from "@/components/installer";
 import { CodeSurface } from "@/components/registry/code-surface";
+import { codeThemes, languageOf } from "@/lib/code-theme";
 import { installCommand, installUrlCommand } from "@/lib/registry";
 import type { RegistryItem } from "@/lib/registry-schema";
 
@@ -56,15 +59,38 @@ export const Tokens = ({ item }: ItemProps) => {
   );
 };
 
-export const Source = ({ item }: ItemProps) => (
-  <>
-    {item.files.map((file) => (
-      <CodeSurface key={file.path} name={file.path}>
-        <code>{file.content}</code>
-      </CodeSurface>
-    ))}
-  </>
-);
+const surfaceFor = (name: string, lines: number) => ({
+  pre: ({ className, style, children }: ComponentProps<"pre">) => (
+    <CodeSurface className={className} lines={lines} name={name} style={style}>
+      {children}
+    </CodeSurface>
+  ),
+});
+
+export const Source = async ({ item }: ItemProps) => {
+  const blocks = await Promise.all(
+    item.files.map((file) =>
+      highlight(file.content, {
+        components: surfaceFor(file.path, file.content.trimEnd().split("\n").length),
+        // Without this shiki writes the light theme straight onto `color` and
+        // only exposes `--shiki-dark`. The site's stylesheet reads
+        // `--shiki-light`, which would then resolve to nothing and drop the
+        // whole block back to one inherited gray.
+        defaultColor: false,
+        lang: languageOf(file.path),
+        themes: codeThemes,
+      }),
+    ),
+  );
+
+  return (
+    <>
+      {blocks.map((block, index) => (
+        <Fragment key={item.files[index]?.path}>{block}</Fragment>
+      ))}
+    </>
+  );
+};
 
 export const GeneratedDoc = ({ item }: ItemProps) => (
   <>

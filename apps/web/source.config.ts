@@ -1,5 +1,7 @@
 import { defineConfig, defineDocs } from "fumadocs-mdx/config";
 
+import { codeThemes } from "./lib/code-theme";
+
 /**
  * Long-form prose for a registry item, one file per slug. Everything else on a
  * component's page (install commands, dependencies, tokens, source) is derived
@@ -12,11 +14,6 @@ export const components = defineDocs({
 
 export default defineConfig({
   mdxOptions: {
-    rehypeCodeOptions: {
-      themes: {
-        dark: "github-dark-high-contrast",
-        light: "github-light-high-contrast",
-      },
-    },
+    rehypeCodeOptions: { themes: codeThemes },
   },
 });
