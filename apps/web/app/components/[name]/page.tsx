@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Navigation } from "@/components/navigation";
-import { Pager } from "@/components/pager";
+import { Pagination } from "@/components/pagination";
 import { registryComponents } from "@/components/registry/mdx-components";
 import { GeneratedDoc } from "@/components/registry/sections";
 import { TableOfContents } from "@/components/table-of-contents";
@@ -63,7 +63,7 @@ const ComponentPage = async ({ params }: ComponentPageProps) => {
         ) : null}
         {Prose ? <Prose components={registryComponents(item)} /> : <GeneratedDoc item={item} />}
       </article>
-      <Pager {...getRegistrySiblings(item.name)} />
+      <Pagination {...getRegistrySiblings(item.name)} />
     </>
   );
 };

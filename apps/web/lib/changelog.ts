@@ -359,16 +359,18 @@ export const getChangelog = (): ChangelogRelease[] => {
 export const getRelease = (slug: string): ChangelogRelease | undefined =>
   getChangelog().find((release) => release.slug === slug);
 
-const pagerEntry = (release: ChangelogRelease | undefined) =>
+const paginationEntry = (release: ChangelogRelease | undefined) =>
   release ? { href: `/updates/${release.slug}`, title: `v${release.version}` } : undefined;
 
 export const getReleaseSiblings = (slug: string) => {
   const releases = getChangelog();
   const index = releases.findIndex((release) => release.slug === slug);
 
+  // Releases run newest first, so the next page is the entry above. The oldest
+  // and newest keep an empty slot rather than a link back to the index.
   return {
-    next: pagerEntry(releases[index - 1]),
-    previous: pagerEntry(releases[index + 1]) ?? { href: "/updates", title: "Updates" },
+    next: paginationEntry(releases[index - 1]),
+    previous: paginationEntry(releases[index + 1]),
   };
 };
 

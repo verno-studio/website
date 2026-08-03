@@ -56,16 +56,18 @@ export const getRegistryItem = (name: string): RegistryItem | undefined =>
 
 const displayTitle = (item: RegistryItem) => item.title ?? item.name;
 
-const pagerEntry = (item: RegistryItem | undefined) =>
+const paginationEntry = (item: RegistryItem | undefined) =>
   item ? { href: `/components/${item.name}`, title: displayTitle(item) } : undefined;
 
 export const getRegistrySiblings = (name: string) => {
   const items = getRegistryItems();
   const index = items.findIndex((item) => item.name === name);
 
+  // The ends of the list have no sibling, and the index is already one click
+  // away up in the back link. Leave the slot empty rather than filling it.
   return {
-    next: pagerEntry(items[index + 1]),
-    previous: pagerEntry(items[index - 1]) ?? { href: "/components", title: "Components" },
+    next: paginationEntry(items[index + 1]),
+    previous: paginationEntry(items[index - 1]),
   };
 };
 

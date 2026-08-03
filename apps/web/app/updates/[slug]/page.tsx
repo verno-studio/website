@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { Release } from "@/components/changelog";
 import { Navigation } from "@/components/navigation";
-import { Pager } from "@/components/pager";
+import { Pagination } from "@/components/pagination";
 import { getChangelog, getRelease, getReleaseSiblings, getReleaseSummary } from "@/lib/changelog";
 
 interface ReleasePageProps {
@@ -46,7 +46,7 @@ const ReleasePage = async ({ params }: ReleasePageProps) => {
         <h1 className="font-medium text-gray-1000">v{release.version}</h1>
       </section>
       <Release release={release} />
-      <Pager {...getReleaseSiblings(release.slug)} />
+      <Pagination {...getReleaseSiblings(release.slug)} />
     </>
   );
 };
