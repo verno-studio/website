@@ -19,7 +19,8 @@ const Error = ({ error, reset }: ErrorProps) => {
       <div className="flex flex-col gap-2 text-center">
         <h1 className="font-medium text-gray-1000">Something went wrong</h1>
         <p className="text-pretty text-gray-900">
-          An unexpected error occurred and has been reported. Trying again may be enough.
+          An unexpected error occurred and has been reported. Try again, or reload the page if it
+          keeps happening.
         </p>
       </div>
       <button
