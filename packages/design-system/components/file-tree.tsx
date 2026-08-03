@@ -9,7 +9,7 @@ const Chevron = ({ open }: { readonly open: boolean }) => (
   <svg
     aria-hidden="true"
     className={cn(
-      "size-4 shrink-0 text-gray-700 transition-transform duration-150 ease-out motion-reduce:transition-none",
+      "size-4 shrink-0 text-gray-700 transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
       open && "rotate-90",
     )}
     fill="none"
@@ -24,30 +24,42 @@ const Chevron = ({ open }: { readonly open: boolean }) => (
   </svg>
 );
 
-const FOLDER_OPEN =
-  "M1.5 3.5C1.5 2.95 1.95 2.5 2.5 2.5H6.09C6.36 2.5 6.61 2.61 6.8 2.79L8 4H12.5C13.05 4 13.5 4.45 13.5 5V5.5H4.5C4.06 5.5 3.67 5.79 3.55 6.21L2.2 11H2C1.72 11 1.5 10.78 1.5 10.5V3.5ZM3.5 12.5L4.86 7.71C4.92 7.5 5.11 7.36 5.33 7.36H14.2C14.53 7.36 14.77 7.68 14.68 8L13.5 12.14C13.38 12.56 12.99 12.85 12.55 12.85H3.5V12.5Z";
-
-const FOLDER_SHUT =
-  "M1.5 3.5C1.5 2.95 1.95 2.5 2.5 2.5H6.09C6.36 2.5 6.61 2.61 6.8 2.79L8 4H13C13.55 4 14 4.45 14 5V12C14 12.55 13.55 13 13 13H2.5C1.95 13 1.5 12.55 1.5 12V3.5Z";
-
 /**
- * A cross-fade, not a path morph. `d` only interpolates between paths that
- * share a command sequence, and the open folder is two subpaths where the shut
- * one is a single outline. Both glyphs stay in the DOM and trade places, which
- * is what the copy button does elsewhere in this system.
+ * A cross-fade, not a path morph. `d` only interpolates between paths sharing a
+ * command sequence, and the open folder is two subpaths where the shut one is a
+ * single outline. Both glyphs stay in the DOM and trade places at once:
+ * staggering them measured better on paper and worse in practice, because this
+ * curve is slow to start, so a delayed entrance leaves a beat where neither
+ * folder is drawn and the icon reads as a blink. Overlapping keeps something on
+ * screen the whole way, and the scale gap tells the two apart while they cross.
  */
-const SWAP =
-  "absolute inset-0 size-4 transition-[opacity,scale,filter] duration-200 ease-out motion-reduce:transition-none";
-const SHOWN = "scale-100 opacity-100 blur-0";
-const HIDDEN = "scale-[0.6] opacity-0 blur-xs";
-
 const FolderGlyph = ({ open }: { readonly open: boolean }) => (
   <span aria-hidden="true" className="relative inline-flex size-4 shrink-0 text-gray-700">
-    <svg className={cn(SWAP, open ? HIDDEN : SHOWN)} fill="none" viewBox="0 0 16 16">
-      <path d={FOLDER_SHUT} fill="currentColor" />
+    <svg
+      className={cn(
+        "absolute inset-0 size-4 transition-[opacity,scale,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
+        open ? "scale-[0.25] opacity-0 blur-xs" : "scale-100 opacity-100 blur-0",
+      )}
+      fill="none"
+      viewBox="0 0 16 16"
+    >
+      <path
+        d="M1.5 3.5C1.5 2.95 1.95 2.5 2.5 2.5H6.09C6.36 2.5 6.61 2.61 6.8 2.79L8 4H13C13.55 4 14 4.45 14 5V12C14 12.55 13.55 13 13 13H2.5C1.95 13 1.5 12.55 1.5 12V3.5Z"
+        fill="currentColor"
+      />
     </svg>
-    <svg className={cn(SWAP, open ? SHOWN : HIDDEN)} fill="none" viewBox="0 0 16 16">
-      <path d={FOLDER_OPEN} fill="currentColor" />
+    <svg
+      className={cn(
+        "absolute inset-0 size-4 transition-[opacity,scale,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
+        open ? "scale-100 opacity-100 blur-0" : "scale-[0.25] opacity-0 blur-xs",
+      )}
+      fill="none"
+      viewBox="0 0 16 16"
+    >
+      <path
+        d="M1.5 3.5C1.5 2.95 1.95 2.5 2.5 2.5H6.09C6.36 2.5 6.61 2.61 6.8 2.79L8 4H12.5C13.05 4 13.5 4.45 13.5 5V5.5H4.5C4.06 5.5 3.67 5.79 3.55 6.21L2.2 11H2C1.72 11 1.5 10.78 1.5 10.5V3.5ZM3.5 12.5L4.86 7.71C4.92 7.5 5.11 7.36 5.33 7.36H14.2C14.53 7.36 14.77 7.68 14.68 8L13.5 12.14C13.38 12.56 12.99 12.85 12.55 12.85H3.5V12.5Z"
+        fill="currentColor"
+      />
     </svg>
   </span>
 );
@@ -62,13 +74,6 @@ const FileGlyph = () => (
     />
   </svg>
 );
-
-/** Every row is the same height and the same target, folder or file. */
-const ROW =
-  "flex min-h-7 w-full items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000";
-
-const INTERACTIVE =
-  "cursor-pointer focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-gray-1000 focus-visible:-outline-offset-2 [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100";
 
 interface FileTreeProps {
   readonly children: ReactNode;
@@ -109,7 +114,7 @@ export const Folder = ({ name, defaultOpen = false, children }: FolderProps) => 
       <button
         aria-controls={children ? id : undefined}
         aria-expanded={open}
-        className={cn(ROW, INTERACTIVE)}
+        className="flex min-h-7 w-full cursor-pointer items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000 focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gray-1000 focus-visible:outline-solid [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"
         onClick={() => setOpen((current) => !current)}
         type="button"
       >
@@ -125,11 +130,7 @@ export const Folder = ({ name, defaultOpen = false, children }: FolderProps) => 
         The guide line lands exactly there and the branch hangs off it.
       */}
       {children ? (
-        <ul
-          className="m-0 list-none border-gray-200 border-s ps-2 [margin-inline-start:0.75rem]"
-          hidden={!open}
-          id={id}
-        >
+        <ul className="m-0 list-none border-gray-200 border-s ps-2 ms-3" hidden={!open} id={id}>
           {children}
         </ul>
       ) : null}
@@ -146,14 +147,17 @@ interface FileProps {
 export const File = ({ name, href }: FileProps) => (
   <li className="m-0 list-none p-0">
     {href ? (
-      <a className={cn(ROW, INTERACTIVE, "no-underline")} href={href}>
+      <a
+        className="flex min-h-7 w-full cursor-pointer items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000 no-underline focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gray-1000 focus-visible:outline-solid [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"
+        href={href}
+      >
         {/* The chevron column is empty here so names line up with folder names. */}
         <span aria-hidden="true" className="size-4 shrink-0" />
         <FileGlyph />
         <span className="truncate">{name}</span>
       </a>
     ) : (
-      <span className={ROW}>
+      <span className="flex min-h-7 w-full items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000">
         <span aria-hidden="true" className="size-4 shrink-0" />
         <FileGlyph />
         <span className="truncate">{name}</span>
