@@ -14,7 +14,7 @@
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.13.11",
     "@vernostudio/design-system": "workspace:*",
-    "clsx": "^2.1.1",
+    "cnfast": "^0.1.0",
     "fumadocs-core": "^16.14.0",
     "fumadocs-mdx": "^15.2.2",
     "lucide-react": "^1.17.0",
@@ -24,7 +24,6 @@
     "posthog-node": "^5.36.2",
     "react": "^19",
     "react-dom": "^19",
-    "tailwind-merge": "^3.6.0",
     "zod": "^4.0.0"
   },
   "devDependencies": {

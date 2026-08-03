@@ -22,7 +22,7 @@
       "dependencies": {
         "@t3-oss/env-nextjs": "^0.13.11",
         "@vernostudio/design-system": "workspace:*",
-        "clsx": "^2.1.1",
+        "cnfast": "^0.1.0",
         "fumadocs-core": "^16.14.0",
         "fumadocs-mdx": "^15.2.2",
         "lucide-react": "^1.17.0",
@@ -32,7 +32,6 @@
         "posthog-node": "^5.36.2",
         "react": "^19",
         "react-dom": "^19",
-        "tailwind-merge": "^3.6.0",
         "zod": "^4.0.0",
       },
       "devDependencies": {
@@ -971,7 +970,7 @@
 
     "client-only": ["client-only@0.0.1", "", {}, "sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA=="],
 
-    "clsx": ["clsx@2.1.1", "", {}, "sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA=="],
+    "cnfast": ["cnfast@0.1.0", "", { "bin": { "cnfast": "bin/cli.js" } }, "sha512-rH0jBKeLkVrK7NsZ5Ba2l7WdMBmm1k0FMpABeXUU1PgTUxbz3261gEuCSsrYuXo4BwAe3yCcIbQ93YyS52lOGQ=="],
 
     "code-block-writer": ["code-block-writer@13.0.3", "", {}, "sha512-Oofo0pq3IKnsFtuHqSF7TqBfr71aeyZDVJ0HpmqB7FBM2qEigL0iPONSCZSO9pE9dZTAxANe5XHG9Uy0YMv8cg=="],
 

@@ -367,11 +367,7 @@ export const fonts = cn(
   "touch-manipulation font-sans antialiased",
 );
 `],
-    ["lib/utils.ts", `import { clsx } from "clsx";
-import type { ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
+    ["lib/utils.ts", `export { cn } from "cnfast";
 `],
     ["next.config.ts", `import type { NextConfig } from "next";
 

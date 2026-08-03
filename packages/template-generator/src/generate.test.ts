@@ -158,7 +158,7 @@ describe("generate + writeTree", () => {
     expectSingleAppGlobalsBaseLayer(appCss);
 
     const utils = await readFile(path.join(out, "apps", "web", "lib", "utils.ts"), "utf-8");
-    expect(utils).toContain("export const cn");
+    expect(utils).toContain('export { cn } from "cnfast"');
   });
 
   test("single-app ui shadcn writes typography + provider at app root", async () => {
