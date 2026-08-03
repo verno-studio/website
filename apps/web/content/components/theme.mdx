@@ -51,11 +51,17 @@ Every contract name points at a step in the scale rather than at a color, so
 retuning the scale retunes everything downstream of it and there is exactly one
 place to edit.
 
-## One lightness, six hues
+## Six hues, one step
 
-The accents are all step 700. In OKLCH that step is a lightness rather than a
-brightness, so the six read as equally loud instead of amber shouting over
-purple. Retuning one accent means changing a hue and nothing else.
+The accents are all step 700, so reaching for a different one stays a change of
+a single token. Their hues sit far apart on purpose: 258° blue, 306° purple,
+182° teal, 76° amber, 1° pink. Chart series read them in that order, so two
+neighboring lines never land on the same part of the wheel. Red sits the
+rotation out, because it already means destructive everywhere else.
+
+These are Geist's published values rather than a ramp generated here, so the six
+share a step and not a lightness. Amber lands at 81.87% and purple at 55.5%,
+which is why amber carries further across a chart than its neighbors do.
 
 <Preview caption="blue, red, purple, teal, amber and pink at step 700, light mode.">
   <AccentScale />
