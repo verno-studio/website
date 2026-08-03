@@ -44,7 +44,7 @@ export const Tokens = ({ item }: ItemProps) => {
 
   return (
     <div className="my-8 overflow-hidden rounded-xl bg-background-100 shadow-(--ds-shadow-border)">
-      <dl className="grid max-h-96 grid-cols-[auto_1fr] gap-x-4 gap-y-1 overflow-y-auto px-4 py-4 font-mono text-sm no-scrollbar scroll-fade-b">
+      <dl className="grid max-h-96 grid-cols-[auto_1fr] gap-x-4 gap-y-1 overflow-y-auto p-4 font-mono text-sm no-scrollbar scroll-fade-b">
         {tokens.map(([token, value]) => (
           <Fragment key={token}>
             <dt className="text-gray-1000">--{token}</dt>
