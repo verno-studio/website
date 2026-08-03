@@ -33,18 +33,20 @@ const proseComponents = {
   Preview,
   a: Anchor,
   h2: ({ children, id, ...props }: ComponentProps<"h2">) => (
-    <h2
-      className="mt-16 mb-3 w-fit scroll-mt-20 font-medium text-gray-1000 first:mt-0"
-      id={id}
-      {...props}
-    >
-      {id ? <HeadingAnchor id={id}>{children}</HeadingAnchor> : children}
-    </h2>
+    <div className="group relative mt-16 mb-3 w-fit first:mt-0">
+      <h2 className="scroll-mt-20 font-medium text-gray-1000" id={id} {...props}>
+        {children}
+      </h2>
+      {id ? <HeadingAnchor id={id} /> : null}
+    </div>
   ),
   h3: ({ children, id, ...props }: ComponentProps<"h3">) => (
-    <h3 className="mt-10 mb-2 w-fit scroll-mt-20 font-medium text-gray-1000" id={id} {...props}>
-      {id ? <HeadingAnchor id={id}>{children}</HeadingAnchor> : children}
-    </h3>
+    <div className="group relative mt-10 mb-2 w-fit">
+      <h3 className="scroll-mt-20 font-medium text-gray-1000" id={id} {...props}>
+        {children}
+      </h3>
+      {id ? <HeadingAnchor id={id} /> : null}
+    </div>
   ),
   hr: Divider,
   ol: ({ children, ...props }: ComponentProps<"ol">) => (
