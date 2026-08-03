@@ -14,8 +14,13 @@
   },
   "devDependencies": {
     "@types/node": "^26",
+    "@types/react": "^19.2.16",
     "@vernostudio/typescript-config": "workspace:*",
+    "react": "^19",
     "shadcn": "^4.16.1",
     "typescript": "^7"
+  },
+  "peerDependencies": {
+    "react": "^19"
   }
 }
