@@ -85,7 +85,7 @@ export const CodeBlock = ({
         <div className="border-gray-alpha-400 border-t">
           <button
             aria-expanded={open}
-            className="w-full cursor-pointer bg-gray-100 py-2 text-center font-medium text-gray-900 text-xs outline-none transition-colors duration-200 ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus [@media(hover:hover)_and_(pointer:fine)]:hover:text-gray-1000"
+            className="w-full cursor-pointer bg-gray-100 py-2 text-center font-medium text-gray-900 text-xs transition-colors duration-200 ease-out focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-focus [@media(hover:hover)_and_(pointer:fine)]:hover:text-gray-1000"
             onClick={() => setOpen((current) => !current)}
             type="button"
           >

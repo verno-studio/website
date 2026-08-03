@@ -50,7 +50,7 @@ export const Searchable = () => {
           Filter
         </label>
         <input
-          className="w-full rounded-md bg-background-100 px-3 py-2 text-base text-gray-1000 shadow-(--ds-shadow-border) outline-none placeholder:text-gray-700 focus-visible:outline-2 focus-visible:outline-focus sm:text-sm"
+          className="w-full rounded-md bg-background-100 px-3 py-2 text-base text-gray-1000 shadow-(--ds-shadow-border) placeholder:text-gray-700 focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-focus sm:text-sm"
           id={inputId}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="oklch tree"

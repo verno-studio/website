@@ -344,7 +344,7 @@ export const JsonView = ({
         aria-setsize={size}
         // Indent by depth, not by position: `first:` would match the first
         // child of every group and flatten one row at each level.
-        className={cn("group outline-none", node.depth > 0 && "ps-4")}
+        className={cn("group", node.depth > 0 && "ps-4")}
         key={node.id}
         onClick={(event) => {
           // The treeitem box wraps its own subtree, so without this a click on
@@ -367,7 +367,7 @@ export const JsonView = ({
         <div
           className={cn(
             "flex min-h-6 items-start gap-1 rounded-sm py-0.5",
-            "group-focus-visible:outline-2 group-focus-visible:outline-gray-1000 group-focus-visible:outline-offset-1",
+            "group-focus-visible:outline-2 group-focus-visible:outline-solid group-focus-visible:outline-gray-1000 group-focus-visible:outline-offset-1",
             node.children &&
               "cursor-pointer touch-manipulation [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100",
           )}
