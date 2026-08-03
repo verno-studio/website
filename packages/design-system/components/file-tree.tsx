@@ -3,68 +3,12 @@
 import { useId, useState } from "react";
 import type { ReactNode } from "react";
 
+// Relative, not the `@/components` alias: this file and its icons land in the
+// same directory in a consumer's project and in this repo, and the alias only
+// resolves in one of them.
+import { Chevron, FileGlyph, FolderGlyph } from "./file-tree-icons";
+
 import { cn } from "@/lib/utils";
-
-const Chevron = ({ open }: { readonly open: boolean }) => (
-  <svg
-    aria-hidden="true"
-    className={cn(
-      "size-4 shrink-0 text-gray-700 transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
-      open && "rotate-90",
-    )}
-    fill="none"
-    viewBox="0 0 16 16"
-  >
-    <path
-      clipRule="evenodd"
-      d="M6.75 3.94L7.28 4.47L10.1 7.29C10.49 7.68 10.49 8.32 10.1 8.71L7.28 11.53L6.75 12.06L5.69 11L6.22 10.47L8.69 8L6.22 5.53L5.69 5L6.75 3.94Z"
-      fill="currentColor"
-      fillRule="evenodd"
-    />
-  </svg>
-);
-
-const FolderGlyph = ({ open }: { readonly open: boolean }) => (
-  <span aria-hidden="true" className="relative inline-flex size-4 shrink-0 text-gray-700">
-    <svg
-      className={cn(
-        "absolute inset-0 size-4 transition-[opacity,scale,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
-        open ? "scale-[0.25] opacity-0 blur-xs" : "scale-100 opacity-100 blur-0",
-      )}
-      fill="none"
-      viewBox="0 0 16 16"
-    >
-      <path
-        d="M1.5 3.5C1.5 2.95 1.95 2.5 2.5 2.5H6.09C6.36 2.5 6.61 2.61 6.8 2.79L8 4H13C13.55 4 14 4.45 14 5V12C14 12.55 13.55 13 13 13H2.5C1.95 13 1.5 12.55 1.5 12V3.5Z"
-        fill="currentColor"
-      />
-    </svg>
-    <svg
-      className={cn(
-        "absolute inset-0 size-4 transition-[opacity,scale,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
-        open ? "scale-100 opacity-100 blur-0" : "scale-[0.25] opacity-0 blur-xs",
-      )}
-      fill="none"
-      viewBox="0 0 16 16"
-    >
-      <path
-        d="M1.5 3.5C1.5 2.95 1.95 2.5 2.5 2.5H6.09C6.36 2.5 6.61 2.61 6.8 2.79L8 4H12.5C13.05 4 13.5 4.45 13.5 5V5.5H4.5C4.06 5.5 3.67 5.79 3.55 6.21L2.2 11H2C1.72 11 1.5 10.78 1.5 10.5V3.5ZM3.5 12.5L4.86 7.71C4.92 7.5 5.11 7.36 5.33 7.36H14.2C14.53 7.36 14.77 7.68 14.68 8L13.5 12.14C13.38 12.56 12.99 12.85 12.55 12.85H3.5V12.5Z"
-        fill="currentColor"
-      />
-    </svg>
-  </span>
-);
-
-const FileGlyph = () => (
-  <svg aria-hidden="true" className="size-4 shrink-0 text-gray-700" fill="none" viewBox="0 0 16 16">
-    <path
-      clipRule="evenodd"
-      d="M3.5 2C3.5 1.72 3.72 1.5 4 1.5H9.25L13 5.25V14C13 14.28 12.78 14.5 12.5 14.5H4C3.72 14.5 3.5 14.28 3.5 14V2ZM9 2.75V5.5H11.75L9 2.75Z"
-      fill="currentColor"
-      fillRule="evenodd"
-    />
-  </svg>
-);
 
 interface FileTreeProps {
   readonly children: ReactNode;
@@ -74,7 +18,7 @@ interface FileTreeProps {
 export const FileTree = ({ children, className }: FileTreeProps) => (
   <ul
     className={cn(
-      "m-0 w-full list-none p-0 font-mono text-gray-1000 text-sm [font-variant-ligatures:none]",
+      "m-0 flex w-full list-none flex-col gap-0 p-0 font-mono text-gray-1000 text-sm [font-variant-ligatures:none]",
       className,
     )}
   >
@@ -94,7 +38,7 @@ export const Folder = ({ name, defaultOpen = false, children }: FolderProps) => 
   const id = useId();
 
   return (
-    <li className="m-0 list-none p-0">
+    <li>
       <button
         aria-controls={children ? id : undefined}
         aria-expanded={open}
@@ -109,7 +53,11 @@ export const Folder = ({ name, defaultOpen = false, children }: FolderProps) => 
         </span>
       </button>
       {children ? (
-        <ul className="m-0 list-none border-gray-200 border-s ps-2 ms-3" hidden={!open} id={id}>
+        <ul
+          className="m-0 flex list-none flex-col gap-0 border-gray-200 border-s ps-2 ms-3"
+          hidden={!open}
+          id={id}
+        >
           {children}
         </ul>
       ) : null}
@@ -124,7 +72,7 @@ interface FileProps {
 }
 
 export const File = ({ name, href }: FileProps) => (
-  <li className="m-0 list-none p-0">
+  <li>
     {href ? (
       <a
         className="flex min-h-7 w-full cursor-pointer items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000 no-underline focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gray-1000 focus-visible:outline-solid [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"

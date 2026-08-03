@@ -189,6 +189,10 @@
         {
           "path": "components/file-tree.tsx",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/file-tree-icons.tsx",
+          "type": "registry:ui"
         }
       ],
       "name": "file-tree",
