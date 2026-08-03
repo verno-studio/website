@@ -43,7 +43,7 @@ const HEADING_KIND: Record<string, ChangeKind> = {
 };
 
 // Node ids double as React keys, so they must be identical across builds of the
-// same source — a random id per parse gives every build a different RSC payload
+// same source. A random id per parse gives every build a different RSC payload
 // for byte-identical release pages. Reset per parse; unique among siblings is
 // all a key needs to be.
 let idCounter = 0;
@@ -358,6 +358,21 @@ export const getChangelog = (): ChangelogRelease[] => {
 
 export const getRelease = (slug: string): ChangelogRelease | undefined =>
   getChangelog().find((release) => release.slug === slug);
+
+const paginationEntry = (release: ChangelogRelease | undefined) =>
+  release ? { href: `/updates/${release.slug}`, title: `v${release.version}` } : undefined;
+
+export const getReleaseSiblings = (slug: string) => {
+  const releases = getChangelog();
+  const index = releases.findIndex((release) => release.slug === slug);
+
+  // Releases run newest first, so the next page is the entry above. The oldest
+  // and newest keep an empty slot rather than a link back to the index.
+  return {
+    next: paginationEntry(releases[index - 1]),
+    previous: paginationEntry(releases[index + 1]),
+  };
+};
 
 const inlineToText = (nodes: InlineNode[]): string =>
   nodes

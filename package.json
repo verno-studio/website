@@ -18,7 +18,8 @@
     "changeset:version": "changeset version",
     "changeset:publish": "turbo build --filter=@vernostudio/cli && changeset publish",
     "prepare": "husky",
-    "doctor": "bunx react-doctor@latest"
+    "doctor": "bunx react-doctor@latest",
+    "registry:build": "turbo run build --filter=@vernostudio/design-system"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",

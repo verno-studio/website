@@ -15,7 +15,7 @@ const resolveInitShadcnMode = (
   if (resolved.useShadcn && !detected.hasShadcn) {
     return {
       kind: "run",
-      monorepoWithDesignSystem: resolved.addons.includes("turborepo"),
+      monorepo: resolved.addons.includes("turborepo"),
       preset: resolved.shadcnPreset,
     };
   }

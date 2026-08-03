@@ -1,0 +1,87 @@
+---
+title: Theme
+---
+
+import { AccentScale, ColorScale } from "@/components/registry/demos/theme";
+
+Everything here is a CSS variable, so it lands in your `globals.css` and nothing
+else changes. There is no component to import and no wrapper to mount. The
+values become what `bg-background`, `text-muted-foreground` and the rest resolve
+to.
+
+<Preview caption="The gray scale in both modes, 100 through 1000, painted with the values the registry ships. Every step is named with its value under Tokens.">
+  <ColorScale />
+</Preview>
+
+Those swatches are not `bg-gray-500` in this app's stylesheet. They are the
+literal values read back out of the built JSON. The palette this site runs on
+and the palette it publishes are free to drift, so a preview reading the wrong
+one would show you a theme you cannot install.
+
+## Install
+
+<Install />
+
+Or, if `components.json` has no registry namespace to resolve `@vernostudio`
+against, point the CLI straight at the file:
+
+<InstallUrl />
+
+---
+
+## Why it is not just a palette
+
+Two registries can each ship a perfectly good set of colors and still disagree
+about which one `--background` means. This item defines both halves: the raw
+scale, and the contract names that shadcn's own components read. Install it and
+a component pulled from ui.shadcn.com lands in the same theme as one pulled from
+here.
+
+```css title="globals.css"
+:root {
+  --background: var(--background-100);
+  --foreground: var(--gray-1000);
+  --muted-foreground: var(--gray-900);
+  --border: var(--gray-alpha-400);
+  --ring: var(--blue-700);
+}
+```
+
+Every contract name points at a step in the scale rather than at a color, so
+retuning the scale retunes everything downstream of it and there is exactly one
+place to edit.
+
+## Six hues, one step
+
+The accents are all step 700, so reaching for a different one stays a change of
+a single token. Their hues sit far apart on purpose: 258° blue, 306° purple,
+182° teal, 76° amber, 1° pink. Chart series read them in that order, so two
+neighboring lines never land on the same part of the wheel. Red sits the
+rotation out, because it already means destructive everywhere else.
+
+These are Geist's published values rather than a ramp generated here, so the six
+share a step and not a lightness. Amber lands at 81.87% and purple at 55.5%,
+which is why amber carries further across a chart than its neighbors do.
+
+<Preview caption="The six accents at step 700, light mode. Each one is named with its value under Tokens.">
+  <AccentScale />
+</Preview>
+
+## Tokens
+
+Every variable below lands in your stylesheet. Dark mode redeclares the same
+names, so nothing downstream has to know which mode it is in.
+
+<Tokens />
+
+## Dependencies
+
+One package comes along with it. It carries the animation keyframes shadcn's own
+components expect to already be there:
+
+<Dependencies />
+
+## What it does not ship
+
+`cn` is not published alongside it. `shadcn init` already writes one, and a
+second copy would only drift from the first.

@@ -1,12 +1,10 @@
 import "./globals.css";
-import { fonts } from "@vernostudio/design-system/lib/fonts";
-import { DesignSystemProvider } from "@vernostudio/design-system/components/providers/client";
+import { fonts } from "@/lib/fonts";
+import { DesignSystemProvider } from "@/components/providers/client";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { url } from "@/lib/url";
-import { Header } from "@/components/header";
 import { PHProvider } from "@/components/providers/posthog";
-import { Footer } from "@/components/footer";
 
 const title = "Verno Studio";
 const description =
@@ -89,10 +87,8 @@ const RootLayout = ({ children }: RootLayoutProps) => (
         <DesignSystemProvider>
           <div className="flex min-w-0">
             <div className="@container flex-1 min-w-0">
-              <main className="relative z-10 mx-auto grid w-full max-w-168 gap-16 @sm:gap-24 px-4 py-16 @sm:py-32">
-                <Header />
+              <main className="relative z-10 mx-auto flex flex-col w-full max-w-160 gap-16 @sm:gap-24 px-4 py-16 @sm:py-32">
                 <div className="flex flex-1 flex-col gap-12">{children}</div>
-                <Footer />
               </main>
             </div>
           </div>

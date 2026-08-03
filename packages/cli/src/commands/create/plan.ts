@@ -5,7 +5,7 @@ import type {
   PackageManager,
 } from "@vernostudio/template-generator";
 import type { ResolvedCreateInputs } from "./args";
-import { resolvedHasDesignSystem } from "./args";
+import { resolvedUsesTurborepo } from "./args";
 import {
   appendInstallStep,
   appendShadcnSteps,
@@ -57,7 +57,7 @@ export const buildCreatePlan = (
     mode: resolved.useShadcn
       ? {
           kind: "run",
-          monorepoWithDesignSystem: resolvedHasDesignSystem(resolved),
+          monorepo: resolvedUsesTurborepo(resolved),
           preset: resolved.shadcnPreset,
         }
       : { kind: "skip", reason: "Skipped (--ui none, --skip-shadcn, or declined)" },

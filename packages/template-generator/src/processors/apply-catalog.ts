@@ -1,62 +1,29 @@
 import type { ProjectConfig } from "../config";
-import { hasAddon, hasDesignSystem, hasPackage, isMonorepo } from "../config";
+import { hasAddon, hasPackage, isMonorepo } from "../config";
 import type { VirtualFileSystem } from "../core/virtual-fs";
 import { scoped } from "../paths";
 import { addPackageDependency } from "../utils/add-deps";
 import type { AvailableDependencies } from "../utils/add-deps";
 
-const nextAppRuntimeDeps: { dependencies: readonly AvailableDependencies[] } = {
-  dependencies: ["next", "react", "react-dom"],
-};
+/** Both lists are shared by the single-app root and `apps/web` in the Turborepo layout. */
+const nextAppDependencies: readonly AvailableDependencies[] = ["next", "react", "react-dom"];
 
-/** Shared by single-app root and `apps/web` in the Turborepo layout. */
-const nextWebAppDevDependencies: readonly AvailableDependencies[] = [
+const nextAppDevDependencies: readonly AvailableDependencies[] = [
   "@tailwindcss/postcss",
   "@types/node",
   "@types/react",
   "@types/react-dom",
-  "@typescript/native-preview",
   "tailwindcss",
   "typescript",
 ];
 
 const monorepoRootSharedDevDeps: readonly AvailableDependencies[] = ["turbo", "typescript"];
 
-const webAppDeps: {
-  dependencies: readonly AvailableDependencies[];
-  devDependencies: readonly AvailableDependencies[];
-} = {
-  dependencies: ["next", "react", "react-dom"],
-  devDependencies: nextWebAppDevDependencies,
-};
+/** What the scaffolded provider imports. `shadcn add` installs its own. */
+const SHADCN_UI_RUNTIME: readonly AvailableDependencies[] = ["next-themes"];
 
-const SHADCN_UI_RUNTIME: readonly AvailableDependencies[] = ["next-themes", "sonner"];
-
-/** `lib/utils.ts` (cn) in standalone / apps/web when there is no workspace design-system package. */
+/** `lib/utils.ts` (cn) lives in the app, so its two dependencies do too. */
 const SHADCN_STANDALONE_LIB_UTILS: readonly AvailableDependencies[] = ["clsx", "tailwind-merge"];
-
-const designSystemDeps: {
-  dependencies: readonly AvailableDependencies[];
-  devDependencies: readonly AvailableDependencies[];
-  peerDependencies: readonly AvailableDependencies[];
-} = {
-  dependencies: [
-    "class-variance-authority",
-    "clsx",
-    "radix-ui",
-    "tailwind-merge",
-    "tailwindcss",
-    "tw-animate-css",
-  ],
-  devDependencies: [
-    "@types/react",
-    "@types/react-dom",
-    "@typescript/native-preview",
-    "shadcn",
-    "typescript",
-  ],
-  peerDependencies: ["react", "react-dom"],
-};
 
 const devDepsWithOptionalUltracite = (
   config: ProjectConfig,
@@ -70,7 +37,6 @@ const devDepsWithOptionalUltracite = (
 
 const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): void => {
   const tsConfigName = scoped(config.npmScope, "typescript-config");
-  const dsName = scoped(config.npmScope, "design-system");
   const uiShadcn = config.ui === "shadcn";
 
   addPackageDependency({
@@ -83,54 +49,33 @@ const applyMonorepoCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): vo
     customDependencies?: Record<string, string>;
     customDevDependencies?: Record<string, string>;
   } = {};
-  if (hasDesignSystem(config)) {
-    webWorkspacePins.customDependencies = { [dsName]: "workspace:*" };
-  }
   if (hasPackage(config, "typescript-config")) {
     webWorkspacePins.customDevDependencies = { [tsConfigName]: "workspace:*" };
   }
 
-  const webRuntimeDependencies: AvailableDependencies[] = [...webAppDeps.dependencies];
-  if (uiShadcn && !hasDesignSystem(config)) {
+  const webRuntimeDependencies: AvailableDependencies[] = [...nextAppDependencies];
+  if (uiShadcn) {
     webRuntimeDependencies.push(...SHADCN_UI_RUNTIME, ...SHADCN_STANDALONE_LIB_UTILS);
   }
 
   addPackageDependency({
     ...webWorkspacePins,
     dependencies: webRuntimeDependencies,
-    devDependencies: devDepsWithOptionalUltracite(config, webAppDeps.devDependencies),
+    devDependencies: devDepsWithOptionalUltracite(config, nextAppDevDependencies),
     packagePath: "apps/web/package.json",
     vfs,
   });
-
-  if (hasDesignSystem(config)) {
-    const dsDependencies = [...designSystemDeps.dependencies];
-    const dsDevDependencies = [...designSystemDeps.devDependencies];
-    if (uiShadcn) {
-      dsDependencies.push(...SHADCN_UI_RUNTIME);
-      dsDevDependencies.push("next");
-    }
-
-    addPackageDependency({
-      customDevDependencies: { [tsConfigName]: "workspace:*" },
-      dependencies: dsDependencies,
-      devDependencies: dsDevDependencies,
-      packagePath: "packages/design-system/package.json",
-      peerDependencies: designSystemDeps.peerDependencies,
-      vfs,
-    });
-  }
 };
 
 export const applyDependencyCatalog = (vfs: VirtualFileSystem, config: ProjectConfig): void => {
   if (!isMonorepo(config)) {
-    const dependencies: AvailableDependencies[] = [...nextAppRuntimeDeps.dependencies];
+    const dependencies: AvailableDependencies[] = [...nextAppDependencies];
     if (config.ui === "shadcn") {
       dependencies.push(...SHADCN_UI_RUNTIME, ...SHADCN_STANDALONE_LIB_UTILS);
     }
     addPackageDependency({
       dependencies,
-      devDependencies: devDepsWithOptionalUltracite(config, nextWebAppDevDependencies),
+      devDependencies: devDepsWithOptionalUltracite(config, nextAppDevDependencies),
       packagePath: "package.json",
       vfs,
     });

@@ -1,13 +1,8 @@
 import "./globals.css";
 {{#if useShadcn}}
 import type { Metadata } from "next";
-{{#if hasDesignSystem}}
-import { DesignSystemProvider } from "{{dsName}}/components/providers/client";
-import { fonts } from "{{dsName}}/lib/fonts";
-{{else}}
 import { DesignSystemProvider } from "@/components/providers/client";
 import { fonts } from "@/lib/fonts";
-{{/if}}
 import type { ReactNode } from "react";
 {{else}}
 import type { Metadata } from "next";

@@ -17,7 +17,6 @@ export const LAYERS: readonly LayerDefinition[] = [
   { id: "shared", layout: "stack-root" },
   { id: "frontends/next", layout: "stack-root" },
   { id: "addons/turborepo", layout: "stack-root" },
-  { id: "packages/design-system", layout: "preserve-path" },
   { id: "packages/typescript-config", layout: "preserve-path" },
 ] as const;
 
@@ -47,13 +46,8 @@ export const resolveLayerStack = (config: ProjectConfig): readonly string[] => {
   if (hasAddon(config, "turborepo")) {
     out.push("addons/turborepo");
   }
-  if (isMonorepo(config)) {
-    if (config.packages.includes("typescript-config")) {
-      out.push("packages/typescript-config");
-    }
-    if (config.packages.includes("design-system")) {
-      out.push("packages/design-system");
-    }
+  if (isMonorepo(config) && config.packages.includes("typescript-config")) {
+    out.push("packages/typescript-config");
   }
   return out;
 };

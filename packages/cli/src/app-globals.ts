@@ -5,6 +5,11 @@ import { VERNO_APP_GLOBALS_BASE_LAYER, VERNO_APP_GLOBALS_BASE_MARKER } from "./c
 
 const trimEndWhitespace = (value: string): string => value.replace(/\s+$/u, "");
 
+/**
+ * The contract is either written into the file by `shadcn init`, or imported from
+ * a workspace design-system package — the shape projects generated before that
+ * package was dropped still have.
+ */
 export const hasStyleContract = (content: string): boolean =>
   /@import\s+["'][^"']*\/styles\/globals\.css["']/u.test(content) || /--border\s*:/u.test(content);
 

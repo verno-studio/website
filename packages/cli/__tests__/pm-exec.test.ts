@@ -11,39 +11,30 @@ describe("getShadcnBootstrapCommand", () => {
   const preset = "a2r6bw";
 
   test("passes arbitrary preset to apply for app root (uses npx when package manager is bun)", () => {
-    const cmd = getShadcnBootstrapCommand("bun", { monorepoWithDesignSystem: false, preset });
+    const cmd = getShadcnBootstrapCommand("bun", { monorepo: false, preset });
     expect(cmd.file).toBe("npx");
     expect(cmd.args).toEqual(["--yes", spec, "apply", "--preset", preset, "-y"]);
   });
 
-  test("monorepo + design-system adds -c packages/design-system so the CLI runs from repo root and uses apply", () => {
-    const cmd = getShadcnBootstrapCommand("npm", { monorepoWithDesignSystem: true, preset });
+  test("monorepo adds -c apps/web so the CLI runs from repo root and uses apply", () => {
+    const cmd = getShadcnBootstrapCommand("npm", { monorepo: true, preset });
     expect(cmd.file).toBe("npx");
-    expect(cmd.args).toEqual([
-      "--yes",
-      spec,
-      "apply",
-      "--preset",
-      preset,
-      "-y",
-      "-c",
-      "packages/design-system",
-    ]);
+    expect(cmd.args).toEqual(["--yes", spec, "apply", "--preset", preset, "-y", "-c", "apps/web"]);
   });
 });
 
 describe("getShadcnAddAllCommand", () => {
   const spec = getShadcnExecSpec();
 
-  test("invokes add --all at app root when not using a design-system cwd", () => {
-    const cmd = getShadcnAddAllCommand("bun", { monorepoWithDesignSystem: false });
+  test("invokes add --all at the project root when not a monorepo", () => {
+    const cmd = getShadcnAddAllCommand("bun", { monorepo: false });
     expect(cmd.file).toBe("npx");
     expect(cmd.args).toEqual(["--yes", spec, "add", "--all", "-y"]);
   });
 
-  test("monorepo + design-system passes the same -c path as init", () => {
-    const cmd = getShadcnAddAllCommand("pnpm", { monorepoWithDesignSystem: true });
-    expect(cmd.args).toEqual(["dlx", spec, "add", "--all", "-y", "-c", "packages/design-system"]);
+  test("monorepo passes the same -c path as apply", () => {
+    const cmd = getShadcnAddAllCommand("pnpm", { monorepo: true });
+    expect(cmd.args).toEqual(["dlx", spec, "add", "--all", "-y", "-c", "apps/web"]);
   });
 });
 

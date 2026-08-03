@@ -9,9 +9,9 @@ export type AddonId = "turborepo" | "ultracite";
 
 export const ADDON_IDS: readonly AddonId[] = ["turborepo", "ultracite"] as const;
 
-export type PackageId = "typescript-config" | "design-system";
+export type PackageId = "typescript-config";
 
-export const PACKAGE_IDS: readonly PackageId[] = ["typescript-config", "design-system"] as const;
+export const PACKAGE_IDS: readonly PackageId[] = ["typescript-config"] as const;
 
 export type UiMode = "none" | "shadcn";
 
@@ -45,9 +45,6 @@ export const hasPackage = (config: ProjectConfig, id: PackageId): boolean =>
   config.packages.includes(id);
 
 export const isMonorepo = (config: ProjectConfig): boolean => hasAddon(config, "turborepo");
-
-export const hasDesignSystem = (config: ProjectConfig): boolean =>
-  isMonorepo(config) && hasPackage(config, "design-system");
 
 export const hasTypescriptConfigPackage = (config: ProjectConfig): boolean =>
   isMonorepo(config) && hasPackage(config, "typescript-config");
@@ -91,11 +88,5 @@ export const assertValidProjectConfig = (config: ProjectConfig): void => {
         throw new InvalidProjectConfigError(`Unknown package "${p}".`);
       }
     }
-  }
-
-  if (hasPackage(config, "design-system") && !hasPackage(config, "typescript-config")) {
-    throw new InvalidProjectConfigError(
-      "design-system package requires typescript-config in the same workspace.",
-    );
   }
 };

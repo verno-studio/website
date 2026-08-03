@@ -10,13 +10,11 @@ import {
 } from "../../pm-exec";
 import type { UltraciteInitMode } from "../../pm-exec";
 import type { UltraciteLinterId } from "../../ultracite-linter";
+import { ensureComponentsJsonRegistries } from "../../components-json";
 import { runProcess } from "../../run";
 
-export const getShadcnWorkingDirectory = (
-  projectDir: string,
-  monorepoWithDesignSystem: boolean,
-): string =>
-  monorepoWithDesignSystem ? path.join(projectDir, "packages", "design-system") : projectDir;
+export const getShadcnWorkingDirectory = (projectDir: string, monorepo: boolean): string =>
+  monorepo ? path.join(projectDir, "apps", "web") : projectDir;
 
 export const runInstallIfEnabled = async (
   enabled: boolean,
@@ -44,16 +42,13 @@ export const runShadcnIfEnabled = async (options: {
   readonly packageManager: PackageManager;
   readonly preset: string;
   readonly projectDir: string;
-  readonly monorepoWithDesignSystem: boolean;
+  readonly monorepo: boolean;
 }): Promise<void> => {
   if (!options.enabled) {
     return;
   }
 
-  const workingDir = getShadcnWorkingDirectory(
-    options.projectDir,
-    options.monorepoWithDesignSystem,
-  );
+  const workingDir = getShadcnWorkingDirectory(options.projectDir, options.monorepo);
 
   // shadcn apply/add requires a detected framework (Next.js, Vite, etc.).
   // We write a temporary dummy config to ensure detection passes in all environments.
@@ -65,11 +60,11 @@ export const runShadcnIfEnabled = async (options: {
 
   try {
     const bootstrap = getShadcnBootstrapCommand(options.packageManager, {
-      monorepoWithDesignSystem: options.monorepoWithDesignSystem,
+      monorepo: options.monorepo,
       preset: options.preset,
     });
     const addAll = getShadcnAddAllCommand(options.packageManager, {
-      monorepoWithDesignSystem: options.monorepoWithDesignSystem,
+      monorepo: options.monorepo,
     });
 
     for (const cmd of [bootstrap, addAll]) {
@@ -87,6 +82,9 @@ export const runShadcnIfEnabled = async (options: {
       });
     }
   }
+
+  // `shadcn apply` rewrote components.json; put the registry namespace back.
+  await ensureComponentsJsonRegistries(options.projectDir, options.monorepo);
 };
 
 export const runUltraciteIfEnabled = async (

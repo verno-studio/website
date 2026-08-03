@@ -16,7 +16,7 @@ export const detectPackageJson = (projectDir: string): PackageJsonRecord | null 
 };
 
 export const detectShadcn = (projectDir: string, monorepo: boolean): boolean => {
-  const workingDir = monorepo ? path.join(projectDir, "packages", "design-system") : projectDir;
+  const workingDir = monorepo ? path.join(projectDir, "apps", "web") : projectDir;
   const configPath = path.join(workingDir, "components.json");
   return existsSync(configPath);
 };

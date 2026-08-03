@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { getRegistries, TOOLING } from "@vernostudio/template-generator";
 import { detectProjectState } from "../init/detect";
 import { detectVernoManifest } from "../shared/manifest";
 import type { VernoManifest } from "../shared/manifest";
@@ -12,6 +13,17 @@ export interface Diagnostic {
   readonly fixable: boolean;
   readonly details?: string;
 }
+
+const hasVernoRegistry = (config: unknown): boolean => {
+  if (typeof config !== "object" || config === null) {
+    return false;
+  }
+  const { registries } = config as Record<string, unknown>;
+  if (typeof registries !== "object" || registries === null) {
+    return false;
+  }
+  return TOOLING.registryNamespace in registries;
+};
 
 export const runManifestAudit = (projectDir: string): Diagnostic[] => {
   const diagnostics: Diagnostic[] = [];
@@ -215,18 +227,7 @@ export const runTurborepoAudit = (
   // Check workspaces packages
   const packagesDir = path.join(projectDir, "packages");
   if (existsSync(packagesDir)) {
-    const dsPath = path.join(packagesDir, "design-system");
     const tcPath = path.join(packagesDir, "typescript-config");
-
-    if (manifest?.packages.includes("design-system") && !existsSync(dsPath)) {
-      diagnostics.push({
-        fixable: false,
-        id: "workspace-design-system-missing",
-        message: "Workspace package 'design-system' is missing under packages/.",
-        severity: "error",
-        type: "turborepo",
-      });
-    }
 
     if (manifest?.packages.includes("typescript-config") && !existsSync(tcPath)) {
       diagnostics.push({
@@ -271,12 +272,20 @@ export const runShadcnAudit = (
   }
 
   const isMonorepo = state.isMonorepo || (manifest?.addons.includes("turborepo") ?? false);
-  const targetDir = isMonorepo ? path.join(projectDir, "packages", "design-system") : projectDir;
-  const configPath = path.join(targetDir, "components.json");
+  // `apps/web` is where the scaffold puts it. Projects generated before the
+  // design-system package was dropped keep theirs under `packages/design-system`,
+  // and a working project should not be reported as broken.
+  const candidates = isMonorepo
+    ? [
+        path.join(projectDir, "apps", "web", "components.json"),
+        path.join(projectDir, "packages", "design-system", "components.json"),
+      ]
+    : [path.join(projectDir, "components.json")];
+  const configPath = candidates.find((candidate) => existsSync(candidate)) ?? candidates[0];
 
   if (existsSync(configPath)) {
     try {
-      JSON.parse(readFileSync(configPath, "utf-8"));
+      const config: unknown = JSON.parse(readFileSync(configPath, "utf-8"));
       diagnostics.push({
         fixable: false,
         id: "shadcn-ok",
@@ -284,6 +293,16 @@ export const runShadcnAudit = (
         severity: "ok",
         type: "shadcn",
       });
+      if (!hasVernoRegistry(config)) {
+        diagnostics.push({
+          details: `Add "registries": ${JSON.stringify(getRegistries())} to components.json to install components with \`shadcn add ${TOOLING.registryNamespace}/<name>\`.`,
+          fixable: false,
+          id: "shadcn-registries-missing",
+          message: "components.json does not point at the Verno Studio registry.",
+          severity: "warning",
+          type: "shadcn",
+        });
+      }
     } catch {
       diagnostics.push({
         fixable: false,
@@ -297,7 +316,7 @@ export const runShadcnAudit = (
     diagnostics.push({
       fixable: false,
       id: "shadcn-components-json-missing",
-      message: `components.json is missing (expected path: ${isMonorepo ? "packages/design-system/components.json" : "components.json"}).`,
+      message: `components.json is missing (expected path: ${isMonorepo ? "apps/web/components.json" : "components.json"}).`,
       severity: "warning",
       type: "shadcn",
     });

@@ -122,6 +122,6 @@ describe("resolveCreateInputsNonInteractive", () => {
       toCreateCommandOptions({ addons: "turborepo", yes: true }),
     );
     expect(r.addons).toContain("turborepo");
-    expect(r.packages).toEqual(["typescript-config", "design-system"]);
+    expect(r.packages).toEqual(["typescript-config"]);
   });
 });

@@ -11,7 +11,6 @@ export {
   type UiMode,
   defaultNpmScopeFromProjectName,
   hasAddon,
-  hasDesignSystem,
   hasPackage,
   hasTypescriptConfigPackage,
   InvalidProjectConfigError,
@@ -28,6 +27,7 @@ export {
   type PackageJsonRecord,
 } from "./utils/add-deps";
 export {
+  getRegistries,
   getShadcnExecSpec,
   getUltraciteExecSpec,
   packageManagerField,

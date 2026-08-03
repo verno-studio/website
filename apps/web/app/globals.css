@@ -1,5 +1,11 @@
 @import "tailwindcss";
-@import "@vernostudio/design-system/styles/globals.css";
+@import "../styles/geist.css";
+
+/* Registry components live outside this app, so automatic source detection
+   never sees them and every utility they use compiles to nothing. The glob
+   belongs here rather than in the published stylesheet: that file is copied
+   into other people's projects, where a path into this monorepo is wrong. */
+@source "../../../packages/design-system/components";
 
 @layer base {
   ul,
@@ -21,5 +27,28 @@
       "liga" 0,
       "calt" 0;
     font-variant-ligatures: none;
+  }
+}
+
+/* Shiki's dual-theme output carries both colors as variables and picks neither.
+   Backgrounds stay ignored: the block sits on the site's surface, not shiki's. */
+@layer base {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-light);
+  }
+
+  .dark .shiki,
+  .dark .shiki span {
+    color: var(--shiki-dark);
+  }
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 }

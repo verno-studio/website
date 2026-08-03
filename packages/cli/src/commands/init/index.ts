@@ -121,7 +121,7 @@ export const runInit = async (args: { options: InitCommandOptions }): Promise<vo
       projectDir,
       shadcn: {
         enabled: resolved.useShadcn && !detected.hasShadcn,
-        monorepoWithDesignSystem: monorepo && resolved.addons.includes("turborepo"),
+        monorepo: monorepo || resolved.addons.includes("turborepo"),
         preset: resolved.shadcnPreset,
       },
       ultracite: {

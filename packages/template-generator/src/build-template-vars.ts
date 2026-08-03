@@ -1,5 +1,5 @@
 import type { ProjectConfig } from "./config";
-import { hasAddon, hasDesignSystem, hasTypescriptConfigPackage, isMonorepo } from "./config";
+import { hasAddon, hasTypescriptConfigPackage, isMonorepo } from "./config";
 import { devScriptCommand, packageManagerField } from "./catalog/tooling";
 import { scoped } from "./paths";
 
@@ -35,7 +35,6 @@ export interface HandlebarsTemplateContext {
   readonly projectName: string;
   readonly npmScope: string;
   readonly packageManagerField: string;
-  readonly dsName: string;
   readonly tsConfigName: string;
   readonly componentsStyle: string;
   readonly shadcnPreset: string;
@@ -44,24 +43,16 @@ export interface HandlebarsTemplateContext {
   readonly useShadcn: boolean;
   readonly turborepo: boolean;
   readonly ultracite: boolean;
-  readonly hasDesignSystem: boolean;
   readonly hasTypescriptConfigPackage: boolean;
-  /** The design-system package declares the shadcn contract; `shadcn init` writes it otherwise. */
-  readonly hasStyleContract: boolean;
 }
 
 /** Values passed to Handlebars for every template file and optional templated paths. */
 export const buildHandlebarsContext = (config: ProjectConfig): HandlebarsTemplateContext => {
-  const dsName = scoped(config.npmScope, "design-system");
   const tsConfigName = scoped(config.npmScope, "typescript-config");
-  const designSystem = hasDesignSystem(config);
   return {
     componentsStyle: componentsStyleFromShadcnPreset(config.shadcnPreset),
     devCommand: devScriptCommand(config.packageManager),
-    dsName,
     frontend: config.frontend,
-    hasDesignSystem: designSystem,
-    hasStyleContract: designSystem || config.ui === "shadcn",
     hasTypescriptConfigPackage: hasTypescriptConfigPackage(config),
     npmScope: config.npmScope,
     packageManagerField: packageManagerField(config.packageManager),

@@ -167,7 +167,8 @@ describe("Update Detect Actions", () => {
     expect(check.needsUpdate).toBe(true);
     expect(check.current).toBe("missing base layer");
 
-    // No marker, contract supplied by a workspace design system
+    // No marker, contract supplied by a workspace design system (projects
+    // scaffolded before that package was dropped)
     writeFileSync(cssPath, '@import "@acme/design-system/styles/globals.css";');
     check = checkGlobalsCssBaseLayer(TEST_DIR, false);
     expect(check.needsUpdate).toBe(true);

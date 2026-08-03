@@ -1,4 +1,4 @@
-import { cn } from "@vernostudio/design-system/lib/utils";
+import { cn } from "@/lib/utils";
 import type { ChangeKind, ChangelogBlock, ChangelogRelease, InlineNode } from "@/lib/changelog";
 
 const KIND_LABEL: Record<ChangeKind, string> = {
@@ -7,9 +7,6 @@ const KIND_LABEL: Record<ChangeKind, string> = {
   patch: "Patch",
 };
 
-// Geist badge variants only swap --geist-background/--geist-foreground, so the
-// kinds do the same. Weight descends: blue fill (major) → gray fill (minor) →
-// outline only (patch).
 const KIND_CLASS: Record<ChangeKind, string> = {
   major:
     "[--geist-background:var(--ds-blue-200)] [--geist-foreground:var(--ds-blue-900)] ring-blue-400",
@@ -109,6 +106,7 @@ export const Release = ({ release }: { release: ChangelogRelease }) => (
               className="flex flex-col gap-3"
             >
               <a
+                aria-label={`Commit ${item.id.slice(0, 7)} on GitHub`}
                 href={`https://github.com/verno-studio/website/commit/${item.id}`}
                 rel="noopener noreferrer"
                 target="_blank"

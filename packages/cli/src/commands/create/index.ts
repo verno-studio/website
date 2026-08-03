@@ -4,11 +4,7 @@ import pc from "picocolors";
 import { dimPath } from "../../ui";
 import { UserCancelledError, CLIError, ProcessFailedError, isUserCancelled } from "../../errors";
 import { runInteractiveCreateWizard } from "./prompts";
-import {
-  resolveCreateInputsNonInteractive,
-  resolvedHasDesignSystem,
-  resolvedUsesTurborepo,
-} from "./args";
+import { resolveCreateInputsNonInteractive, resolvedUsesTurborepo } from "./args";
 import type { CreateCommandOptions, ResolvedCreateInputs } from "./args";
 import {
   assertPathAvailable,
@@ -118,7 +114,7 @@ export const runCreate = async (args: {
       shadcn: {
         bannerSuffix: "(full output below; can take several minutes)",
         enabled: resolved.useShadcn,
-        monorepoWithDesignSystem: resolvedHasDesignSystem(resolved),
+        monorepo: resolvedUsesTurborepo(resolved),
         preset: resolved.shadcnPreset,
       },
       ultracite: {

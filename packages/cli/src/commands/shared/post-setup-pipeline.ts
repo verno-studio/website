@@ -14,7 +14,7 @@ export interface PostSetupPipelineContext {
   readonly monorepo: boolean;
   readonly shadcn: {
     readonly enabled: boolean;
-    readonly monorepoWithDesignSystem: boolean;
+    readonly monorepo: boolean;
     readonly preset: string;
     readonly bannerSuffix?: string;
   };
@@ -55,7 +55,7 @@ export const runPostSetupPipeline = async (ctx: PostSetupPipelineContext): Promi
     process.stdout.write(`\n${pc.cyan("shadcn")} — ${pc.dim(banner)}\n\n`);
     await runShadcnIfEnabled({
       enabled: true,
-      monorepoWithDesignSystem: ctx.shadcn.monorepoWithDesignSystem,
+      monorepo: ctx.shadcn.monorepo,
       packageManager: ctx.packageManager,
       preset: ctx.shadcn.preset,
       projectDir: ctx.projectDir,

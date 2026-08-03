@@ -11,7 +11,6 @@ import type { UltraciteLinterId } from "../../ultracite-linter";
 import {
   DEFAULT_SHADCN_PRESET,
   DEFAULT_WORKSPACE_PACKAGES,
-  ensureTypescriptWithDesignSystem,
   isPackageManager,
   isUiMode,
   isValidProjectName,
@@ -96,7 +95,6 @@ const readAddonsInteractive = async (options: CreateCommandOptions): Promise<Add
 
 const PACKAGE_OPTION_DESCRIPTORS = [
   { hint: "shared tsconfig" as const, id: "typescript-config" as const },
-  { hint: "requires typescript-config" as const, id: "design-system" as const },
 ] as const;
 
 const readPackagesInteractive = async (
@@ -110,7 +108,7 @@ const readPackagesInteractive = async (
     return [];
   }
   if (options.packages !== undefined && options.packages.length > 0) {
-    return ensureTypescriptWithDesignSystem(parsePackagesArg(options.packages));
+    return parsePackagesArg(options.packages);
   }
   const selected = assertValue(
     await p.multiselect<PackageId>({
@@ -124,11 +122,10 @@ const readPackagesInteractive = async (
       required: false,
     }),
   );
-  let pkgs = selected as PackageId[];
+  const pkgs = selected as PackageId[];
   if (pkgs.length === 0) {
     p.log.warn("No packages selected — monorepo will only contain apps/web.");
   }
-  pkgs = ensureTypescriptWithDesignSystem(pkgs);
   return pkgs;
 };
 

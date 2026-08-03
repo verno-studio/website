@@ -8,17 +8,8 @@
 ```
 {{projectName}}
 {{#if hasTypescriptConfigPackage}}
-{{#if hasDesignSystem}}
-├── apps/web
-├── packages/{{tsConfigName}}
-└── packages/{{dsName}}
-{{else}}
 ├── apps/web
 └── packages/{{tsConfigName}}
-{{/if}}
-{{else if hasDesignSystem}}
-├── apps/web
-└── packages/{{dsName}}
 {{else}}
 └── apps/web
 {{/if}}
