@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ComponentProps } from "react";
 
+import { HeadingAnchor } from "@/components/heading-anchor";
 import { CodeSurface } from "@/components/registry/code-surface";
 import { Preview } from "@/components/registry/preview";
 import { Dependencies, Install, InstallUrl, Source, Tokens } from "@/components/registry/sections";
@@ -31,14 +32,18 @@ const Anchor = ({ href, children, ...props }: ComponentProps<"a">) =>
 const proseComponents = {
   Preview,
   a: Anchor,
-  h2: ({ children, ...props }: ComponentProps<"h2">) => (
-    <h2 className="mt-16 mb-3 scroll-mt-20 font-medium text-gray-1000 first:mt-0" {...props}>
-      {children}
+  h2: ({ children, id, ...props }: ComponentProps<"h2">) => (
+    <h2
+      className="mt-16 mb-3 w-fit scroll-mt-20 font-medium text-gray-1000 first:mt-0"
+      id={id}
+      {...props}
+    >
+      {id ? <HeadingAnchor id={id}>{children}</HeadingAnchor> : children}
     </h2>
   ),
-  h3: ({ children, ...props }: ComponentProps<"h3">) => (
-    <h3 className="mt-10 mb-2 scroll-mt-20 font-medium text-gray-1000" {...props}>
-      {children}
+  h3: ({ children, id, ...props }: ComponentProps<"h3">) => (
+    <h3 className="mt-10 mb-2 w-fit scroll-mt-20 font-medium text-gray-1000" id={id} {...props}>
+      {id ? <HeadingAnchor id={id}>{children}</HeadingAnchor> : children}
     </h3>
   ),
   hr: Divider,
