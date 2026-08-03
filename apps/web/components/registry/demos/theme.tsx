@@ -9,30 +9,52 @@ const themeVars = () => {
   return light && dark ? { dark, light } : null;
 };
 
+const OKLCH_LIGHTNESS = /oklch\(\s*(?<value>[\d.]+)(?<percent>%?)/u;
+
+const INK_BOUNDARY = 0.73;
+
+const inkFor = (value: string, vars: Record<string, string>) => {
+  const groups = OKLCH_LIGHTNESS.exec(value)?.groups;
+
+  if (!groups) {
+    return vars["gray-1000"];
+  }
+
+  // Both spellings ship: the grays are written `oklch(0.961 0 0)` and the
+  // accents `oklch(57.61% 0.2508 258.23)`.
+  const lightness = groups.percent ? Number(groups.value) / 100 : Number(groups.value);
+
+  return lightness > INK_BOUNDARY ? vars["gray-1000"] : vars["background-100"];
+};
+
 interface RampProps {
   readonly label: string;
   readonly vars: Record<string, string>;
 }
 
 const Ramp = ({ label, vars }: RampProps) => (
-  <div className="flex w-full flex-col gap-2">
-    <span className="font-mono text-gray-900 text-xs">{label}</span>
-    <div className="flex overflow-hidden rounded-md shadow-(--ds-shadow-border)">
-      {GRAY_STEPS.map((step) => (
-        <div
-          className="h-14 flex-1"
-          key={step}
-          style={{ background: vars[`gray-${step}`] }}
-          title={`--gray-${step}: ${vars[`gray-${step}`]}`}
-        />
-      ))}
-    </div>
-    <div className="flex">
-      {GRAY_STEPS.map((step) => (
-        <span className="flex-1 text-center font-mono text-[10px] text-gray-900" key={step}>
-          {step}
-        </span>
-      ))}
+  <div className="flex w-full flex-col items-center gap-2">
+    <span className="flex h-10 w-24 select-none items-center justify-center rounded-full bg-gray-100 font-mono uppercase text-gray-1000 shadow-(--ds-shadow-border) @lg:hidden">
+      {label}
+    </span>
+    <div className="flex items-center gap-1 rounded-2xl p-1 shadow-(--ds-shadow-border) @md:rounded-full">
+      <span className="hidden h-10 w-24 shrink-0 select-none items-center justify-center rounded-full bg-gray-100 font-mono uppercase text-gray-1000 shadow-(--ds-shadow-border) @lg:flex">
+        {label}
+      </span>
+      <div className="grid grid-cols-5 gap-1 @md:grid-cols-10">
+        {GRAY_STEPS.map((step) => {
+          const value = vars[`gray-${step}`];
+
+          return (
+            <div
+              className="size-10 rounded-full shadow-(--ds-shadow-border)"
+              key={step}
+              style={{ background: value }}
+              title={`--gray-${step}: ${value}`}
+            />
+          );
+        })}
+      </div>
     </div>
   </div>
 );
@@ -60,17 +82,27 @@ export const AccentScale = () => {
   }
 
   return (
-    <div className="flex w-full flex-wrap items-start justify-center gap-6">
-      {ACCENTS.map((accent) => (
-        <div className="flex flex-col items-center gap-2" key={accent}>
+    <div className="grid w-full grid-cols-3 justify-items-center gap-3">
+      {ACCENTS.map((accent) => {
+        const value = vars.light[`${accent}-700`];
+
+        return (
           <div
-            className="size-12 rounded-full shadow-(--ds-shadow-border)"
-            style={{ background: vars.light[`${accent}-700`] }}
-            title={`--${accent}-700: ${vars.light[`${accent}-700`]}`}
-          />
-          <span className="font-mono text-[10px] text-gray-900">{accent}</span>
-        </div>
-      ))}
+            className="w-full max-w-26 select-none rounded-full bg-background-200 p-1 shadow-(--ds-shadow-border)"
+            key={accent}
+          >
+            <div
+              className="flex h-8 w-full items-center justify-center rounded-full shadow-(--ds-shadow-border)"
+              style={{ background: value }}
+              title={`--${accent}-700: ${value}`}
+            >
+              <span className="font-mono" style={{ color: inkFor(value, vars.light) }}>
+                {accent}
+              </span>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
