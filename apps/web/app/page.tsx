@@ -1,10 +1,10 @@
 import { EntryList } from "@/components/entry-list";
 import type { EntryListItem } from "@/components/entry-list";
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/header";
+import { Footer } from "@/components/sections/home/footer";
+import { Header } from "@/components/sections/home/header";
 import { getThumbnail } from "@/components/registry/thumbnails";
-import { Showcase } from "@/components/showcase";
-import { Story } from "@/components/story";
+import { Showcase } from "@/components/sections/home/showcase";
+import { Story } from "@/components/sections/home/story";
 import { getChangelog, getReleaseSummary } from "@/lib/changelog";
 import { getRegistryItems } from "@/lib/registry";
 
