@@ -73,11 +73,10 @@ describe("applyDependencyCatalog", () => {
       devDependencies?: Record<string, string>;
     };
     expect(web.dependencies?.["next-themes"]).toBe(dependencyVersionMap["next-themes"]);
-    expect(web.dependencies?.clsx).toBe(dependencyVersionMap.clsx);
-    expect(web.dependencies?.["tailwind-merge"]).toBe(dependencyVersionMap["tailwind-merge"]);
+    expect(web.dependencies?.cnfast).toBe(dependencyVersionMap.cnfast);
   });
 
-  test("single app ui shadcn adds clsx and tailwind-merge for lib/utils cn()", () => {
+  test("single app ui shadcn adds cnfast for lib/utils cn()", () => {
     const config: ProjectConfig = { ...appWithUltracite, ui: "shadcn" };
     const vfs = virtualFileSystemFromFileTree(buildInterpolatedFileTree(config));
     applyDependencyCatalog(vfs, config);
@@ -85,7 +84,6 @@ describe("applyDependencyCatalog", () => {
     const pkg = JSON.parse(tree["package.json"] ?? "{}") as {
       dependencies?: Record<string, string>;
     };
-    expect(pkg.dependencies?.clsx).toBe(dependencyVersionMap.clsx);
-    expect(pkg.dependencies?.["tailwind-merge"]).toBe(dependencyVersionMap["tailwind-merge"]);
+    expect(pkg.dependencies?.cnfast).toBe(dependencyVersionMap.cnfast);
   });
 });

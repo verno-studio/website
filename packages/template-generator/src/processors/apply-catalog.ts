@@ -22,8 +22,8 @@ const monorepoRootSharedDevDeps: readonly AvailableDependencies[] = ["turbo", "t
 /** What the scaffolded provider imports. `shadcn add` installs its own. */
 const SHADCN_UI_RUNTIME: readonly AvailableDependencies[] = ["next-themes"];
 
-/** `lib/utils.ts` (cn) lives in the app, so its two dependencies do too. */
-const SHADCN_STANDALONE_LIB_UTILS: readonly AvailableDependencies[] = ["clsx", "tailwind-merge"];
+/** `lib/utils.ts` (cn) lives in the app, so its dependency does too. */
+const SHADCN_STANDALONE_LIB_UTILS: readonly AvailableDependencies[] = ["cnfast"];
 
 const devDepsWithOptionalUltracite = (
   config: ProjectConfig,
