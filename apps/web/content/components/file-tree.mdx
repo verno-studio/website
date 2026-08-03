@@ -1,0 +1,88 @@
+---
+title: File Tree
+---
+
+import { Closed, Default, Linked } from "@/components/registry/demos/file-tree";
+
+A directory listing you can open a folder at a time. Write it the way you would
+draw it, nested, and the nesting is the structure.
+
+<Preview
+  align="start"
+  caption="What verno create writes for a Turborepo project. The two folders on the path you care about start open."
+>
+  <Default />
+</Preview>
+
+## Install
+
+<Install />
+
+Or, if `components.json` has no registry namespace to resolve `@vernostudio`
+against, point the CLI straight at the file:
+
+<InstallUrl />
+
+---
+
+## Writing one
+
+Three pieces. `FileTree` holds the listing, `Folder` nests, `File` sits at the
+end of a branch.
+
+```tsx
+<FileTree>
+  <Folder defaultOpen name="apps">
+    <Folder name="web">
+      <File name="page.tsx" />
+    </Folder>
+  </Folder>
+  <File name="turbo.json" />
+</FileTree>
+```
+
+There is no depth prop. A folder's indentation comes from the list it is in, so
+moving a branch means moving the markup and nothing else.
+
+## What starts open
+
+`defaultOpen` opens a folder on mount. Use it for the path you are pointing at
+and leave the rest closed, so the shape of the project is legible before anyone
+clicks.
+
+<Preview
+  align="start"
+  caption="Everything closed. Good for a listing that sits beside the thing it describes rather than being the point."
+>
+  <Closed />
+</Preview>
+
+A folder remembers what was open inside it. Collapse a parent and open it again
+and the branch is as you left it.
+
+## Files that go somewhere
+
+`href` turns a row into a link. Without it the name is text, because a row with
+nothing to activate should not be focusable.
+
+<Preview align="start" caption="Two files that link to their own pages.">
+  <Linked />
+</Preview>
+
+## Keyboard
+
+Folders are buttons. <kbd>Tab</kbd> reaches them, <kbd>Enter</kbd> and
+
+<kbd>Space</kbd> open them. That is the whole model, and none of it is custom.
+
+This is deliberately not a `role="tree"`. A role is a promise: `tree` commits to
+the full ARIA authoring practices keyboard model, roving tabindex and arrow
+navigation included. That earns its cost on a payload of hundreds of rows, which
+is why [JSON View](/components/json-view) implements it. A directory listing of
+ten rows is a set of disclosures, and saying so costs a reader nothing to learn.
+
+## Source
+
+One file, no dependencies beyond React and your `cn`.
+
+<Source />
