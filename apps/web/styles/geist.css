@@ -143,6 +143,13 @@
   --color-pink-1000: var(--ds-pink-1000);
 
   --color-focus: var(--focus);
+
+  --color-json-key: var(--json-key);
+  --color-json-string: var(--json-string);
+  --color-json-number: var(--json-number);
+  --color-json-boolean: var(--json-boolean);
+  --color-json-highlight: var(--json-highlight);
+  --color-json-highlight-foreground: var(--json-highlight-foreground);
 }
 
 :root {
@@ -244,6 +251,17 @@
   --ds-shadow-background-border: 0 0 0 1px var(--ds-background-200);
 
   --focus: var(--ds-blue-700);
+
+  /* Owned by the json-view registry item, not by this layer. The literal
+     values are the contract `shadcn add` writes, so they are repeated here
+     rather than mapped onto `--ds-*`; json-view.test.ts fails if the two
+     copies ever disagree. */
+  --json-key: oklch(0.522 0.212 1.01);
+  --json-string: oklch(0.5 0.09 181.95);
+  --json-number: oklch(0.515 0.193 258.23);
+  --json-boolean: oklch(0.517 0.109 76.46);
+  --json-highlight: oklch(0.9 0.17 96);
+  --json-highlight-foreground: oklch(0.205 0 0);
 
   --ds-shadow-border-base: 0 0 0 1px rgba(0, 0, 0, 0.08);
   --ds-shadow-border-inset: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
@@ -389,6 +407,13 @@
   --ds-pink-1000: oklch(95.74% 0.0326 350.08);
 
   --focus: var(--ds-blue-900);
+
+  --json-key: oklch(0.867 0.076 1.01);
+  --json-string: oklch(0.835 0.15 181.95);
+  --json-number: oklch(0.857 0.071 258.23);
+  --json-boolean: oklch(0.86 0.124 76.46);
+  --json-highlight: oklch(0.9 0.17 96);
+  --json-highlight-foreground: oklch(0.205 0 0);
 
   --ds-shadow-background-border: 0 0 0 1px var(--ds-background-200);
 

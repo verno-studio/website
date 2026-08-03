@@ -181,6 +181,45 @@
       "name": "theme",
       "title": "Theme",
       "type": "registry:theme"
+    },
+    {
+      "cssVars": {
+        "dark": {
+          "json-key": "oklch(0.867 0.076 1.01)",
+          "json-string": "oklch(0.835 0.15 181.95)",
+          "json-number": "oklch(0.857 0.071 258.23)",
+          "json-boolean": "oklch(0.86 0.124 76.46)",
+          "json-highlight": "oklch(0.9 0.17 96)",
+          "json-highlight-foreground": "oklch(0.205 0 0)"
+        },
+        "light": {
+          "json-key": "oklch(0.522 0.212 1.01)",
+          "json-string": "oklch(0.5 0.09 181.95)",
+          "json-number": "oklch(0.515 0.193 258.23)",
+          "json-boolean": "oklch(0.517 0.109 76.46)",
+          "json-highlight": "oklch(0.9 0.17 96)",
+          "json-highlight-foreground": "oklch(0.205 0 0)"
+        },
+        "theme": {
+          "color-json-key": "var(--json-key)",
+          "color-json-string": "var(--json-string)",
+          "color-json-number": "var(--json-number)",
+          "color-json-boolean": "var(--json-boolean)",
+          "color-json-highlight": "var(--json-highlight)",
+          "color-json-highlight-foreground": "var(--json-highlight-foreground)"
+        }
+      },
+      "dependencies": [],
+      "description": "A collapsible tree for inspecting a JSON payload, with syntax roles, search highlighting and the full ARIA tree keyboard model.",
+      "files": [
+        {
+          "path": "components/json-view.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "name": "json-view",
+      "title": "JSON View",
+      "type": "registry:ui"
     }
   ],
   "name": "vernostudio"

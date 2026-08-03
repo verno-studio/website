@@ -63,9 +63,31 @@ const readCssVars = () => {
   };
 };
 
+// A component's own tokens ride with the component, not with the theme, so
+// installing one does not quietly widen the other. The stylesheet stays the
+// single place they are written down.
+const OWNED_BY = /^(?:color-)?json-/u;
+
+const partition = (vars: ReturnType<typeof readCssVars>) => {
+  const kept: Record<string, Record<string, string>> = {};
+  const taken: Record<string, Record<string, string>> = {};
+
+  for (const [scope, entries] of Object.entries(vars)) {
+    for (const [name, value] of Object.entries(entries)) {
+      const target = OWNED_BY.test(name) ? taken : kept;
+      target[scope] ??= {};
+      (target[scope] as Record<string, string>)[name] = value;
+    }
+  }
+
+  return { component: taken, theme: kept };
+};
+
+const { component: jsonViewVars, theme: themeVars } = partition(readCssVars());
+
 const items = [
   {
-    cssVars: readCssVars(),
+    cssVars: themeVars,
     dependencies: ["tw-animate-css"],
     description:
       "The color scale plus the variables shadcn components read, so a component from " +
@@ -74,6 +96,17 @@ const items = [
     name: "theme",
     title: "Theme",
     type: "registry:theme",
+  },
+  {
+    cssVars: jsonViewVars,
+    dependencies: [],
+    description:
+      "A collapsible tree for inspecting a JSON payload, with syntax roles, search " +
+      "highlighting and the full ARIA tree keyboard model.",
+    files: [{ path: "components/json-view.tsx", type: "registry:ui" }],
+    name: "json-view",
+    title: "JSON View",
+    type: "registry:ui",
   },
 ];
 

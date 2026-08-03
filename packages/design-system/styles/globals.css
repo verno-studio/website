@@ -46,6 +46,18 @@
   --amber-700: oklch(81.87% 0.1969 76.46);
   --pink-700: oklch(63.52% 0.238 1.01);
   --shadow-tint: oklch(0 0 0 / 0.04);
+
+  /* Syntax roles for json-view. The scale above is tuned for fills, so its one
+     step per hue is far too light to sit on a background as text: teal-700
+     measures APCA Lc 54 here and amber-700 Lc 35, against a floor of 60. These
+     are solved instead. Each one is the most chromatic in-gamut color at its
+     hue that holds Lc 78, so the four read as equally present. */
+  --json-key: oklch(0.522 0.212 1.01);
+  --json-string: oklch(0.5 0.09 181.95);
+  --json-number: oklch(0.515 0.193 258.23);
+  --json-boolean: oklch(0.517 0.109 76.46);
+  --json-highlight: oklch(0.9 0.17 96);
+  --json-highlight-foreground: oklch(0.205 0 0);
 }
 
 .dark {
@@ -73,6 +85,17 @@
   --amber-700: oklch(81.87% 0.1969 76.46);
   --pink-700: oklch(63.52% 0.2346 1.01);
   --shadow-tint: oklch(0 0 0 / 0.5);
+
+  /* Solved against pure black at the same Lc 78 the light values hold. Pink
+     gives up the most chroma: at this hue nothing more saturated stays in
+     sRGB and still clears the floor. The highlight pair does not flip, so a
+     match reads as marked in both modes, the way a highlighter would. */
+  --json-key: oklch(0.867 0.076 1.01);
+  --json-string: oklch(0.835 0.15 181.95);
+  --json-number: oklch(0.857 0.071 258.23);
+  --json-boolean: oklch(0.86 0.124 76.46);
+  --json-highlight: oklch(0.9 0.17 96);
+  --json-highlight-foreground: oklch(0.205 0 0);
 }
 
 /* The contract `shadcn add` writes against. Every value is a step from the
@@ -177,6 +200,13 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  --color-json-key: var(--json-key);
+  --color-json-string: var(--json-string);
+  --color-json-number: var(--json-number);
+  --color-json-boolean: var(--json-boolean);
+  --color-json-highlight: var(--json-highlight);
+  --color-json-highlight-foreground: var(--json-highlight-foreground);
 
   /* 4px steps, so spacing lands on 4 8 12 16 20 24 32 40 48 64. */
   --spacing: 0.25rem;
