@@ -13,11 +13,25 @@ interface CodeBlockProps {
   /** Geist calls this the filename. Absent means the block has no header. */
   readonly filename?: string;
   readonly lines?: number;
+  /**
+   * Off by default, unlike Geist's `hideLineNumbers`. Geist renders standalone
+   * samples; this also renders every fence in the prose, and those are
+   * fragments. Numbering a fragment 1, 2, 3 claims it starts at the top of a
+   * file, which is usually a lie. A block that really is a whole file asks.
+   */
+  readonly lineNumbers?: boolean;
   readonly className?: string;
   readonly style?: CSSProperties;
 }
 
-export const CodeBlock = ({ children, filename, lines, className, style }: CodeBlockProps) => {
+export const CodeBlock = ({
+  children,
+  filename,
+  lines,
+  lineNumbers = false,
+  className,
+  style,
+}: CodeBlockProps) => {
   const ref = useRef<HTMLPreElement>(null);
   const [code, setCode] = useState("");
   const [open, setOpen] = useState(false);
@@ -50,6 +64,7 @@ export const CodeBlock = ({ children, filename, lines, className, style }: CodeB
         <pre
           className={cn(
             "overflow-x-auto p-3 text-gray-900 text-sm leading-relaxed no-scrollbar",
+            lineNumbers && "line-numbers",
             !filename && "pe-12",
             className,
           )}

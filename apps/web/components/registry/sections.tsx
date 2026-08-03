@@ -61,7 +61,7 @@ export const Tokens = ({ item }: ItemProps) => {
 
 const blockFor = (filename: string, lines: number) => ({
   pre: ({ className, style, children }: ComponentProps<"pre">) => (
-    <CodeBlock className={className} filename={filename} lines={lines} style={style}>
+    <CodeBlock className={className} filename={filename} lineNumbers lines={lines} style={style}>
       {children}
     </CodeBlock>
   ),
