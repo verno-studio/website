@@ -55,7 +55,7 @@ export const Showcase = () => (
             <div className="flex w-full flex-col items-start justify-center px-4 pt-3 pb-4 font-medium">
               <span className="flex w-full items-center justify-between gap-1">
                 <span className="flex-1">{name}</span>
-                <span className="-translate-x-0.5 flex shrink-0 scale-75 items-center justify-center text-gray-1000 opacity-0 transition-[opacity,translate,scale] duration-300 ease-out group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100">
+                <span className="-translate-x-0.5 flex shrink-0 scale-75 items-center justify-center text-gray-1000 opacity-0 transition-[opacity,translate,scale] duration-300 ease-out group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:scale-100 group-focus-visible:opacity-100">
                   <ChevronRightIcon className="size-4.5" />
                 </span>
               </span>
