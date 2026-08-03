@@ -1,6 +1,6 @@
 import { TurborepoIcon } from "@/components/icons/turborepo";
 import { NextJsIcon } from "@/components/icons/nextjs";
-import { Installer } from "./installer";
+import { Installer } from "@/components/installer";
 
 export const Story = () => (
   <article className="grid gap-6 [&_p]:text-pretty [&_p]:text-gray-900">

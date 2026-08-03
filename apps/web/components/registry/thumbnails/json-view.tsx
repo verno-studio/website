@@ -1,35 +1,13 @@
 import type { ReactNode } from "react";
 
-import type { RegistryItem } from "@/lib/registry-schema";
 import { cn } from "@/lib/utils";
 
-// this small cannot label two modes.
-const THUMBNAIL_STEPS = [
-  "background-100",
-  "gray-100",
-  "gray-300",
-  "gray-500",
-  "gray-700",
-  "gray-900",
-  "gray-1000",
-] as const;
-
-const themeThumbnail = (item: RegistryItem): ReactNode => {
-  const light = item.cssVars?.light;
-
-  if (!light) {
-    return null;
-  }
-
-  return (
-    <div className="flex h-full w-full flex-col">
-      {THUMBNAIL_STEPS.map((step) => (
-        <div className="flex-1" key={step} style={{ background: light[step] }} />
-      ))}
-    </div>
-  );
-};
-
+/**
+ * Indent plus two bars per row. At 44px there is no room for a glyph, so the
+ * thing that has to survive is what separates this component from a page of
+ * text: rows that step in, and a key that is coloured differently from its
+ * value. The tones are the item's own tokens, so the chip previews the palette.
+ */
 const JSON_ROWS = [
   { id: "root", indent: "ps-0", key: "w-2.5", tone: "", value: null },
   { id: "string", indent: "ps-1.5", key: "w-2", tone: "bg-json-string", value: "w-3" },
@@ -38,7 +16,7 @@ const JSON_ROWS = [
   { id: "nested", indent: "ps-1.5", key: "w-2", tone: "bg-json-string", value: "w-2.5" },
 ] as const;
 
-const jsonViewThumbnail = (): ReactNode => (
+export const jsonViewThumbnail = (): ReactNode => (
   <div className="flex h-full w-full flex-col justify-center gap-1 px-1">
     {JSON_ROWS.map((row) => (
       <div className={cn("flex items-center gap-1", row.indent)} key={row.id}>
@@ -48,11 +26,3 @@ const jsonViewThumbnail = (): ReactNode => (
     ))}
   </div>
 );
-
-const thumbnails: Record<string, (item: RegistryItem) => ReactNode> = {
-  "json-view": jsonViewThumbnail,
-  theme: themeThumbnail,
-};
-
-export const getThumbnail = (item: RegistryItem): ReactNode =>
-  thumbnails[item.name]?.(item) ?? null;

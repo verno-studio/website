@@ -8,15 +8,30 @@ import { cn } from "@/lib/utils";
 
 const COLLAPSE_AFTER = 24;
 
-interface CodeSurfaceProps {
+interface CodeBlockProps {
   readonly children: ReactNode;
-  readonly name?: string;
+  /** Geist calls this the filename. Absent means the block has no header. */
+  readonly filename?: string;
   readonly lines?: number;
+  /**
+   * Off by default, unlike Geist's `hideLineNumbers`. Geist renders standalone
+   * samples; this also renders every fence in the prose, and those are
+   * fragments. Numbering a fragment 1, 2, 3 claims it starts at the top of a
+   * file, which is usually a lie. A block that really is a whole file asks.
+   */
+  readonly lineNumbers?: boolean;
   readonly className?: string;
   readonly style?: CSSProperties;
 }
 
-export const CodeSurface = ({ children, name, lines, className, style }: CodeSurfaceProps) => {
+export const CodeBlock = ({
+  children,
+  filename,
+  lines,
+  lineNumbers = false,
+  className,
+  style,
+}: CodeBlockProps) => {
   const ref = useRef<HTMLPreElement>(null);
   const [code, setCode] = useState("");
   const [open, setOpen] = useState(false);
@@ -30,9 +45,9 @@ export const CodeSurface = ({ children, name, lines, className, style }: CodeSur
 
   return (
     <figure className="relative my-8 w-full overflow-hidden rounded-xl bg-background-100 shadow-(--ds-shadow-border)">
-      {name ? (
+      {filename ? (
         <figcaption className="flex items-center justify-between gap-2 border-gray-alpha-400 border-b bg-gray-100 py-1.5 pr-1.5 pl-3">
-          <span className="truncate font-mono text-gray-900 text-xs">{name}</span>
+          <span className="truncate font-mono text-gray-900 text-xs">{filename}</span>
           <CopyButton aria-label="Copy code" className="size-7" value={code} />
         </figcaption>
       ) : (
@@ -49,7 +64,8 @@ export const CodeSurface = ({ children, name, lines, className, style }: CodeSur
         <pre
           className={cn(
             "overflow-x-auto p-3 text-gray-900 text-sm leading-relaxed no-scrollbar",
-            !name && "pe-12",
+            lineNumbers && "line-numbers",
+            !filename && "pe-12",
             className,
           )}
           ref={ref}

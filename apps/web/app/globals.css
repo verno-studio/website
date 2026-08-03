@@ -44,6 +44,26 @@
   }
 }
 
+/* Shiki wraps every line, blank ones included, so a counter is enough and the
+   numbers never reach the DOM as text. `content` is generated, so it stays out
+   of `textContent` and the copy button cannot pick it up; `user-select` keeps a
+   mouse drag from grabbing it either. The gutter is fixed at 3ch so the code
+   column does not shift when a block crosses line 99. */
+@utility line-numbers {
+  counter-reset: line;
+
+  & .line::before {
+    content: counter(line);
+    counter-increment: line;
+    display: inline-block;
+    width: 3ch;
+    margin-inline-end: 1.5ch;
+    text-align: end;
+    color: --alpha(var(--color-gray-900) / 45%);
+    user-select: none;
+  }
+}
+
 @utility no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import type { ComponentProps } from "react";
 
 import { Installer } from "@/components/installer";
-import { CodeSurface } from "@/components/registry/code-surface";
+import { CodeBlock } from "@/components/registry/code-block";
 import { codeThemes, languageOf } from "@/lib/code-theme";
 import { installCommand, installUrlCommand } from "@/lib/registry";
 import type { RegistryItem } from "@/lib/registry-schema";
@@ -59,11 +59,11 @@ export const Tokens = ({ item }: ItemProps) => {
   );
 };
 
-const surfaceFor = (name: string, lines: number) => ({
+const blockFor = (filename: string, lines: number) => ({
   pre: ({ className, style, children }: ComponentProps<"pre">) => (
-    <CodeSurface className={className} lines={lines} name={name} style={style}>
+    <CodeBlock className={className} filename={filename} lineNumbers lines={lines} style={style}>
       {children}
-    </CodeSurface>
+    </CodeBlock>
   ),
 });
 
@@ -71,7 +71,7 @@ export const Source = async ({ item }: ItemProps) => {
   const blocks = await Promise.all(
     item.files.map((file) =>
       highlight(file.content, {
-        components: surfaceFor(file.path, file.content.trimEnd().split("\n").length),
+        components: blockFor(file.path, file.content.trimEnd().split("\n").length),
         // Without this shiki writes the light theme straight onto `color` and
         // only exposes `--shiki-dark`. The site's stylesheet reads
         // `--shiki-light`, which would then resolve to nothing and drop the
