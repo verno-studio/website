@@ -1,0 +1,108 @@
+---
+title: JSON View
+---
+
+import { Collapsed, Deep, Default, Searchable } from "@/components/registry/demos/json-view";
+
+A payload you can open one level at a time. Pass the object itself, never a
+string, and every value keeps its type, its color and its place in the tree.
+
+<Preview
+  align="start"
+  caption="This component's own registry entry at the default depth. The first level is open; everything under it waits to be asked for."
+>
+  <Default />
+</Preview>
+
+## Install
+
+<Install />
+
+Or, if `components.json` has no registry namespace to resolve `@vernostudio`
+against, point the CLI straight at the file:
+
+<InstallUrl />
+
+---
+
+## How much to open
+
+`defaultExpandDepth` decides how much is already open on the first render. One
+level is the default because it answers "what is in here" without making you
+scroll past the answer.
+
+<Preview
+  align="start"
+  caption="defaultExpandDepth={0}. Everything closed, for a table row or a preview where the payload is not the main event."
+>
+  <Collapsed />
+</Preview>
+
+Reach for `0` where the JSON sits beside something more important, and for a
+larger number when the interesting part is nested and you already know where it
+is.
+
+## Finding a value
+
+`makeJsonViewHighlightPattern` turns search terms into the pattern the tree
+marks up. Terms match literally, so a search for `a.b` stays a search for `a.b`.
+Pass `null` whenever the search box is empty. A pattern that matches everything
+marks everything.
+
+<Preview
+  align="start"
+  caption="Type to re-mark the tree. Matches are highlighted in both field names and primitive values."
+>
+  <Searchable />
+</Preview>
+
+```tsx
+const pattern = useMemo(() => makeJsonViewHighlightPattern(query.split(/\s+/u)), [query]);
+
+<JsonView data={payload} highlightPattern={pattern} />;
+```
+
+Highlighting does not open anything. A match inside a closed node stays closed,
+so combine it with a `defaultExpandDepth` that reaches the rows you search.
+
+## Keyboard
+
+The tree is one tab stop, not one per row, so tabbing past a large payload takes
+a single press. Inside it, the arrow keys do the walking:
+
+- <kbd>↓</kbd> and <kbd>↑</kbd> move through the rows that are actually visible
+- <kbd>→</kbd> opens a closed node, then steps into it
+- <kbd>←</kbd> closes an open node, then steps out to its parent
+- <kbd>Home</kbd> and <kbd>End</kbd> jump to the first and last visible row
+- <kbd>Enter</kbd> and <kbd>Space</kbd> toggle the focused node
+
+Every row carries its own name, level and position, so a screen reader announces
+`request: object, 6 items` rather than a bare brace.
+
+<Preview
+  align="start"
+  caption="defaultExpandDepth={3}. Tab once to reach the tree, then arrow through it."
+>
+  <Deep />
+</Preview>
+
+## Tokens
+
+Four syntax roles, plus the pair a match is marked with. They ship with the
+component rather than with the theme, so installing the tree does not quietly
+widen your palette.
+
+<Tokens />
+
+The scale the theme publishes is tuned for fills, and one step per hue is too
+light to sit on a background as text: `--teal-700` measures APCA Lc 54 against
+white and `--amber-700` Lc 35, under a floor of 60. These six are solved
+instead. Each is the most chromatic in-gamut color at its hue that still holds
+Lc 78, which is why the four types read as equally present rather than one
+shouting over the others.
+
+## Source
+
+One file, no dependencies beyond React and your `cn`.
+
+<Source />
