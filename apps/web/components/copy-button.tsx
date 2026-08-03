@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import type { ComponentProps, ComponentType, SVGProps } from "react";
 
 import { CheckIcon } from "@/components/icons/check";
 import { CopyIcon } from "@/components/icons/copy";
+import { useCopy } from "@/lib/use-copy";
 import { cn } from "@/lib/utils";
 
 interface CopyButtonProps extends Omit<ComponentProps<"button">, "onClick" | "value"> {
@@ -20,27 +21,13 @@ export const CopyButton = ({
   icon: Icon = CopyIcon,
   ...props
 }: CopyButtonProps) => {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useCopy(value);
 
   const handleCopy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(typeof value === "function" ? value() : value);
-      setCopied(true);
+    if (await copy()) {
       onCopy?.();
-    } catch {
-      // clipboard not available
     }
-  }, [value, onCopy]);
-
-  useEffect(() => {
-    if (!copied) {
-      return;
-    }
-    const timer = setTimeout(() => {
-      setCopied(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [copied]);
+  }, [copy, onCopy]);
 
   return (
     <button
