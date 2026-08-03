@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Release } from "@/components/changelog";
-import { getChangelog, getRelease, getReleaseSummary } from "@/lib/changelog";
+import { Navigation } from "@/components/navigation";
+import { Pager } from "@/components/pager";
+import { getChangelog, getRelease, getReleaseSiblings, getReleaseSummary } from "@/lib/changelog";
 
 interface ReleasePageProps {
   params: Promise<{ slug: string }>;
@@ -39,10 +41,12 @@ const ReleasePage = async ({ params }: ReleasePageProps) => {
 
   return (
     <>
+      <Navigation href="/updates" label="Back to updates" />
       <section className="grid gap-4">
         <h1 className="font-medium text-gray-1000">v{release.version}</h1>
       </section>
       <Release release={release} />
+      <Pager {...getReleaseSiblings(release.slug)} />
     </>
   );
 };

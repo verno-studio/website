@@ -1,6 +1,5 @@
 import { TurborepoIcon } from "@/components/icons/turborepo";
 import { NextJsIcon } from "@/components/icons/nextjs";
-import { ProseLink } from "@/components/prose-link";
 import { Installer } from "./installer";
 
 export const Story = () => (
@@ -16,7 +15,9 @@ export const Story = () => (
       default path, not an afterthought.
     </p>
 
-    <div className="flex flex-col gap-4">
+    {/* Grid items floor at their min-content width, and the installer's command
+        never wraps. Without this the whole column stretches past the viewport. */}
+    <div className="flex min-w-0 flex-col gap-4">
       <p>
         One command from zero to a Next.js app with Turborepo, workspace packages, shadcn/ui, and
         Ultracite
@@ -26,15 +27,25 @@ export const Story = () => (
 
     <p>
       It sits on{" "}
-      <ProseLink href="https://turborepo.dev/">
+      <a
+        className="text-gray-900 underline decoration-1 decoration-gray-900/50 underline-offset-2 transition-[color,text-decoration-color] [@media(hover:hover)_and_(pointer:fine)]:hover:text-gray-1000 [@media(hover:hover)_and_(pointer:fine)]:hover:decoration-gray-1000"
+        href="https://turborepo.dev/"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         <TurborepoIcon className="mr-1 mb-0.5 inline-block size-4" />
         Turborepo
-      </ProseLink>
+      </a>
       ,{" "}
-      <ProseLink href="https://nextjs.org/">
+      <a
+        className="text-gray-900 underline decoration-1 decoration-gray-900/50 underline-offset-2 transition-[color,text-decoration-color] [@media(hover:hover)_and_(pointer:fine)]:hover:text-gray-1000 [@media(hover:hover)_and_(pointer:fine)]:hover:decoration-gray-1000"
+        href="https://nextjs.org/"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         <NextJsIcon className="mr-1 mb-0.5 inline-block size-4" />
         Next.js
-      </ProseLink>
+      </a>
       , and TypeScript, with a real design system you can fork, extend, and keep coherent as the
       product grows.
     </p>

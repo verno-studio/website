@@ -1,23 +1,30 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { ComponentProps } from "react";
+import type { ComponentProps, ComponentType, SVGProps } from "react";
 
 import { CheckIcon } from "@/components/icons/check";
 import { CopyIcon } from "@/components/icons/copy";
 import { cn } from "@/lib/utils";
 
-interface CopyButtonProps extends Omit<ComponentProps<"button">, "onClick"> {
-  readonly value: string;
+interface CopyButtonProps extends Omit<ComponentProps<"button">, "onClick" | "value"> {
+  readonly value: string | (() => string);
   readonly onCopy?: () => void;
+  readonly icon?: ComponentType<SVGProps<SVGSVGElement>>;
 }
 
-export const CopyButton = ({ value, onCopy, className, ...props }: CopyButtonProps) => {
+export const CopyButton = ({
+  value,
+  onCopy,
+  className,
+  icon: Icon = CopyIcon,
+  ...props
+}: CopyButtonProps) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(value);
+      await navigator.clipboard.writeText(typeof value === "function" ? value() : value);
       setCopied(true);
       onCopy?.();
     } catch {
@@ -49,17 +56,17 @@ export const CopyButton = ({ value, onCopy, className, ...props }: CopyButtonPro
       aria-label="Copy to clipboard"
       {...props}
     >
-      <CopyIcon
+      <Icon
         aria-hidden
         className={cn(
-          "size-4 transition-all duration-200 ease-out",
+          "size-4 transition-[opacity,scale,filter] duration-200 ease-out",
           copied ? "opacity-0 scale-[0.6] blur-xs" : "opacity-100 scale-100 blur-0",
         )}
       />
       <CheckIcon
         aria-hidden
         className={cn(
-          "absolute inset-0 size-4 m-auto transition-all duration-200 ease-out",
+          "absolute inset-0 size-4 m-auto transition-[opacity,scale,filter] duration-200 ease-out",
           copied ? "opacity-100 scale-100 blur-0" : "opacity-0 scale-[0.6] blur-xs",
         )}
       />

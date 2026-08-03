@@ -42,7 +42,7 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
           className="w-full material-base bg-transparent py-2.5 pr-3 pl-9 placeholder:text-gray-900 transition-colors duration-200 ease-out"
           id={inputId}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder={`Search ${releases.length} updates by version or content...`}
+          placeholder={`Search ${releases.length} ${releases.length === 1 ? "update" : "updates"} by version or content...`}
           type="search"
           value={query}
         />
@@ -58,9 +58,16 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
       </output>
 
       {filtered.length === 0 ? (
-        <p className="px-4 py-8 text-center text-gray-900">
-          No updates match &ldquo;{query}&rdquo;.
-        </p>
+        <div className="flex flex-col items-center gap-4 px-4 py-8 text-center">
+          <p className="text-gray-900">No updates match &ldquo;{query}&rdquo;.</p>
+          <button
+            className="rounded-full bg-background-100 px-4 py-1.5 font-medium text-gray-1000 ring-1 ring-gray-alpha-400 ring-inset cursor-pointer transition-[transform,background-color] duration-150 ease-out active:scale-[0.96] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"
+            onClick={() => setQuery("")}
+            type="button"
+          >
+            Clear search
+          </button>
+        </div>
       ) : (
         <ul className="flex list-none flex-col gap-7 @sm:gap-4 pl-0">
           {filtered.map(({ slug, version, itemCount, headline }) => (

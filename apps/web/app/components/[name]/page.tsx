@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Fragment } from "react";
 import { notFound } from "next/navigation";
 
-import { Installer } from "@/components/installer";
-import { mdxComponents } from "@/components/registry/mdx-components";
-import { getPreview } from "@/components/registry/previews";
-import {
-  getRegistryItem,
-  getRegistryItems,
-  installCommand,
-  installUrlCommand,
-} from "@/lib/registry";
+import { Navigation } from "@/components/navigation";
+import { Pager } from "@/components/pager";
+import { registryComponents } from "@/components/registry/mdx-components";
+import { GeneratedDoc } from "@/components/registry/sections";
+import { getRegistryItem, getRegistryItems, getRegistrySiblings } from "@/lib/registry";
 import { componentDocs } from "@/lib/source";
 
 interface ComponentPageProps {
@@ -43,85 +38,20 @@ const ComponentPage = async ({ params }: ComponentPageProps) => {
     notFound();
   }
 
-  const preview = getPreview(item);
-  // Prose is optional: a slug with no MDX file renders its generated sections
-  // and nothing else, so adding a registry item never requires writing a page.
   const doc = componentDocs.getPage([item.name]);
   const Prose = doc?.data.body;
-  const dependencies = item.dependencies ?? [];
-  // The light block is the source of truth; dark redeclares the same names.
-  const tokens = Object.entries(item.cssVars?.light ?? {});
 
   return (
     <>
-      <section className="flex flex-col gap-4">
-        <h1 className="font-medium text-gray-1000">{item.title ?? item.name}</h1>
-        {item.description ? <p className="text-gray-900 text-pretty">{item.description}</p> : null}
-      </section>
-
-      {preview ? (
-        <section className="flex flex-col gap-3">
-          <h2 className="font-medium text-gray-1000">Preview</h2>
-          <div className="flex min-h-32 items-center justify-center material-large px-4 py-8">
-            {preview}
-          </div>
-        </section>
-      ) : null}
-
-      {Prose ? (
-        <section className="flex flex-col gap-3">
-          <Prose components={mdxComponents} />
-        </section>
-      ) : null}
-
-      <section className="flex flex-col gap-3">
-        <h2 className="font-medium text-gray-1000">Install</h2>
-        <Installer command={installCommand(item.name)} />
-        <p className="text-gray-900">
-          Or without configuring the registry namespace in <code>components.json</code>:
-        </p>
-        <Installer command={installUrlCommand(item.name)} />
-      </section>
-
-      {dependencies.length > 0 ? (
-        <section className="flex flex-col gap-3">
-          <h2 className="font-medium text-gray-1000">Dependencies</h2>
-          <ul>
-            {dependencies.map((dependency) => (
-              <li key={dependency}>
-                <code>{dependency}</code>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      {tokens.length > 0 ? (
-        <section className="flex flex-col gap-3">
-          <h2 className="font-medium text-gray-1000">Tokens</h2>
-          <p className="text-gray-900">
-            {tokens.length} variables land in your stylesheet. Dark mode redeclares the same names,
-            so nothing downstream has to know which mode it is in.
-          </p>
-          <dl className="grid max-h-96 grid-cols-[auto_1fr] gap-x-4 gap-y-1 overflow-y-auto material-large px-4 py-4 font-mono text-sm no-scrollbar">
-            {tokens.map(([token, value]) => (
-              <Fragment key={token}>
-                <dt className="text-gray-1000">--{token}</dt>
-                <dd className="truncate text-gray-900">{value}</dd>
-              </Fragment>
-            ))}
-          </dl>
-        </section>
-      ) : null}
-
-      {item.files.map((file) => (
-        <section className="flex flex-col gap-3" key={file.path}>
-          <h2 className="font-mono text-gray-1000 text-sm">{file.path}</h2>
-          <pre className="overflow-x-auto material-large px-4 py-4 text-gray-900 text-sm leading-relaxed">
-            <code>{file.content}</code>
-          </pre>
-        </section>
-      ))}
+      <Navigation href="/components" label="Back to components" />
+      <article>
+        <h1 className="mb-2 font-medium text-gray-1000">{item.title ?? item.name}</h1>
+        {item.description ? (
+          <p className="mb-12 text-gray-900 text-pretty">{item.description}</p>
+        ) : null}
+        {Prose ? <Prose components={registryComponents(item)} /> : <GeneratedDoc item={item} />}
+      </article>
+      <Pager {...getRegistrySiblings(item.name)} />
     </>
   );
 };

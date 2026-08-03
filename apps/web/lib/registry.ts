@@ -3,10 +3,6 @@ import path from "node:path";
 import type { RegistryItem } from "@/lib/registry-schema";
 import { registryItemSchema } from "@/lib/registry-schema";
 
-// The same JSON `shadcn add` downloads. Reading the built output rather than the
-// source tree is the point: the code shown on a component's page is the code the
-// install writes, byte for byte, so the docs cannot describe something the
-// registry does not ship.
 const candidateDirs = [
   path.join(process.cwd(), "public", "r"),
   path.join(process.cwd(), "apps", "web", "public", "r"),
@@ -58,6 +54,21 @@ export const getRegistryItems = (): RegistryItem[] => {
 export const getRegistryItem = (name: string): RegistryItem | undefined =>
   getRegistryItems().find((item) => item.name === name);
 
+const displayTitle = (item: RegistryItem) => item.title ?? item.name;
+
+const pagerEntry = (item: RegistryItem | undefined) =>
+  item ? { href: `/components/${item.name}`, title: displayTitle(item) } : undefined;
+
+export const getRegistrySiblings = (name: string) => {
+  const items = getRegistryItems();
+  const index = items.findIndex((item) => item.name === name);
+
+  return {
+    next: pagerEntry(items[index + 1]),
+    previous: pagerEntry(items[index - 1]) ?? { href: "/components", title: "Components" },
+  };
+};
+
 const registryNamespace = "@vernostudio";
 
 export const installCommand = (name: string) =>
@@ -70,17 +81,15 @@ export interface RegistryItemSummary {
   name: string;
   title: string;
   description: string;
-  fileCount: number;
   searchText: string;
 }
 
 export const getRegistryItemSummary = (item: RegistryItem): RegistryItemSummary => {
-  const title = item.title ?? item.name;
+  const title = displayTitle(item);
   const description = item.description ?? "";
 
   return {
     description,
-    fileCount: item.files.length,
     name: item.name,
     searchText: `${item.name} ${title} ${description}`.toLowerCase(),
     title,

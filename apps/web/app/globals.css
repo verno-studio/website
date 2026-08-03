@@ -24,6 +24,20 @@
   }
 }
 
+/* Shiki's dual-theme output carries both colors as variables and picks neither.
+   Backgrounds stay ignored: the block sits on the site's surface, not shiki's. */
+@layer base {
+  .shiki,
+  .shiki span {
+    color: var(--shiki-light);
+  }
+
+  .dark .shiki,
+  .dark .shiki span {
+    color: var(--shiki-dark);
+  }
+}
+
 @utility no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

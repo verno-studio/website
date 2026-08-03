@@ -1,13 +1,18 @@
 "use client";
 
 import { SearchIcon } from "lucide-react";
-import Link from "next/link";
+import type { ReactNode } from "react";
 import { useId, useMemo, useState } from "react";
 
+import { EntryRow } from "@/components/entry-list";
 import type { RegistryItemSummary } from "@/lib/registry";
 
+export interface RegistryIndexItem extends RegistryItemSummary {
+  readonly preview: ReactNode;
+}
+
 interface RegistryIndexProps {
-  items: RegistryItemSummary[];
+  items: RegistryIndexItem[];
 }
 
 export const RegistryIndex = ({ items }: RegistryIndexProps) => {
@@ -37,15 +42,12 @@ export const RegistryIndex = ({ items }: RegistryIndexProps) => {
           className="w-full material-base bg-transparent py-2.5 pr-3 pl-9 placeholder:text-gray-900 transition-colors duration-200 ease-out"
           id={inputId}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder={`Search ${items.length} components...`}
+          placeholder={`Search ${items.length} ${items.length === 1 ? "component" : "components"}...`}
           type="search"
           value={query}
         />
       </div>
 
-      {/* `output` carries an implicit role="status" and aria-live="polite".
-          Always mounted so assistive tech observes a content change on an
-          existing region, not a node insertion. */}
       <output className="sr-only">
         {query
           ? `${filtered.length} ${filtered.length === 1 ? "component" : "components"} match ${query}`
@@ -53,27 +55,26 @@ export const RegistryIndex = ({ items }: RegistryIndexProps) => {
       </output>
 
       {filtered.length === 0 ? (
-        <p className="px-4 py-8 text-center text-gray-900">
-          No components match &ldquo;{query}&rdquo;.
-        </p>
+        <div className="flex flex-col items-center gap-4 px-4 py-8 text-center">
+          <p className="text-gray-900">No components match &ldquo;{query}&rdquo;.</p>
+          <button
+            className="rounded-full bg-background-100 px-4 py-1.5 font-medium text-gray-1000 ring-1 ring-gray-alpha-400 ring-inset cursor-pointer transition-[transform,background-color] duration-150 ease-out active:scale-[0.96] [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"
+            onClick={() => setQuery("")}
+            type="button"
+          >
+            Clear search
+          </button>
+        </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {filtered.map(({ name, title, description, fileCount }) => (
-            <Link
-              className="group flex flex-col gap-1 material-large px-4 pt-3 pb-4 shadow-(--ds-shadow-border) transition-shadow duration-200 ease-out hover:shadow-(--ds-shadow-border-medium)"
+        <div className="grid grid-cols-1 gap-2">
+          {filtered.map(({ name, title, description, preview }) => (
+            <EntryRow
+              description={description}
               href={`/components/${name}`}
               key={name}
-            >
-              <span className="flex w-full items-center justify-between gap-2 font-medium">
-                <span className="flex-1 text-gray-1000">{title}</span>
-                {fileCount > 0 ? (
-                  <span className="shrink-0 font-normal text-gray-900 text-xs">
-                    {fileCount} {fileCount === 1 ? "file" : "files"}
-                  </span>
-                ) : null}
-              </span>
-              <span className="text-gray-900 leading-relaxed">{description}</span>
-            </Link>
+              preview={preview}
+              title={title}
+            />
           ))}
         </div>
       )}

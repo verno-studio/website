@@ -3,6 +3,7 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
+      "collections/*": ["./.source/*"],
       "@vernostudio/*": ["../../packages/*"]
     }
   },

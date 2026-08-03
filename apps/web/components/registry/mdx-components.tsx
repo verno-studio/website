@@ -1,37 +1,76 @@
-import { ProseLink } from "@/components/prose-link";
+import Link from "next/link";
 import type { ComponentProps } from "react";
 
-/**
- * The site's own type styles, not fumadocs-ui's. Only `fumadocs-mdx` and
- * `fumadocs-core` are installed — nothing ships a stylesheet, so every element
- * an MDX file can produce is mapped here or inherits from `app/globals.css`.
- *
- * Children are nested rather than spread: a heading whose content arrives
- * through `{...props}` reads as empty to both the linter and a screen reader.
- */
-export const mdxComponents = {
-  a: ({ children, ...props }: ComponentProps<"a">) => <ProseLink {...props}>{children}</ProseLink>,
+import { CodeSurface } from "@/components/registry/code-surface";
+import { Preview } from "@/components/registry/preview";
+import { Dependencies, Install, InstallUrl, Source, Tokens } from "@/components/registry/sections";
+import type { RegistryItem } from "@/lib/registry-schema";
+import { Divider } from "@/components/devider";
+
+const Anchor = ({ href, children, ...props }: ComponentProps<"a">) =>
+  href?.startsWith("/") ? (
+    <Link
+      className="text-gray-900 underline decoration-1 decoration-gray-900/50 underline-offset-2 transition-[color,text-decoration-color] [@media(hover:hover)_and_(pointer:fine)]:hover:text-gray-1000 [@media(hover:hover)_and_(pointer:fine)]:hover:decoration-gray-1000"
+      href={href}
+      {...props}
+    >
+      {children}
+    </Link>
+  ) : (
+    <a
+      className="text-gray-900 underline decoration-1 decoration-gray-900/50 underline-offset-2 transition-[color,text-decoration-color] [@media(hover:hover)_and_(pointer:fine)]:hover:text-gray-1000 [@media(hover:hover)_and_(pointer:fine)]:hover:decoration-gray-1000"
+      href={href}
+      rel="noopener noreferrer"
+      target="_blank"
+      {...props}
+    >
+      {children}
+    </a>
+  );
+
+const proseComponents = {
+  Preview,
+  a: Anchor,
   h2: ({ children, ...props }: ComponentProps<"h2">) => (
-    <h2 className="font-medium text-gray-1000" {...props}>
+    <h2 className="mt-16 mb-3 scroll-mt-20 font-medium text-gray-1000 first:mt-0" {...props}>
       {children}
     </h2>
   ),
   h3: ({ children, ...props }: ComponentProps<"h3">) => (
-    <h3 className="font-medium text-gray-1000" {...props}>
+    <h3 className="mt-10 mb-2 scroll-mt-20 font-medium text-gray-1000" {...props}>
       {children}
     </h3>
   ),
+  hr: Divider,
+  ol: ({ children, ...props }: ComponentProps<"ol">) => (
+    <ol className="my-6" {...props}>
+      {children}
+    </ol>
+  ),
   p: ({ children, ...props }: ComponentProps<"p">) => (
-    <p className="text-gray-900 text-pretty" {...props}>
+    <p className="my-4 text-gray-900 text-pretty" {...props}>
       {children}
     </p>
   ),
-  pre: ({ children, ...props }: ComponentProps<"pre">) => (
-    <pre
-      className="overflow-x-auto material-large px-4 py-4 text-gray-900 text-sm leading-relaxed no-scrollbar"
-      {...props}
-    >
+  // Shiki hangs theme classes, CSS variables and a fumadocs-ui `icon` off the
+  // `pre`. Forward the first two; spreading the icon puts an SVG in an attribute.
+  pre: ({ children, className, style, title }: ComponentProps<"pre">) => (
+    <CodeSurface className={className} name={title} style={style}>
       {children}
-    </pre>
+    </CodeSurface>
+  ),
+  ul: ({ children, ...props }: ComponentProps<"ul">) => (
+    <ul className="my-6" {...props}>
+      {children}
+    </ul>
   ),
 };
+
+export const registryComponents = (item: RegistryItem) => ({
+  ...proseComponents,
+  Dependencies: () => <Dependencies item={item} />,
+  Install: () => <Install item={item} />,
+  InstallUrl: () => <InstallUrl item={item} />,
+  Source: () => <Source item={item} />,
+  Tokens: () => <Tokens item={item} />,
+});
