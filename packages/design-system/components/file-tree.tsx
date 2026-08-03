@@ -24,15 +24,6 @@ const Chevron = ({ open }: { readonly open: boolean }) => (
   </svg>
 );
 
-/**
- * A cross-fade, not a path morph. `d` only interpolates between paths sharing a
- * command sequence, and the open folder is two subpaths where the shut one is a
- * single outline. Both glyphs stay in the DOM and trade places at once:
- * staggering them measured better on paper and worse in practice, because this
- * curve is slow to start, so a delayed entrance leaves a beat where neither
- * folder is drawn and the icon reads as a blink. Overlapping keeps something on
- * screen the whole way, and the scale gap tells the two apart while they cross.
- */
 const FolderGlyph = ({ open }: { readonly open: boolean }) => (
   <span aria-hidden="true" className="relative inline-flex size-4 shrink-0 text-gray-700">
     <svg
@@ -80,13 +71,6 @@ interface FileTreeProps {
   readonly className?: string;
 }
 
-/**
- * A directory listing built from nested disclosures rather than `role="tree"`.
- * A role is a promise: `tree` commits to the full APG keyboard model, roving
- * tabindex and arrow navigation included, which earns its cost on a payload of
- * hundreds of rows and not on a listing of ten. A native button already answers
- * to Enter and Space, reports its own state, and needs nothing explained.
- */
 export const FileTree = ({ children, className }: FileTreeProps) => (
   <ul
     className={cn(
@@ -120,15 +104,10 @@ export const Folder = ({ name, defaultOpen = false, children }: FolderProps) => 
       >
         <Chevron open={open} />
         <FolderGlyph open={open} />
-        <span className="truncate">{name}</span>
+        <span className="truncate" title={name}>
+          {name}
+        </span>
       </button>
-      {/*
-        Hidden rather than unmounted, so a folder opened deep in the tree is
-        still open when its parent is collapsed and opened again.
-
-        The row pads 4px then draws a 16px chevron, so its centre sits 12px in.
-        The guide line lands exactly there and the branch hangs off it.
-      */}
       {children ? (
         <ul className="m-0 list-none border-gray-200 border-s ps-2 ms-3" hidden={!open} id={id}>
           {children}
@@ -151,16 +130,19 @@ export const File = ({ name, href }: FileProps) => (
         className="flex min-h-7 w-full cursor-pointer items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000 no-underline focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gray-1000 focus-visible:outline-solid [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"
         href={href}
       >
-        {/* The chevron column is empty here so names line up with folder names. */}
         <span aria-hidden="true" className="size-4 shrink-0" />
         <FileGlyph />
-        <span className="truncate">{name}</span>
+        <span className="truncate" title={name}>
+          {name}
+        </span>
       </a>
     ) : (
       <span className="flex min-h-7 w-full items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000">
         <span aria-hidden="true" className="size-4 shrink-0" />
         <FileGlyph />
-        <span className="truncate">{name}</span>
+        <span className="truncate" title={name}>
+          {name}
+        </span>
       </span>
     )}
   </li>
