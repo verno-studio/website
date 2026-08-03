@@ -63,7 +63,7 @@ export const TableOfContents = ({ items }: TableOfContentsProps) => {
     >
       <div className="mb-6 flex items-center gap-2">
         <MenuIcon aria-hidden className="size-4 text-gray-1000" />
-        <span className="font-[450] text-[13px] text-gray-1000">Table of contents</span>
+        <span className="font-[450] text-[0.8125rem] text-gray-1000">Table of contents</span>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -99,7 +99,7 @@ export const TableOfContents = ({ items }: TableOfContentsProps) => {
                 />
                 <span
                   className={cn(
-                    "truncate font-[450] text-[13px] transition-colors duration-200 ease-out",
+                    "truncate font-[450] text-[0.8125rem] transition-colors duration-200 ease-out",
                     active
                       ? "text-gray-1000"
                       : "text-gray-900 [@media(hover:hover)_and_(pointer:fine)]:group-hover:text-gray-1000",
