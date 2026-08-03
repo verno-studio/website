@@ -8,7 +8,7 @@ import { packageJsonString } from "../templates/strings";
  */
 export const dependencyVersionMap = {
   "@tailwindcss/postcss": "^4.0.0",
-  "@types/node": "^25",
+  "@types/node": "^26",
   "@types/react": "^19",
   "@types/react-dom": "^19",
   clsx: "^2.1.1",
