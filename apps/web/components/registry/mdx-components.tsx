@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 
 import { HeadingAnchor } from "@/components/heading-anchor";
-import { CodeSurface } from "@/components/registry/code-surface";
+import { CodeBlock } from "@/components/registry/code-block";
 import { Preview } from "@/components/registry/preview";
 import { Dependencies, Install, InstallUrl, Source, Tokens } from "@/components/registry/sections";
 import type { RegistryItem } from "@/lib/registry-schema";
@@ -62,9 +62,9 @@ const proseComponents = {
   // Shiki hangs theme classes, CSS variables and a fumadocs-ui `icon` off the
   // `pre`. Forward the first two; spreading the icon puts an SVG in an attribute.
   pre: ({ children, className, style, title }: ComponentProps<"pre">) => (
-    <CodeSurface className={className} name={title} style={style}>
+    <CodeBlock className={className} filename={title} style={style}>
       {children}
-    </CodeSurface>
+    </CodeBlock>
   ),
   ul: ({ children, ...props }: ComponentProps<"ul">) => (
     <ul className="my-6" {...props}>
