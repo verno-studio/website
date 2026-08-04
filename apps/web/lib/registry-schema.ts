@@ -1,8 +1,5 @@
 import { z } from "zod";
 
-// The subset of a built registry item this site reads. `shadcn build` emits more
-// than this; unknown keys are allowed through so adding a field to registry.json
-// does not break the docs.
 export const registryFileSchema = z.object({
   content: z.string(),
   path: z.string(),

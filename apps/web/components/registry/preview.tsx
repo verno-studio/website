@@ -5,11 +5,6 @@ import { cn } from "@/lib/utils";
 interface PreviewProps {
   readonly children: ReactNode;
   readonly caption?: ReactNode;
-  /**
-   * `center` suits a specimen that keeps one size. Use `start` for anything
-   * that grows and shrinks as you use it. Centering re-anchors the whole
-   * thing on every change, so collapsing a row slides the rest of the demo.
-   */
   readonly align?: "center" | "start";
 }
 

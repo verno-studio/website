@@ -2,11 +2,6 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-/**
- * The same trick as the json-view chip, one level up: at 44px what has to read
- * is nesting. A row is a glyph plus a name bar, and the guide line is what makes
- * the indent look deliberate rather than ragged.
- */
 const FILE_ROWS = [
   { id: "root", indent: "ps-0", name: "w-4", tone: "bg-gray-1000" },
   { id: "child-a", indent: "ps-1.5", name: "w-3.5", tone: "bg-gray-700" },

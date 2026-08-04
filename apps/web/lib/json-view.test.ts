@@ -9,12 +9,6 @@ const GEIST = path.join(ROOT, "apps", "web", "styles", "geist.css");
 
 const DECLARATION = /^\s*--(?<name>json-[\w-]+)\s*:\s*(?<value>[^;]+);/gmu;
 
-/**
- * The published values and the ones this site runs on are two copies of the
- * same contract: the registry ships literals, and geist.css cannot map them
- * onto `--ds-*` without changing what a reader sees. Copies drift, so the
- * drift is what gets tested.
- */
 const declared = (css: string) => {
   const blocks = new Map<string, Record<string, string>>();
   const light = css.slice(css.indexOf("\n:root {"), css.indexOf("\n.dark {"));
