@@ -37,14 +37,14 @@ export const Folder = ({ name, defaultOpen = false, children }: FolderProps) => 
       <button
         aria-controls={children ? id : undefined}
         aria-expanded={open}
-        className="flex min-h-7 w-full cursor-pointer items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000 focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gray-1000 focus-visible:outline-solid [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"
+        className="flex min-h-7 w-full cursor-pointer touch-manipulation items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000 focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gray-1000 focus-visible:outline-solid [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"
         onClick={() => setOpen((current) => !current)}
         type="button"
       >
         <svg
           aria-hidden="true"
           className={cn(
-            "size-4 shrink-0 text-gray-700 transition-transform duration-300 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
+            "size-4 shrink-0 text-gray-700 transition-transform duration-200 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
             open && "rotate-90",
           )}
           fill="none"
@@ -123,7 +123,7 @@ export const File = ({ name, href }: FileProps) => (
   <li>
     {href ? (
       <a
-        className="flex min-h-7 w-full cursor-pointer items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000 no-underline focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gray-1000 focus-visible:outline-solid [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"
+        className="flex min-h-7 w-full cursor-pointer touch-manipulation items-center gap-1.5 rounded-sm py-1 pe-2 ps-1 text-start text-gray-1000 no-underline focus-visible:-outline-offset-2 focus-visible:outline-2 focus-visible:outline-gray-1000 focus-visible:outline-solid [@media(hover:hover)_and_(pointer:fine)]:hover:bg-gray-100"
         href={href}
       >
         <span aria-hidden="true" className="size-4 shrink-0" />
