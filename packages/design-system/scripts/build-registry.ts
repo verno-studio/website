@@ -14,6 +14,7 @@ const OUTPUT = path.join(PACKAGE_ROOT, "registry.json");
 
 const REGISTRY_NAME = "vernostudio";
 const HOMEPAGE = "https://verno-studio.vercel.app/components";
+const AUTHOR = "Noppakorn Kaewsalabnil (https://www.pungrumpy.com)";
 
 const cssBlock = (css: string, header: string): string => {
   const start = css.indexOf(header);
@@ -87,6 +88,7 @@ const { component: jsonViewVars, theme: themeVars } = partition(readCssVars());
 
 const items = [
   {
+    author: AUTHOR,
     cssVars: themeVars,
     dependencies: ["tw-animate-css"],
     description:
@@ -98,6 +100,7 @@ const items = [
     type: "registry:theme",
   },
   {
+    author: AUTHOR,
     dependencies: [],
     description:
       "A directory listing with collapsible folders, built from nested disclosures rather " +
@@ -108,6 +111,7 @@ const items = [
     type: "registry:ui",
   },
   {
+    author: AUTHOR,
     cssVars: jsonViewVars,
     dependencies: [],
     description:
