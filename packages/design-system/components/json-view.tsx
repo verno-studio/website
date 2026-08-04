@@ -183,7 +183,7 @@ const Chevron = ({ open }: { readonly open: boolean }) => (
   <svg
     aria-hidden="true"
     className={cn(
-      "size-4 shrink-0 transition-transform duration-150 ease-out motion-reduce:transition-none",
+      "size-4 shrink-0 transition-transform duration-200 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
       open && "rotate-90",
     )}
     fill="none"
@@ -354,6 +354,14 @@ export const JsonView = ({
         }}
         onFocus={() => setActiveId(node.id)}
         onKeyDown={(event) => onKeyDown(event, node)}
+        // A second click on a row that opens is a toggle, not a word select.
+        // Drag still selects, and a leaf still selects on double click.
+        onMouseDown={(event) => {
+          event.stopPropagation();
+          if (node.children && event.detail > 1) {
+            event.preventDefault();
+          }
+        }}
         ref={(element) => {
           if (element) {
             nodes.set(node.id, element);
