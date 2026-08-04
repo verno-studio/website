@@ -15,8 +15,6 @@ export const Story = () => (
       default path, not an afterthought.
     </p>
 
-    {/* Grid items floor at their min-content width, and the installer's command
-        never wraps. Without this the whole column stretches past the viewport. */}
     <div className="flex min-w-0 flex-col gap-4">
       <p>
         One command from zero to a Next.js app with Turborepo, workspace packages, shadcn/ui, and

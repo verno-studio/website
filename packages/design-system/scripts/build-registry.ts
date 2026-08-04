@@ -98,6 +98,16 @@ const items = [
     type: "registry:theme",
   },
   {
+    dependencies: [],
+    description:
+      "A directory listing with collapsible folders, built from nested disclosures rather " +
+      "than a tree role.",
+    files: [{ path: "components/file-tree.tsx", type: "registry:ui" }],
+    name: "file-tree",
+    title: "File Tree",
+    type: "registry:ui",
+  },
+  {
     cssVars: jsonViewVars,
     dependencies: [],
     description:

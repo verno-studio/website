@@ -2,12 +2,6 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-/**
- * Indent plus two bars per row. At 44px there is no room for a glyph, so the
- * thing that has to survive is what separates this component from a page of
- * text: rows that step in, and a key that is coloured differently from its
- * value. The tones are the item's own tokens, so the chip previews the palette.
- */
 const JSON_ROWS = [
   { id: "root", indent: "ps-0", key: "w-2.5", tone: "", value: null },
   { id: "string", indent: "ps-1.5", key: "w-2", tone: "bg-json-string", value: "w-3" },

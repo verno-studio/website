@@ -86,7 +86,7 @@ export const TableOfContents = ({ items }: TableOfContentsProps) => {
                   // hit, and the one a focus ring should trace: an outline on
                   // the link would cut straight through the middle of its text.
                   "before:absolute before:-inset-y-3.5 before:inset-x-0 before:rounded-md before:content-['']",
-                  "focus-visible:before:outline-2 focus-visible:before:outline-focus",
+                  "focus-visible:before:outline-2 focus-visible:before:outline-solid focus-visible:before:outline-focus",
                   item.depth > 2 && "ml-3",
                 )}
                 href={item.url}

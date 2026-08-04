@@ -10,15 +10,8 @@ const COLLAPSE_AFTER = 24;
 
 interface CodeBlockProps {
   readonly children: ReactNode;
-  /** Geist calls this the filename. Absent means the block has no header. */
   readonly filename?: string;
   readonly lines?: number;
-  /**
-   * Off by default, unlike Geist's `hideLineNumbers`. Geist renders standalone
-   * samples; this also renders every fence in the prose, and those are
-   * fragments. Numbering a fragment 1, 2, 3 claims it starts at the top of a
-   * file, which is usually a lie. A block that really is a whole file asks.
-   */
   readonly lineNumbers?: boolean;
   readonly className?: string;
   readonly style?: CSSProperties;
@@ -85,7 +78,7 @@ export const CodeBlock = ({
         <div className="border-gray-alpha-400 border-t">
           <button
             aria-expanded={open}
-            className="w-full cursor-pointer bg-gray-100 py-2 text-center font-medium text-gray-900 text-xs outline-none transition-colors duration-200 ease-out focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus [@media(hover:hover)_and_(pointer:fine)]:hover:text-gray-1000"
+            className="w-full cursor-pointer bg-gray-100 py-2 text-center font-medium text-gray-900 text-xs transition-colors duration-200 ease-out focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-focus [@media(hover:hover)_and_(pointer:fine)]:hover:text-gray-1000"
             onClick={() => setOpen((current) => !current)}
             type="button"
           >
