@@ -354,6 +354,16 @@ export const JsonView = ({
         }}
         onFocus={() => setActiveId(node.id)}
         onKeyDown={(event) => onKeyDown(event, node)}
+        // A second click on a row that opens and shuts is someone toggling it,
+        // not someone selecting the key, and the browser's word and paragraph
+        // select turns a quick double toggle into a highlighted subtree. Drag
+        // select is untouched, and a leaf still selects on double click.
+        onMouseDown={(event) => {
+          event.stopPropagation();
+          if (node.children && event.detail > 1) {
+            event.preventDefault();
+          }
+        }}
         ref={(element) => {
           if (element) {
             nodes.set(node.id, element);
