@@ -3,6 +3,7 @@
   "homepage": "https://verno-studio.vercel.app/components",
   "items": [
     {
+      "author": "Noppakorn Kaewsalabnil (https://www.pungrumpy.com)",
       "cssVars": {
         "dark": {
           "background-100": "oklch(0 0 0)",
@@ -183,6 +184,7 @@
       "type": "registry:theme"
     },
     {
+      "author": "Noppakorn Kaewsalabnil (https://www.pungrumpy.com)",
       "dependencies": [],
       "description": "A directory listing with collapsible folders, built from nested disclosures rather than a tree role.",
       "files": [
@@ -196,6 +198,7 @@
       "type": "registry:ui"
     },
     {
+      "author": "Noppakorn Kaewsalabnil (https://www.pungrumpy.com)",
       "cssVars": {
         "dark": {
           "json-key": "oklch(0.867 0.076 1.01)",
