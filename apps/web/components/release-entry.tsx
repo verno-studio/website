@@ -1,5 +1,63 @@
 import type { EntryListItem } from "@/components/entry-list";
-import type { ReleaseSummary } from "@/lib/changelog";
+import type { ChangeKind, ReleaseSummary } from "@/lib/changelog";
+import { cn } from "@/lib/utils";
+
+const KIND_LABEL: Record<ChangeKind, string> = {
+  major: "Major",
+  minor: "Minor",
+  patch: "Patch",
+};
+
+// Same palette as the KindBadge on a release page, sized down to sit inline
+// next to a version rather than to head a section.
+const KIND_TAG: Record<ChangeKind, string> = {
+  major: "bg-blue-200 text-blue-900 ring-blue-400",
+  minor: "bg-gray-200 text-gray-1000 ring-gray-alpha-400",
+  patch: "text-gray-900 ring-gray-alpha-400",
+};
+
+const KIND_RANK: Record<ChangeKind, number> = { major: 3, minor: 2, patch: 1 };
+
+/** A release is only as notable as the largest kind of change in it. */
+const highestKind = (kinds: readonly ChangeKind[]): ChangeKind => {
+  let top: ChangeKind = "patch";
+  for (const kind of kinds) {
+    if (KIND_RANK[kind] > KIND_RANK[top]) {
+      top = kind;
+    }
+  }
+  return top;
+};
+
+const KindTag = ({ kind }: { kind: ChangeKind }) => (
+  <span
+    className={cn(
+      "ml-1.5 inline-flex h-4.5 shrink-0 items-center rounded-full px-1.5 align-middle font-medium text-[11px] ring-1 ring-inset",
+      KIND_TAG[kind],
+    )}
+  >
+    {KIND_LABEL[kind]}
+  </span>
+);
+
+// A component tile previews the component. A release has nothing to preview, so
+// the tile reports on it instead: body lines track how much shipped, which is
+// why a big release reads denser than a one-line patch at a glance.
+const BODY_WIDTHS = ["w-full", "w-3/4", "w-5/6", "w-1/2"] as const;
+const MIN_BODY_LINES = 2;
+
+const ReleaseThumbnail = ({ itemCount }: { itemCount: number }) => {
+  const lines = Math.min(Math.max(itemCount, MIN_BODY_LINES), BODY_WIDTHS.length);
+
+  return (
+    <div className="flex w-full flex-col items-start gap-1 px-1 pt-3.5">
+      <span className="h-1.25 w-1/2 rounded-full bg-gray-600" />
+      {BODY_WIDTHS.slice(0, lines).map((width) => (
+        <span className={cn("h-0.75 rounded-full bg-gray-400", width)} key={width} />
+      ))}
+    </div>
+  );
+};
 
 /** One release rendered as an EntryRow, shared by the homepage and /updates. */
 export const releaseToEntry = ({
@@ -7,8 +65,15 @@ export const releaseToEntry = ({
   version,
   headline,
   itemCount,
+  kinds,
 }: ReleaseSummary): EntryListItem => ({
   description: headline || `${itemCount} ${itemCount === 1 ? "change" : "changes"}`,
   href: `/updates/${slug}`,
-  title: <span className="font-mono">v{version}</span>,
+  preview: <ReleaseThumbnail itemCount={itemCount} />,
+  title: (
+    <>
+      <span className="font-mono">v{version}</span>
+      <KindTag kind={highestKind(kinds)} />
+    </>
+  ),
 });
