@@ -1,9 +1,10 @@
 "use client";
 
 import { SearchIcon } from "lucide-react";
-import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 
+import { EntryRow } from "@/components/entry-list";
+import { releaseToEntry } from "@/components/release-entry";
 import type { ReleaseSummary } from "@/lib/changelog";
 
 interface UpdatesIndexProps {
@@ -69,26 +70,11 @@ export const UpdatesIndex = ({ releases }: UpdatesIndexProps) => {
           </button>
         </div>
       ) : (
-        <ul className="flex list-none flex-col gap-7 @sm:gap-4 pl-0">
-          {filtered.map(({ slug, version, itemCount, headline }) => (
-            <li key={slug}>
-              <Link
-                className="flex flex-col gap-2 -mx-3 px-3 @sm:py-3 rounded-md transition-colors duration-200 ease-out hover:bg-gray-100"
-                href={`/updates/${slug}`}
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-gray-1000">v{version}</span>
-                  <span className="text-xs text-gray-900">
-                    {itemCount} {itemCount === 1 ? "change" : "changes"}
-                  </span>
-                </div>
-                {headline ? (
-                  <p className="line-clamp-2 text-gray-900 leading-relaxed">{headline}</p>
-                ) : null}
-              </Link>
-            </li>
+        <div className="grid grid-cols-1 gap-2">
+          {filtered.map((release) => (
+            <EntryRow key={release.slug} {...releaseToEntry(release)} />
           ))}
-        </ul>
+        </div>
       )}
     </section>
   );

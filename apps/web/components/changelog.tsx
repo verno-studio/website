@@ -7,9 +7,13 @@ const KIND_LABEL: Record<ChangeKind, string> = {
   patch: "Patch",
 };
 
+// A badge's fill has to get heavier as the change gets bigger, and blue-200 was
+// lighter against the page (1.11:1) than minor's gray-200 (1.19:1), so a major
+// release read as the quietest of the three in light mode. blue-400 puts major
+// back on top in both themes; blue-1000 is the text that keeps up with it.
 const KIND_CLASS: Record<ChangeKind, string> = {
   major:
-    "[--geist-background:var(--ds-blue-200)] [--geist-foreground:var(--ds-blue-900)] ring-blue-400",
+    "[--geist-background:var(--ds-blue-400)] [--geist-foreground:var(--ds-blue-1000)] ring-blue-500",
   minor:
     "[--geist-background:var(--ds-gray-200)] [--geist-foreground:var(--ds-gray-1000)] ring-gray-alpha-400",
   patch:
